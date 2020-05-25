@@ -14,10 +14,17 @@ import com.rentacar.agentbackend.repository.IAdminRepository;
 import com.rentacar.agentbackend.repository.IAgentRepository;
 import com.rentacar.agentbackend.repository.ISimpleUserRepository;
 import com.rentacar.agentbackend.repository.IUserRepository;
+import com.rentacar.agentbackend.security.TokenUtils;
 import com.rentacar.agentbackend.service.IAuthService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import com.rentacar.agentbackend.util.enums.UserRole;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +35,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class AuthService implements IAuthService {
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private TokenUtils tokenUtils;
 
     private final PasswordEncoder _passwordEncoder;
 
@@ -123,48 +136,35 @@ public class AuthService implements IAuthService {
     public UserResponse login(LoginRequest request) throws Exception {
         User user = _userRepository.findOneByUsername(request.getUsername());
 
-        if (user == null) {
+        String mail = request.getUsername();
+        String password = request.getPassword();
+        Authentication authentication = null;
+        try {
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(mail, password));
+        }catch (BadCredentialsException e){
+            System.out.println("Nisu dobri kredencijali [BadCredentialsException]");
             throw new Exception(String.format("Bad credentials."));
+        }catch (DisabledException e){
+            System.out.println("Korisnik jos nije prihvacen [DisabledException]");
+            throw new Exception(String.format("Your registration request hasn't been approved yet."));
+        }catch (Exception e) {
+            System.out.println("Neki drugi exception [Exception]");
+            e.printStackTrace();
         }
 
-        if (!_passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new Exception("Bad credentials.");
-        }
-
-        if(user.isDeleted()){
-            throw new Exception("Your account has been deleted.");
-        }
-
-        if(user.getUserRole().equals(UserRole.AGENT)){
-            if(user.getAgent().getRequestStatus().equals(RequestStatus.PENDING)){
-                throw new Exception("Your registration request hasn't been approved yet.");
-            }
-        }
-
-        if(user.getUserRole().equals(UserRole.SIMPLE_USER)){
-            if(user.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
-                throw new Exception("Your registration request hasn't been approved yet.");
-            }
-        }
-
-        if(user.getUserRole().equals(UserRole.AGENT)){
-            if(user.getAgent().getRequestStatus().equals(RequestStatus.DENIED)){
-                throw new Exception("Your registration request has been denied.");
-            }
-        }
-
-        if(user.getUserRole().equals(UserRole.SIMPLE_USER)){
-            if(user.getSimpleUser().getRequestStatus().equals(RequestStatus.DENIED)){
-                throw new Exception("Your registration request has been denied.");
-            }
-        }
-
+        String jwt = "";
+        int expiresIn = 0;
         if(!user.isHasSignedIn()){
-            user.setHasSignedIn(true);
-            _userRepository.save(user);
+            User userLog = (User) authentication.getPrincipal();
+            jwt = tokenUtils.generateToken(userLog.getUsername());
+            expiresIn = tokenUtils.getExpiredIn();
         }
+        UserResponse userResponse = mapUserToUserResponse(user);
+        userResponse.setToken(jwt);
+        userResponse.setTokenExpiresIn(expiresIn);
 
-        return mapUserToUserResponse(user);
+        return userResponse;
     }
 
     @Override
@@ -252,15 +252,9 @@ public class AuthService implements IAuthService {
     private UserResponse mapUserToUserResponse(User user) {
         UserResponse userResponse = new UserResponse();
         userResponse.setHasSignedIn(user.isHasSignedIn());
-        if(user.getUserRole().equals(UserRole.AGENT)){
-            userResponse.setId(user.getAgent().getId());
-        }else if(user.getUserRole().equals(UserRole.SIMPLE_USER)){
-            userResponse.setId(user.getSimpleUser().getId());
-        }else if(user.getUserRole().equals(UserRole.ADMIN)){
-            userResponse.setId(user.getAdmin().getId());
-        }
+        userResponse.setId(user.getId());
         userResponse.setUsername(user.getUsername());
-        userResponse.setUserRole(user.getUserRole());
+        userResponse.setUserRole(user.getAuthorities().get(0).getAuthority());
         return userResponse;
     }
 }
