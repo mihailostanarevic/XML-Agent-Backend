@@ -8,6 +8,8 @@ import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.service.IAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +28,10 @@ public class AuthController extends ValidationControler {
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
+    @GetMapping("/")
+    public ResponseEntity<?> hello(){
+        return new ResponseEntity<>("Hello", HttpStatus.OK);
+    }
 
     @PostMapping("/create-agent")
     public UserResponse createAgent(@RequestBody CreateAgentRequest request) throws Exception{
