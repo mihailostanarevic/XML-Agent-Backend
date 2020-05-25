@@ -6,6 +6,8 @@ import com.rentacar.agentbackend.dto.request.LoginRequest;
 import com.rentacar.agentbackend.dto.request.NewPassordRequest;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.service.IAuthService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,12 @@ public class AuthController {
 
     public AuthController(IAuthService authService) {
         _authService = authService;
+    }
+
+    @GetMapping("/hello")
+    public void hello(){
+        System.out.println("12312312312");
+        new ResponseEntity<>("Hello from auth", HttpStatus.OK);
     }
 
     @PostMapping("/create-agent")
