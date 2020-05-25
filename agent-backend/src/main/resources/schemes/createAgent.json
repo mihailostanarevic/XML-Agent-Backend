@@ -1,0 +1,66 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "CreateAgent",
+  "required": [
+    "username",
+    "password",
+    "rePassword"
+  ],
+  "properties": {
+    "username": {
+      "$id": "#/properties/username",
+      "type": "string",
+      "title": "Username",
+      "description": "Username",
+      "default": "",
+      "minLength": 1,
+      "maxLength": 30,
+      "examples": [
+        "tajlor@gmail.com"
+      ],
+      "pattern": "^[A-Za-z0-9+_.-]+@(.+)$"
+    },
+    "password" : {
+      "$id": "#/properties/password",
+      "type": "string",
+      "title": "Password",
+      "description": "Password",
+      "default": "",
+      "minLength": 5,
+      "maxLength": 30,
+      "examples": [
+        "tajlor1"
+      ],
+      "pattern" : "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{5,}$"
+    },
+    "rePassword" : {
+      "$id": "#/properties/rePassword",
+      "type": "string",
+      "title": "rePassword",
+      "description": "rePassword",
+      "default": "",
+      "minLength": 5,
+      "maxLength": 30,
+      "examples": [
+        "tajlor1"
+      ],
+      "pattern" : "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{5,}$"
+    },
+    "name" : {
+      "$id": "#/properties/name",
+      "type": "string",
+      "title": "Name",
+      "description": "Name",
+      "default": "",
+      "minLength": 5,
+      "maxLength": 30,
+      "examples": [
+        "Tajlor"
+      ]
+    }
+
+  }
+}

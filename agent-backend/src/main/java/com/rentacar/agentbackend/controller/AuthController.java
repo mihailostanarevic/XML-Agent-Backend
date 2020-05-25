@@ -6,6 +6,8 @@ import com.rentacar.agentbackend.dto.request.LoginRequest;
 import com.rentacar.agentbackend.dto.request.NewPassordRequest;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.service.IAuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthController extends ValidationControler {
 
     private final IAuthService _authService;
 
@@ -21,8 +23,12 @@ public class AuthController {
         _authService = authService;
     }
 
+    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+
     @PostMapping("/create-agent")
     public UserResponse createAgent(@RequestBody CreateAgentRequest request) throws Exception{
+        validateAgentJSON(request);
         return _authService.createAgent(request);
     }
 
@@ -37,8 +43,8 @@ public class AuthController {
     }
 
     @PutMapping("/{id}/new-password")
-    public UserResponse newPassword(@PathVariable UUID id, @RequestBody NewPassordRequest request) throws Exception{
-        return _authService.setNewPassword(id, request);
+    public UserResponse newPassword(@PathVariable UUID id , @RequestBody NewPassordRequest request) throws Exception{
+        return _authService.setNewPassword(id,request);
     }
 
     @PutMapping("/approve/{id}/registration-request")

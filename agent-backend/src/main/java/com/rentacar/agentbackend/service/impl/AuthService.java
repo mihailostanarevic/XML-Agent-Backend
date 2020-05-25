@@ -1,5 +1,6 @@
 package com.rentacar.agentbackend.service.impl;
 
+import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
 import com.rentacar.agentbackend.dto.request.CreateAgentRequest;
 import com.rentacar.agentbackend.dto.request.CreateSimpleUserRequest;
 import com.rentacar.agentbackend.dto.request.LoginRequest;
@@ -16,6 +17,7 @@ import com.rentacar.agentbackend.repository.IUserRepository;
 import com.rentacar.agentbackend.service.IAuthService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import com.rentacar.agentbackend.util.enums.UserRole;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,11 +47,31 @@ public class AuthService implements IAuthService {
         _adminRepository = adminRepository;
     }
 
+    /**
+     * checkSQLInjection prevent sql injection
+     */
+    @Override
+    public void checkSQLInjection(CreateAgentRequest request)throws GeneralException {
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getUsername()))
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getPassword()))
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getRePassword()))
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getName()))
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getTin()))
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getBankAccountNumber()))
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+    }
+
     @Override
     public UserResponse createAgent(CreateAgentRequest request) throws Exception {
         if(!request.getPassword().equals(request.getRePassword())){
             throw new Exception("Passwords don't match.");
         }
+        checkSQLInjection(request);
         User user = new User();
         Agent agent = new Agent();
         user.setDeleted(false);

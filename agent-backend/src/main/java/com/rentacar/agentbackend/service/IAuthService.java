@@ -5,6 +5,7 @@ import com.rentacar.agentbackend.dto.request.CreateSimpleUserRequest;
 import com.rentacar.agentbackend.dto.request.LoginRequest;
 import com.rentacar.agentbackend.dto.request.NewPassordRequest;
 import com.rentacar.agentbackend.dto.response.UserResponse;
+import com.rentacar.agentbackend.service.impl.GeneralException;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,4 +25,6 @@ public interface IAuthService {
     void denyRegistrationRequest(UUID id) throws Exception;
 
     List<UserResponse> getAllRegistrationRequests() throws Exception;
+
+    public void checkSQLInjection(CreateAgentRequest request)throws GeneralException;
 }
