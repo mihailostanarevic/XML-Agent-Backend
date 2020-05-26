@@ -15,7 +15,7 @@ import java.util.UnknownFormatConversionException;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService implements IUserService, UserDetailsService {
+public class UserService implements IUserService {
 
     private final IUserRepository _userRepository;
 
@@ -42,15 +42,5 @@ public class UserService implements IUserService, UserDetailsService {
         userResponse.setUsername(user.getUsername());
         userResponse.setUserRole(user.getAuthorities().get(0).getAuthority());
         return userResponse;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, UnknownFormatConversionException {
-        User user = findOneByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("No user found with email "+username+"."));
-        } else {
-            return user;
-        }
     }
 }

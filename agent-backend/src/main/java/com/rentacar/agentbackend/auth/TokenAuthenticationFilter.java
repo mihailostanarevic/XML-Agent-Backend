@@ -1,9 +1,12 @@
 package com.rentacar.agentbackend.auth;
 
 import com.rentacar.agentbackend.security.TokenUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -15,8 +18,10 @@ import java.io.IOException;
 @SuppressWarnings("ALL")
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
+    @Autowired
     private TokenUtils tokenUtils;
 
+    @Autowired
     private UserDetailsService userDetailsService;
 
     public TokenAuthenticationFilter(TokenUtils tokenHelper, UserDetailsService userDetailsService) {
@@ -40,11 +45,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 // proveri da li je prosledjeni token validan
-                if (tokenUtils.validateToken(authToken, userDetails)) {
-                    // kreiraj autentifikaciju (otvori mi mini-sesiju za korisnika)
-                    TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
-                    authentication.setToken(authToken);
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    final UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+//                    TokenBasedAuthentication authentication = new TokenBasedAuthentication(userDetails);
+//                    authentication.setToken(authToken);
+//                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
         }
