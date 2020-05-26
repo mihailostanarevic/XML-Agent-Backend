@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
@@ -13,16 +15,21 @@ import java.util.Collection;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Permission {
+public class Permission implements Serializable, GrantedAuthority {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    @Column(name = "name") String name;
+    @Column(name = "name") private String name;
 
     @ManyToMany(mappedBy = "permissions")
     private Collection<Authority> authority;
+
+    @Override
+    public String getAuthority() {
+        return name;
+    }
 
 }

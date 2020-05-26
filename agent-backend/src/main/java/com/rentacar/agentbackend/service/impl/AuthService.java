@@ -7,14 +7,8 @@ import com.rentacar.agentbackend.dto.request.CreateSimpleUserRequest;
 import com.rentacar.agentbackend.dto.request.LoginRequest;
 import com.rentacar.agentbackend.dto.request.NewPassordRequest;
 import com.rentacar.agentbackend.dto.response.UserResponse;
-import com.rentacar.agentbackend.entity.Admin;
-import com.rentacar.agentbackend.entity.Agent;
-import com.rentacar.agentbackend.entity.SimpleUser;
-import com.rentacar.agentbackend.entity.User;
-import com.rentacar.agentbackend.repository.IAdminRepository;
-import com.rentacar.agentbackend.repository.IAgentRepository;
-import com.rentacar.agentbackend.repository.ISimpleUserRepository;
-import com.rentacar.agentbackend.repository.IUserRepository;
+import com.rentacar.agentbackend.entity.*;
+import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.security.TokenUtils;
 import com.rentacar.agentbackend.service.IAuthService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
@@ -33,19 +27,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import javax.transaction.Transactional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 @Service
+@Transactional
 public class AuthService implements IAuthService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager _authenticationManager;
 
-    @Autowired
-    private TokenUtils tokenUtils;
+    private final TokenUtils _tokenUtils;
 
     private final PasswordEncoder _passwordEncoder;
 
@@ -59,12 +52,17 @@ public class AuthService implements IAuthService {
 
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository) {
+    @Autowired
+    private IAuthorityRepository _authorityRepository;
+
+    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
         _simpleUserRepository = simpleUserRepository;
         _adminRepository = adminRepository;
+        _authenticationManager = authenticationManager;
+        _tokenUtils = tokenUtils;
     }
 
     /**
@@ -139,10 +137,14 @@ public class AuthService implements IAuthService {
         user.setUsername(request.getUsername());
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
         user.setUserRole(UserRole.SIMPLE_USER);
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
+        authorities.add(_authorityRepository.findByName("ROLE_RENT_USER"));
+        user.setAuthorities(new HashSet<>(authorities));
         simpleUser.setAddress(request.getAddress());
         simpleUser.setCity(request.getCity());
         simpleUser.setCountry(request.getCountry());
-        simpleUser.setFistName(request.getFistName());
+        simpleUser.setFirstName(request.getFirstName());
         simpleUser.setLastName(request.getLastName());
         simpleUser.setSsn(request.getSsn());
         simpleUser.setRequestStatus(RequestStatus.PENDING);
@@ -164,7 +166,7 @@ public class AuthService implements IAuthService {
         String password = request.getPassword();
         Authentication authentication = null;
         try {
-            authentication = authenticationManager
+            authentication = _authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(mail, password));
         }catch (BadCredentialsException e){
             logger.info(user.getUsername() + " entered incorrect credentials!");
@@ -182,9 +184,9 @@ public class AuthService implements IAuthService {
         String jwt = "";
         int expiresIn = 0;
         if(!user.isHasSignedIn()){
-            User userLog = (User) authentication.getPrincipal();
-            jwt = tokenUtils.generateToken(userLog.getUsername());
-            expiresIn = tokenUtils.getExpiredIn();
+            UserDetailsImpl userLog = (UserDetailsImpl) authentication.getPrincipal();
+            jwt = _tokenUtils.generateToken(userLog.getUsername());
+            expiresIn = _tokenUtils.getExpiredIn();
         }
         UserResponse userResponse = mapUserToUserResponse(user);
         userResponse.setToken(jwt);
@@ -260,15 +262,16 @@ public class AuthService implements IAuthService {
         List<User> users = _userRepository.findAllByDeleted(false);
         List<User> requests = new ArrayList<>();
         for (User u: users){
-            if(u.getUserRole().equals(UserRole.AGENT)){
-                if(u.getAgent().getRequestStatus().equals(RequestStatus.PENDING)){
-                    requests.add(u);
-                }
-            }else if(u.getUserRole().equals(UserRole.SIMPLE_USER)){
-                if(u.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
-                    requests.add(u);
-                }
-            }
+            requests.add(u);
+//            if(u.getUserRole().equals(UserRole.AGENT)){
+//                if(u.getAgent().getRequestStatus().equals(RequestStatus.PENDING)){
+//                    requests.add(u);
+//                }
+//            }else if(u.getUserRole().equals(UserRole.SIMPLE_USER)){
+//                if(u.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
+//                    requests.add(u);
+//                }
+//            }
         }
 //        if(requests.isEmpty()){
 //            throw new Exception("There are no registration requests.");

@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(value="/auth")
 public class AuthController extends ValidationControler {
 
     private final IAuthService _authService;
@@ -63,7 +64,7 @@ public class AuthController extends ValidationControler {
     }
 
     @GetMapping("/registration-requests")
-    @PreAuthorize("hasRole('SIMPLE_USER')")
+    @PreAuthorize("hasAuthority('REGISTER')")
     public List<UserResponse> getAllRegistrationRequests() throws Exception{
         return _authService.getAllRegistrationRequests();
     }
