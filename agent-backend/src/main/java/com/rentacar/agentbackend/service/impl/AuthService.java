@@ -122,7 +122,7 @@ public class AuthService implements IAuthService {
         simpleUser.setAddress(request.getAddress());
         simpleUser.setCity(request.getCity());
         simpleUser.setCountry(request.getCountry());
-        simpleUser.setFistName(request.getFistName());
+        simpleUser.setFirstName(request.getFirstName());
         simpleUser.setLastName(request.getLastName());
         simpleUser.setSsn(request.getSsn());
         simpleUser.setRequestStatus(RequestStatus.PENDING);
