@@ -45,10 +45,12 @@ public class AuthService implements IAuthService {
 
     private final IAdminRepository _adminRepository;
 
+    private final NoticeMessageRepository noticeMessageRepository;
+
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils) {
+    public AuthService(NoticeMessageRepository noticeMessageRepository1, PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
@@ -56,6 +58,7 @@ public class AuthService implements IAuthService {
         _adminRepository = adminRepository;
         _authenticationManager = authenticationManager;
         _tokenUtils = tokenUtils;
+        noticeMessageRepository = noticeMessageRepository1;
     }
 
     /**
@@ -90,6 +93,12 @@ public class AuthService implements IAuthService {
         user.setUsername(request.getUsername());
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
         user.setUserRole(UserRole.AGENT);
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(_authorityRepository.findByName("ROLE_AGENT"));
+        authorities.add(_authorityRepository.findByName("ROLE_REVIEWER_USER"));
+        authorities.add(_authorityRepository.findByName("ROLE_MESSAGE_USER"));
+        authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
+        user.setAuthorities(new HashSet<>(authorities));
         agent.setName(request.getName());
         agent.setBankAccountNumber(request.getBankAccountNumber());
         agent.setDateFounded(request.getDateFounded());
@@ -165,6 +174,12 @@ public class AuthService implements IAuthService {
         UserResponse userResponse = mapUserToUserResponse(user);
         userResponse.setToken(jwt);
         userResponse.setTokenExpiresIn(expiresIn);
+
+        try {
+            NoticeMessage user_proba = noticeMessageRepository.findById(1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         return userResponse;
     }
