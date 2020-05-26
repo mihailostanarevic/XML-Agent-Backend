@@ -11,7 +11,7 @@ public class CreateSimpleUserRequest {
 
     private String rePassword;
 
-    private String fistName;
+    private String firstName;
 
     private String lastName;
 

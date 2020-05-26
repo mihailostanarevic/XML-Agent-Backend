@@ -19,7 +19,7 @@ public class SimpleUser extends BaseEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    private String fistName;
+    private String firstName;
 
     private String lastName;
 
