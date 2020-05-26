@@ -26,8 +26,6 @@ public class AuthController extends ValidationControler {
         _authService = authService;
     }
 
-    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
     @GetMapping("/")
     public ResponseEntity<?> hello(){
         return new ResponseEntity<>("Hello", HttpStatus.OK);
