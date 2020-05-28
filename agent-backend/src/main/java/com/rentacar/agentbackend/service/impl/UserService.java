@@ -37,10 +37,8 @@ public class UserService implements IUserService {
 
     private UserResponse mapUserToUserResponse(User user) {
         UserResponse userResponse = new UserResponse();
-        userResponse.setHasSignedIn(user.isHasSignedIn());
         userResponse.setId(user.getId());
         userResponse.setUsername(user.getUsername());
-        userResponse.setUserRole(user.getAuthorities().get(0).getAuthority());
         return userResponse;
     }
 }
