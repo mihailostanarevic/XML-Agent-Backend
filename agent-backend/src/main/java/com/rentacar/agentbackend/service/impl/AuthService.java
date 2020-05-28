@@ -145,11 +145,9 @@ public class AuthService implements IAuthService {
             authentication = _authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(mail, password));
         }catch (BadCredentialsException e){
-            System.out.println("Nisu dobri kredencijali [BadCredentialsException]");
-            throw new Exception(String.format("Bad credentials."));
+            throw new GeneralException("Bad credentials.", HttpStatus.BAD_REQUEST);
         }catch (DisabledException e){
-            System.out.println("Korisnik jos nije prihvacen [DisabledException]");
-            throw new Exception(String.format("Your registration request hasn't been approved yet."));
+            throw new GeneralException("Your registration request hasn't been approved yet.", HttpStatus.BAD_REQUEST);
         }catch (Exception e) {
             System.out.println("Neki drugi exception [Exception]");
             e.printStackTrace();
@@ -254,10 +252,8 @@ public class AuthService implements IAuthService {
 
     private UserResponse mapUserToUserResponse(User user) {
         UserResponse userResponse = new UserResponse();
-        userResponse.setHasSignedIn(user.isHasSignedIn());
         userResponse.setId(user.getId());
         userResponse.setUsername(user.getUsername());
-        userResponse.setUserRole(user.getAuthorities().get(0).getAuthority());
         return userResponse;
     }
 }

@@ -18,10 +18,6 @@ public class UserResponse {
 
     private String username; //email
 
-    private String userRole;
-
-    private boolean hasSignedIn;
-
     private String token;
 
     private int tokenExpiresIn;
