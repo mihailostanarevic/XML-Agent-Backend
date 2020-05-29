@@ -1,0 +1,2 @@
+2020-05-28 18:59:18,241 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-05-28 18:59:25,599 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 9.281 seconds (JVM running for 10.342)

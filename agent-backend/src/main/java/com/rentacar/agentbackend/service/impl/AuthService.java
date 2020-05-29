@@ -82,6 +82,9 @@ public class AuthService implements IAuthService {
         if(!request.getPassword().equals(request.getRePassword())){
             throw new Exception("Passwords don't match.");
         }
+        if(_userRepository.findOneByUsername(request.getUsername()) != null){
+            throw new GeneralException("User with this username already exist", HttpStatus.BAD_REQUEST);
+        }
         checkSQLInjection(request);
         User user = new User();
         Agent agent = new Agent();
@@ -89,7 +92,6 @@ public class AuthService implements IAuthService {
         user.setHasSignedIn(false);
         user.setUsername(request.getUsername());
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
-        user.setUserRole(UserRole.AGENT);
         agent.setName(request.getName());
         agent.setBankAccountNumber(request.getBankAccountNumber());
         agent.setDateFounded(request.getDateFounded());
@@ -106,7 +108,10 @@ public class AuthService implements IAuthService {
     @Override
     public UserResponse createSimpleUser(CreateSimpleUserRequest request) throws Exception {
         if(!request.getPassword().equals(request.getRePassword())){
-            throw new Exception("Passwords don't match.");
+            throw new GeneralException("Passwords don't match.", HttpStatus.BAD_REQUEST);
+        }
+        if(_userRepository.findOneByUsername(request.getUsername()) != null){
+            throw new GeneralException("User with this username already exist", HttpStatus.BAD_REQUEST);
         }
         User user = new User();
         SimpleUser simpleUser = new SimpleUser();
@@ -114,7 +119,6 @@ public class AuthService implements IAuthService {
         user.setHasSignedIn(false);
         user.setUsername(request.getUsername());
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
-        user.setUserRole(UserRole.SIMPLE_USER);
         List<Authority> authorities = new ArrayList<>();
         authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_RENT_USER"));
@@ -170,7 +174,7 @@ public class AuthService implements IAuthService {
     @Override
     public UserResponse setNewPassword(UUID id, NewPassordRequest request) throws Exception {
         if (!request.getPassword().equals(request.getRePassword())) {
-            throw new Exception("Passwords don't match");
+            throw new GeneralException("Passwords don't match", HttpStatus.BAD_REQUEST);
         }
 
         Admin admin = _adminRepository.findOneById(id);
@@ -232,19 +236,7 @@ public class AuthService implements IAuthService {
         List<User> requests = new ArrayList<>();
         for (User u: users){
             requests.add(u);
-//            if(u.getUserRole().equals(UserRole.AGENT)){
-//                if(u.getAgent().getRequestStatus().equals(RequestStatus.PENDING)){
-//                    requests.add(u);
-//                }
-//            }else if(u.getUserRole().equals(UserRole.SIMPLE_USER)){
-//                if(u.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
-//                    requests.add(u);
-//                }
-//            }
         }
-//        if(requests.isEmpty()){
-//            throw new Exception("There are no registration requests.");
-//        }
         return requests.stream()
                 .map(user -> mapUserToUserResponse(user))
                 .collect(Collectors.toList());
