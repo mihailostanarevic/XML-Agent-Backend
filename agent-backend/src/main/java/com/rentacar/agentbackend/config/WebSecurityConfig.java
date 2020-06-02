@@ -67,6 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/create-simple-user").permitAll()
                 .antMatchers("/auth/create-agent").permitAll()
                 .anyRequest().authenticated().and()
+                .exceptionHandling().accessDeniedPage("/error-page").and()
 
                 .cors().and()
                 .addFilterBefore(new TokenAuthenticationFilter(tokenUtils, jwtUserDetailsService),
