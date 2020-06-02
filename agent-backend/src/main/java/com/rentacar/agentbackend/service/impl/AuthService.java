@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
+import com.rentacar.agentbackend.AgentBackendApplication;
 import com.rentacar.agentbackend.dto.request.CreateAgentRequest;
 import com.rentacar.agentbackend.dto.request.CreateSimpleUserRequest;
 import com.rentacar.agentbackend.dto.request.LoginRequest;
@@ -12,6 +13,10 @@ import com.rentacar.agentbackend.security.TokenUtils;
 import com.rentacar.agentbackend.service.IAuthService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import com.rentacar.agentbackend.util.enums.UserRole;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,6 +50,8 @@ public class AuthService implements IAuthService {
 
     private final IAdminRepository _adminRepository;
 
+    private final Logger logger = LoggerFactory.getLogger(AuthService.class);
+
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
@@ -63,23 +70,36 @@ public class AuthService implements IAuthService {
      */
     @Override
     public void checkSQLInjection(CreateAgentRequest request)throws GeneralException {
-        if(!SqlSafeUtil.isSqlInjectionSafe(request.getUsername()))
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getUsername())) {
+            logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
-        if(!SqlSafeUtil.isSqlInjectionSafe(request.getPassword()))
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getPassword())){
+            logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
-        if(!SqlSafeUtil.isSqlInjectionSafe(request.getRePassword()))
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getRePassword())){
+            logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
-        if(!SqlSafeUtil.isSqlInjectionSafe(request.getName()))
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getName())){
+            logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
-        if(!SqlSafeUtil.isSqlInjectionSafe(request.getTin()))
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getTin())){
+            logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
-        if(!SqlSafeUtil.isSqlInjectionSafe(request.getBankAccountNumber()))
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getBankAccountNumber())){
+            logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Override
     public UserResponse createAgent(CreateAgentRequest request) throws Exception {
         if(!request.getPassword().equals(request.getRePassword())){
+            logger.info(request.getUsername() + " didn't match his/hers passwords");
             throw new Exception("Passwords don't match.");
         }
         if(_userRepository.findOneByUsername(request.getUsername()) != null){
@@ -102,16 +122,22 @@ public class AuthService implements IAuthService {
         user.setAgent(savedAgent);
         User savedUser = _userRepository.save(user);
 
+        logger.info(user.getUsername() + " account has been successfully created as an agent");
         return mapUserToUserResponse(savedUser);
     }
 
     @Override
     public UserResponse createSimpleUser(CreateSimpleUserRequest request) throws Exception {
         if(!request.getPassword().equals(request.getRePassword())){
+<<<<<<< HEAD
             throw new GeneralException("Passwords don't match.", HttpStatus.BAD_REQUEST);
         }
         if(_userRepository.findOneByUsername(request.getUsername()) != null){
             throw new GeneralException("User with this username already exist", HttpStatus.BAD_REQUEST);
+=======
+            logger.info(request.getUsername() + " didn't match his passwords");
+            throw new Exception("Passwords don't match.");
+>>>>>>> 48c4e9b38a084e6a051d68d7a7b3ea5b17ce4415
         }
         User user = new User();
         SimpleUser simpleUser = new SimpleUser();
@@ -135,6 +161,7 @@ public class AuthService implements IAuthService {
         user.setSimpleUser(savedSimpleUser);
         User savedUser = _userRepository.save(user);
 
+        logger.info(user.getUsername() + " account has been successfully created as a simple user");
         return mapUserToUserResponse(savedUser);
     }
 
@@ -142,6 +169,7 @@ public class AuthService implements IAuthService {
     public UserResponse login(LoginRequest request) throws Exception {
         User user = _userRepository.findOneByUsername(request.getUsername());
 
+        logger.error("Example of an error which will be displayed because its higher priority than INFO");
         String mail = request.getUsername();
         String password = request.getPassword();
         Authentication authentication = null;
@@ -150,9 +178,11 @@ public class AuthService implements IAuthService {
                     .authenticate(new UsernamePasswordAuthenticationToken(mail, password));
         }catch (BadCredentialsException e){
             throw new GeneralException("Bad credentials.", HttpStatus.BAD_REQUEST);
+            logger.info(user.getUsername() + " entered incorrect credentials!");
         }catch (DisabledException e){
             throw new GeneralException("Your registration request hasn't been approved yet.", HttpStatus.BAD_REQUEST);
         }catch (Exception e) {
+            logger.warn("An unknown exception happened upon login attempt");
             System.out.println("Neki drugi exception [Exception]");
             e.printStackTrace();
         }
@@ -168,13 +198,19 @@ public class AuthService implements IAuthService {
         userResponse.setToken(jwt);
         userResponse.setTokenExpiresIn(expiresIn);
 
+        logger.info(user.getUsername() + " has logged in");
         return userResponse;
     }
 
     @Override
     public UserResponse setNewPassword(UUID id, NewPassordRequest request) throws Exception {
         if (!request.getPassword().equals(request.getRePassword())) {
+<<<<<<< HEAD
             throw new GeneralException("Passwords don't match", HttpStatus.BAD_REQUEST);
+=======
+            logger.info("User didn't match his passwords when trying to change password");
+            throw new Exception("Passwords don't match");
+>>>>>>> 48c4e9b38a084e6a051d68d7a7b3ea5b17ce4415
         }
 
         Admin admin = _adminRepository.findOneById(id);
@@ -192,6 +228,7 @@ public class AuthService implements IAuthService {
         }
 
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
+        logger.info(user.getUsername() + " has changed his password");
 
         if(!user.isHasSignedIn()){
             user.setHasSignedIn(true);
