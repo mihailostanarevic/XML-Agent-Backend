@@ -42,8 +42,10 @@ public class User extends BaseEntity implements Serializable {
 
     private boolean hasSignedIn;
 
-    @Column(name = "enabled")           // da li je admin odobrio zahtev
-    private boolean enabled;
+//    @Column(name = "enabled")           // da li je admin odobrio zahtev
+//    private boolean enabled;
+    //zakomentarisao sam jer ne znam zasto bismo to stavili u user entity, kad nam je i admin user a on ne treba da ima to polje
+    //premestio sam u SimpleUser i u Agent i nazvao sam RequestStatus, jer nam je tako u mikroservisnoj app pa da bude isto
 
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
