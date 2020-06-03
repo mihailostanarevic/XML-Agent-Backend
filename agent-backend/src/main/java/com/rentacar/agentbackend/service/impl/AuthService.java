@@ -1,7 +1,6 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
-import com.rentacar.agentbackend.AgentBackendApplication;
 import com.rentacar.agentbackend.dto.request.CreateAgentRequest;
 import com.rentacar.agentbackend.dto.request.CreateSimpleUserRequest;
 import com.rentacar.agentbackend.dto.request.LoginRequest;
@@ -12,9 +11,6 @@ import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.security.TokenUtils;
 import com.rentacar.agentbackend.service.IAuthService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
-import com.rentacar.agentbackend.util.enums.UserRole;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +105,7 @@ public class AuthService implements IAuthService {
         user.setHasSignedIn(false);
         user.setUsername(request.getUsername());
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
-        user.setUserRole(UserRole.AGENT);
+//        user.setUserRole(UserRole.AGENT);
         List<Authority> authorities = new ArrayList<>();
         authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_AD_USER"));
@@ -120,7 +116,7 @@ public class AuthService implements IAuthService {
         agent.setBankAccountNumber(request.getBankAccountNumber());
         agent.setDateFounded(request.getDateFounded());
         agent.setTin(request.getTin());
-        agent.setRequestStatus(RequestStatus.PENDING);
+//        agent.setRequestStatus(RequestStatus.PENDING);
         Agent savedAgent = _agentRepository.save(agent);
         savedAgent.setUser(user);
         user.setAgent(savedAgent);
@@ -142,7 +138,7 @@ public class AuthService implements IAuthService {
         user.setHasSignedIn(false);
         user.setUsername(request.getUsername());
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
-        user.setUserRole(UserRole.SIMPLE_USER);
+//        user.setUserRole(UserRole.SIMPLE_USER);
         List<Authority> authorities = new ArrayList<>();
         authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_RENT_USER"));
@@ -166,7 +162,13 @@ public class AuthService implements IAuthService {
     @Override
     public UserResponse login(LoginRequest request) throws Exception {
         User user = _userRepository.findOneByUsername(request.getUsername());
+        if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
+            throw new Exception("Your account hasn't been approved yet.");
+        }
 
+        if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.DENIED)){
+            throw new Exception("Your account has been denied.");
+        }
         logger.error("Example of an error which will be displayed because its higher priority than INFO");
         String mail = request.getUsername();
         String password = request.getPassword();
@@ -195,6 +197,13 @@ public class AuthService implements IAuthService {
         UserResponse userResponse = mapUserToUserResponse(user);
         userResponse.setToken(jwt);
         userResponse.setTokenExpiresIn(expiresIn);
+        if(user.getAuthorities1().contains(_authorityRepository.findOneByName("ROLE_ADMIN"))){
+            userResponse.setUserRole("ADMIN_ROLE");
+        }else if(user.getAuthorities1().contains(_authorityRepository.findOneByName("ROLE_AGENT"))){
+            userResponse.setUserRole("AGENT_ROLE");
+        }else if(user.getAuthorities1().contains(_authorityRepository.findOneByName("ROLE_SIMPLE_USER"))){
+            userResponse.setUserRole("SIMPLE_USER_ROLE");
+        }
 
         logger.info(user.getUsername() + " has logged in");
         return userResponse;
@@ -237,28 +246,16 @@ public class AuthService implements IAuthService {
 
     @Override
     public void approveRegistrationRequest(UUID id) throws Exception {
-        Agent agent = _agentRepository.findOneById(id);
         SimpleUser simpleUser = _simpleUserRepository.findOneById(id);
-        if(simpleUser == null){
-            agent.setRequestStatus(RequestStatus.APPROVED);
-            _agentRepository.save(agent);
-        }else if(agent == null){
-            simpleUser.setRequestStatus(RequestStatus.APPROVED);
-            _simpleUserRepository.save(simpleUser);
-        }
+        simpleUser.setRequestStatus(RequestStatus.APPROVED);
+        _simpleUserRepository.save(simpleUser);
     }
 
     @Override
     public void denyRegistrationRequest(UUID id) throws Exception {
-        Agent agent = _agentRepository.findOneById(id);
         SimpleUser simpleUser = _simpleUserRepository.findOneById(id);
-        if(simpleUser == null){
-            agent.setRequestStatus(RequestStatus.DENIED);
-            _agentRepository.save(agent);
-        }else if(agent == null){
-            simpleUser.setRequestStatus(RequestStatus.DENIED);
-            _simpleUserRepository.save(simpleUser);
-        }
+        simpleUser.setRequestStatus(RequestStatus.DENIED);
+        _simpleUserRepository.save(simpleUser);
     }
 
     @Override
@@ -267,15 +264,11 @@ public class AuthService implements IAuthService {
         List<User> requests = new ArrayList<>();
         for (User u: users){
             requests.add(u);
-//            if(u.getUserRole().equals(UserRole.AGENT)){
-//                if(u.getAgent().getRequestStatus().equals(RequestStatus.PENDING)){
-//                    requests.add(u);
-//                }
-//            }else if(u.getUserRole().equals(UserRole.SIMPLE_USER)){
-//                if(u.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
-//                    requests.add(u);
-//                }
-//            }
+            if(u.getAuthorities().contains(_authorityRepository.findByName("ROLE_SIMPLE_USER"))){
+                if(u.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
+                    requests.add(u);
+                }
+            }
         }
 //        if(requests.isEmpty()){
 //            throw new Exception("There are no registration requests.");

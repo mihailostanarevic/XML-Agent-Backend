@@ -6,8 +6,6 @@ import com.rentacar.agentbackend.dto.request.LoginRequest;
 import com.rentacar.agentbackend.dto.request.NewPassordRequest;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.service.IAuthService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +32,7 @@ public class AuthController extends ValidationControler {
 
     @PostMapping("/create-agent")
     public UserResponse createAgent(@RequestBody CreateAgentRequest request) throws Exception{
-        validateAgentJSON(request);
+//        validateAgentJSON(request);
         return _authService.createAgent(request);
     }
 
