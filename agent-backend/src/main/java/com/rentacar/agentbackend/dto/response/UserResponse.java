@@ -19,5 +19,7 @@ public class UserResponse {
 
     private String token;
 
+    private String userRole;
+
     private int tokenExpiresIn;
 }

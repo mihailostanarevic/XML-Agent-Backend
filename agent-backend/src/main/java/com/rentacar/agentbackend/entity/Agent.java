@@ -27,7 +27,7 @@ public class Agent extends BaseEntity {
     private Date dateFounded;
 
     private String bankAccountNumber;
-
-    @Enumerated(EnumType.STRING)
-    private RequestStatus requestStatus;
+//
+//    @Enumerated(EnumType.STRING)
+//    private RequestStatus requestStatus;
 }

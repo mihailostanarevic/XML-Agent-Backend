@@ -16,7 +16,10 @@ insert into authorities_permissions (authority_id, permission_id) values
     (6, 16), (6, 12),
     (7, 5), (7, 6), (7, 7), (7, 8);
 
-insert into user_entity (id, username, password, deleted, has_signed_in, enabled, last_password_reset_date)
-    values ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 'admin@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, true, '2019-10-01 21:58:58.508-07');
+insert into user_entity (id, username, password, deleted, has_signed_in, last_password_reset_date)
+    values ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 'admin@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', 'false', 'false', '2019-10-01 21:58:58.508-07');
 
-insert into user_authority (user_id, authority_id) values ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 3), ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 7);
+insert into user_authority (user_id, authority_id) values ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 1), ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 7);
+
+insert into admin (id, first_name, last_name, user_id) values
+('51d5e58d-ac22-4233-a1dc-e4251a18e815', 'Ms', 'Misoni', '9bbbd6c1-34b4-4ea6-8889-be247cfebc34');

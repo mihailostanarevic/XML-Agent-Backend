@@ -27,7 +27,7 @@ public class User extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private String password;
 
-    private UserRole userRole;
+//    private UserRole userRole;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Agent agent;
@@ -45,7 +45,7 @@ public class User extends BaseEntity implements Serializable {
 //    @Column(name = "enabled")           // da li je admin odobrio zahtev
 //    private boolean enabled;
     //zakomentarisao sam jer ne znam zasto bismo to stavili u user entity, kad nam je i admin user a on ne treba da ima to polje
-    //premestio sam u SimpleUser i u Agent i nazvao sam RequestStatus, jer nam je tako u mikroservisnoj app pa da bude isto
+    //premestio sam u SimpleUser i nazvao sam RequestStatus, jer nam je tako u mikroservisnoj app pa da bude isto
 
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
@@ -60,5 +60,9 @@ public class User extends BaseEntity implements Serializable {
         List<GrantedAuthority> auth_list = new ArrayList<>();
         this.authorities.forEach(authority -> auth_list.addAll(authority.getPermissions()));
         return auth_list;
+    }
+
+    public Set<Authority> getAuthorities1() {
+        return this.authorities;
     }
 }
