@@ -110,6 +110,12 @@ public class AuthService implements IAuthService {
         user.setUsername(request.getUsername());
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
         user.setUserRole(UserRole.AGENT);
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
+        authorities.add(_authorityRepository.findByName("ROLE_AD_USER"));
+        authorities.add(_authorityRepository.findByName("ROLE_MESSAGE_USER"));
+        authorities.add(_authorityRepository.findByName("ROLE_AGENT"));
+        user.setAuthorities(new HashSet<>(authorities));
         agent.setName(request.getName());
         agent.setBankAccountNumber(request.getBankAccountNumber());
         agent.setDateFounded(request.getDateFounded());
@@ -169,8 +175,8 @@ public class AuthService implements IAuthService {
             authentication = _authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(mail, password));
         }catch (BadCredentialsException e){
+            logger.info("entered incorrect credentials!");
             throw new GeneralException("Bad credentials.", HttpStatus.BAD_REQUEST);
-            logger.info(user.getUsername() + " entered incorrect credentials!");
         }catch (DisabledException e){
             throw new GeneralException("Your registration request hasn't been approved yet.", HttpStatus.BAD_REQUEST);
         }catch (Exception e) {
