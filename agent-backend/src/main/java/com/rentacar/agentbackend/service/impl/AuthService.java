@@ -197,11 +197,11 @@ public class AuthService implements IAuthService {
         UserResponse userResponse = mapUserToUserResponse(user);
         userResponse.setToken(jwt);
         userResponse.setTokenExpiresIn(expiresIn);
-        if(user.getAuthorities1().contains(_authorityRepository.findOneByName("ROLE_ADMIN"))){
+        if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_ADMIN"))){
             userResponse.setUserRole("ADMIN_ROLE");
-        }else if(user.getAuthorities1().contains(_authorityRepository.findOneByName("ROLE_AGENT"))){
+        }else if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_AGENT"))){
             userResponse.setUserRole("AGENT_ROLE");
-        }else if(user.getAuthorities1().contains(_authorityRepository.findOneByName("ROLE_SIMPLE_USER"))){
+        }else if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_SIMPLE_USER"))){
             userResponse.setUserRole("SIMPLE_USER_ROLE");
         }
 

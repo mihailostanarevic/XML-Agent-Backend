@@ -62,7 +62,7 @@ public class User extends BaseEntity implements Serializable {
         return auth_list;
     }
 
-    public Set<Authority> getAuthorities1() {
+    public Set<Authority> getRoles() {
         return this.authorities;
     }
 }
