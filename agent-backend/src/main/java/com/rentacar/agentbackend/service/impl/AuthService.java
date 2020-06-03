@@ -1,10 +1,7 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
-import com.rentacar.agentbackend.dto.request.CreateAgentRequest;
-import com.rentacar.agentbackend.dto.request.CreateSimpleUserRequest;
-import com.rentacar.agentbackend.dto.request.LoginRequest;
-import com.rentacar.agentbackend.dto.request.NewPassordRequest;
+import com.rentacar.agentbackend.dto.request.*;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
@@ -197,13 +194,6 @@ public class AuthService implements IAuthService {
         UserResponse userResponse = mapUserToUserResponse(user);
         userResponse.setToken(jwt);
         userResponse.setTokenExpiresIn(expiresIn);
-        if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_ADMIN"))){
-            userResponse.setUserRole("ADMIN_ROLE");
-        }else if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_AGENT"))){
-            userResponse.setUserRole("AGENT_ROLE");
-        }else if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_SIMPLE_USER"))){
-            userResponse.setUserRole("SIMPLE_USER_ROLE");
-        }
 
         logger.info(user.getUsername() + " has logged in");
         return userResponse;
@@ -245,15 +235,15 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public void approveRegistrationRequest(UUID id) throws Exception {
-        SimpleUser simpleUser = _simpleUserRepository.findOneById(id);
+    public void approveRegistrationRequest(GetIdRequest request) throws Exception {
+        SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getId());
         simpleUser.setRequestStatus(RequestStatus.APPROVED);
         _simpleUserRepository.save(simpleUser);
     }
 
     @Override
-    public void denyRegistrationRequest(UUID id) throws Exception {
-        SimpleUser simpleUser = _simpleUserRepository.findOneById(id);
+    public void denyRegistrationRequest(GetIdRequest request) throws Exception {
+        SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getId());
         simpleUser.setRequestStatus(RequestStatus.DENIED);
         _simpleUserRepository.save(simpleUser);
     }
@@ -280,8 +270,21 @@ public class AuthService implements IAuthService {
 
     private UserResponse mapUserToUserResponse(User user) {
         UserResponse userResponse = new UserResponse();
-        userResponse.setId(user.getId());
+        if(user.getSimpleUser() != null){
+            userResponse.setId(user.getSimpleUser().getId());
+        }else if(user.getAgent() != null){
+            userResponse.setId(user.getAgent().getId());
+        }else if(user.getAdmin() != null){
+            userResponse.setId(user.getAdmin().getId());
+        }
         userResponse.setUsername(user.getUsername());
+        if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_ADMIN"))){
+            userResponse.setUserRole("ADMIN_ROLE");
+        }else if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_AGENT"))){
+            userResponse.setUserRole("AGENT_ROLE");
+        }else if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_SIMPLE_USER"))){
+            userResponse.setUserRole("SIMPLE_USER_ROLE");
+        }
         return userResponse;
     }
 }

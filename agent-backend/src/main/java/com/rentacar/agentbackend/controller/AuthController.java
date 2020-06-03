@@ -1,9 +1,6 @@
 package com.rentacar.agentbackend.controller;
 
-import com.rentacar.agentbackend.dto.request.CreateAgentRequest;
-import com.rentacar.agentbackend.dto.request.CreateSimpleUserRequest;
-import com.rentacar.agentbackend.dto.request.LoginRequest;
-import com.rentacar.agentbackend.dto.request.NewPassordRequest;
+import com.rentacar.agentbackend.dto.request.*;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.service.IAuthService;
 import org.springframework.http.HttpStatus;
@@ -51,18 +48,18 @@ public class AuthController extends ValidationControler {
         return _authService.setNewPassword(id,request);
     }
 
-    @PutMapping("/approve/{id}/registration-request")
-    public void approveRegistrationRequest(@PathVariable UUID id) throws Exception{
-        _authService.approveRegistrationRequest(id);
+    @PutMapping("/approve-registration-request")
+    public void approveRegistrationRequest(@RequestBody GetIdRequest request) throws Exception{
+        _authService.approveRegistrationRequest(request);
     }
 
-    @PutMapping("/deny/{id}/registration-request")
-    public void denyRegistrationRequest(@PathVariable UUID id) throws Exception{
-        _authService.denyRegistrationRequest(id);
+    @PutMapping("/deny-registration-request")
+    public void denyRegistrationRequest(@RequestBody GetIdRequest request) throws Exception{
+        _authService.denyRegistrationRequest(request);
     }
 
     @GetMapping("/registration-requests")
-    @PreAuthorize("hasAuthority('LOGIN')")
+//    @PreAuthorize("hasAuthority('LOGIN')")
     public List<UserResponse> getAllRegistrationRequests() throws Exception{
         return _authService.getAllRegistrationRequests();
     }

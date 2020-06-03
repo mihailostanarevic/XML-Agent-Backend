@@ -1,9 +1,6 @@
 package com.rentacar.agentbackend.service;
 
-import com.rentacar.agentbackend.dto.request.CreateAgentRequest;
-import com.rentacar.agentbackend.dto.request.CreateSimpleUserRequest;
-import com.rentacar.agentbackend.dto.request.LoginRequest;
-import com.rentacar.agentbackend.dto.request.NewPassordRequest;
+import com.rentacar.agentbackend.dto.request.*;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.service.impl.GeneralException;
 
@@ -20,11 +17,11 @@ public interface IAuthService {
 
     UserResponse setNewPassword(UUID id, NewPassordRequest request) throws Exception;
 
-    void approveRegistrationRequest(UUID id) throws Exception;
+    void approveRegistrationRequest(GetIdRequest request) throws Exception;
 
-    void denyRegistrationRequest(UUID id) throws Exception;
+    void denyRegistrationRequest(GetIdRequest request) throws Exception;
 
     List<UserResponse> getAllRegistrationRequests() throws Exception;
 
-    public void checkSQLInjection(CreateAgentRequest request)throws GeneralException;
+    void checkSQLInjection(CreateAgentRequest request)throws GeneralException;
 }
