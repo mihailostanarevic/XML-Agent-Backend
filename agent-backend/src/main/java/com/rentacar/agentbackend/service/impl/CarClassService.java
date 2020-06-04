@@ -63,6 +63,7 @@ public class CarClassService implements ICarClassService {
 
     private CarClassResponse mapCarClassToCarClassResponse(CarClass carClass) {
         CarClassResponse response = new CarClassResponse();
+        response.setId(carClass.getId());
         response.setDescription(carClass.getDescription());
         response.setName(carClass.getName());
         return response;

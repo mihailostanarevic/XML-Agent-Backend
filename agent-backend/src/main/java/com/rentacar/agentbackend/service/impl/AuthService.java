@@ -253,8 +253,7 @@ public class AuthService implements IAuthService {
         List<User> users = _userRepository.findAllByDeleted(false);
         List<User> requests = new ArrayList<>();
         for (User u: users){
-            requests.add(u);
-            if(u.getAuthorities().contains(_authorityRepository.findByName("ROLE_SIMPLE_USER"))){
+            if(u.getRoles().contains(_authorityRepository.findByName("ROLE_SIMPLE_USER"))){
                 if(u.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
                     requests.add(u);
                 }
