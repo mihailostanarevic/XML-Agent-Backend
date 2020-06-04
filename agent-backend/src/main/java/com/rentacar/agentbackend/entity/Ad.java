@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -20,8 +21,11 @@ public class Ad extends BaseEntity {
     @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Request> request;
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    private Set<Request> request;
+
+    @OneToMany(mappedBy = "ad")
+    private Set<RequestAd> adRequests = new HashSet<RequestAd>();
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agent_id", referencedColumnName = "id")

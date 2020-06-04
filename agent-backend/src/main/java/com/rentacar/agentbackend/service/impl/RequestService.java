@@ -4,6 +4,7 @@ import com.rentacar.agentbackend.dto.request.RequestDTO;
 import com.rentacar.agentbackend.entity.Ad;
 import com.rentacar.agentbackend.entity.Agent;
 import com.rentacar.agentbackend.entity.Request;
+import com.rentacar.agentbackend.entity.RequestAd;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IRequestService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
@@ -24,36 +25,76 @@ public class RequestService implements IRequestService {
     private final IAdRepository _adRepository;
     private final ISimpleUserRepository _simpleUserRepository;
     private final IAddressRepository _addressRepository;
+    private final IRequestAdRepository _requestAdRepository;
 
-    public RequestService(IRequestRepository requestRepository, IAgentRepository agentRepository, IAdRepository adRepository, ISimpleUserRepository simpleUserRepository, IAddressRepository addressRepository) {
+    public RequestService(IRequestRepository requestRepository, IAgentRepository agentRepository, IAdRepository adRepository, ISimpleUserRepository simpleUserRepository, IAddressRepository addressRepository, IRequestAdRepository requestAdRepository) {
         _requestRepository = requestRepository;
         _agentRepository = agentRepository;
         _adRepository = adRepository;
         _simpleUserRepository = simpleUserRepository;
         _addressRepository = addressRepository;
+        _requestAdRepository = requestAdRepository;
     }
 
     @Override
     public void processRequests(List<RequestDTO> requestList) {
         List<RequestDTO> processedList = new ArrayList<>();
         for (RequestDTO requestDTO : requestList) {
+            boolean canCreateBundle = true;
             Ad ad = _adRepository.findOneById(requestDTO.getAdID());
             Agent agent = _agentRepository.findOneById(ad.getAgent().getId());
-            if(requestDTO.isBundle() && !processedList.contains(requestDTO)) {
+            if (requestDTO.isBundle() && !processedList.contains(requestDTO)) {
                 List<RequestDTO> bundleList = new ArrayList<>();
                 for (RequestDTO agentRequest : requestList) {
                     Ad ad1 = _adRepository.findOneById(agentRequest.getAdID());
-                    Agent agent1 = _agentRepository.findOneById(ad.getAgent().getId());
-                    if(agent.equals(agent1) && !bundleList.contains(agentRequest) && agentRequest.isBundle()) {
-                        bundleList.add(agentRequest);
-                        processedList.add(agentRequest);
+                    Agent agent1 = _agentRepository.findOneById(ad1.getAgent().getId());
+                    if(agentRequest.isBundle() && agent.equals(agent1) && !bundleList.contains(agentRequest)) {
+                        if (checkCarAvailability(ad, requestDTO) && ad.isAvailable()) {
+                            bundleList.add(agentRequest);
+                            processedList.add(agentRequest);
+                        } else {
+                            canCreateBundle = false;
+                        }
                     }
                 }
-                createBundleRequest(bundleList);
-            } else if(!requestDTO.isBundle()) {
-                createRequest(requestDTO);
+                if(canCreateBundle) {
+                    createBundleRequest(bundleList);
+                }
+            } else if (!requestDTO.isBundle()) {
+                if (checkCarAvailability(ad, requestDTO) && ad.isAvailable()) {
+                    createRequest(requestDTO);
+                }
             }
         }
+    }
+
+    /**
+     * Check whether the car is available in that period
+     * */
+    private boolean checkCarAvailability(Ad ad, RequestDTO requestDTO) {
+        List<RequestAd> requestAdList = _requestAdRepository.findAllByAd(ad);
+        for (RequestAd requestAd : requestAdList) {
+            boolean startEndDate = requestAd.getReturnDate().isBefore(LocalDate.parse(requestDTO.getPickUpDate()));
+            if (!startEndDate) {
+                boolean endStartDate = LocalDate.parse(requestDTO.getReturnDate()).isBefore(requestAd.getPickUpDate());
+                if (!endStartDate) {
+                    if(requestAd.getReturnDate().isEqual(LocalDate.parse(requestDTO.getPickUpDate()))) {
+                        if (!requestAd.getReturnTime().isBefore(LocalTime.parse(requestDTO.getPickUpTime()))) {
+                            return false;
+                        }
+                    }
+                    else if(requestAd.getPickUpDate().isEqual(LocalDate.parse(requestDTO.getReturnDate()))) {
+                        if (!requestAd.getPickUpTime().isAfter(LocalTime.parse(requestDTO.getReturnTime()))) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -61,9 +102,14 @@ public class RequestService implements IRequestService {
         Request request = new Request();
         Set<Ad> adSet = new HashSet<>();
         adSet.add(_adRepository.findOneById(requestDTO.getAdID()));
-        request.setAds(adSet);
-        createRequestWithoutCarID(request, requestDTO);
+        request.setCustomer(_simpleUserRepository.findOneById(requestDTO.getCustomerID()));
+        request.setStatus(RequestStatus.PENDING);
+        request.setPickUpAddress(_addressRepository.findOneById(requestDTO.getPickUpAddress()));
+        request.setDeleted(false);
+        List<RequestDTO> requestDTOList = new ArrayList<>();
+        requestDTOList.add(requestDTO);
         _requestRepository.save(request);
+        createRequestAd(request, requestDTOList);
         return request;
     }
 
@@ -75,21 +121,26 @@ public class RequestService implements IRequestService {
             Ad ad = _adRepository.findOneById(requestDTO.getAdID());
             adSet.add(ad);
         }
-        request.setAds(adSet);
-        createRequestWithoutCarID(request, requestList.get(0));
+        request.setCustomer(_simpleUserRepository.findOneById(requestList.get(0).getCustomerID()));
+        request.setStatus(RequestStatus.PENDING);
+        request.setPickUpAddress(_addressRepository.findOneById(requestList.get(0).getPickUpAddress()));
+        request.setDeleted(false);
         _requestRepository.save(request);
+        createRequestAd(request, requestList);
         return request;
     }
-    private Request createRequestWithoutCarID(Request request, RequestDTO requestDTO) {
-        request.setCustomer(_simpleUserRepository.findOneById(requestDTO.getCustomerID()));
-        request.setStatus(RequestStatus.PENDING);
-        request.setPickUpDate(LocalDate.parse(requestDTO.getPickUpDate()));
-        request.setPickUpTime(LocalTime.parse(requestDTO.getPickUpTime()));
-        request.setReturnDate(LocalDate.parse(requestDTO.getReturnDate()));
-        request.setReturnTime(LocalTime.parse(requestDTO.getReturnTime()));
-        request.setPickUpAddress(_addressRepository.findOneById(requestDTO.getPickUpAddress()));
-        request.setDeleted(false);
-        return request;
+
+    private void createRequestAd(Request request, List<RequestDTO> requestDTOList) {
+        for (RequestDTO requestDTO : requestDTOList) {
+            RequestAd requestAd = new RequestAd();
+            requestAd.setPickUpDate(LocalDate.parse(requestDTO.getPickUpDate()));
+            requestAd.setPickUpTime(LocalTime.parse(requestDTO.getPickUpTime()));
+            requestAd.setReturnDate(LocalDate.parse(requestDTO.getReturnDate()));
+            requestAd.setReturnTime(LocalTime.parse(requestDTO.getReturnTime()));
+            requestAd.setAd(_adRepository.findOneById(requestDTO.getAdID()));
+            requestAd.setRequest(request);
+            _requestAdRepository.save(requestAd);
+        }
     }
 
 }
