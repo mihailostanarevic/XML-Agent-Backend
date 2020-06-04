@@ -66,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/login").permitAll()
                 .antMatchers("/auth/create-simple-user").permitAll()
                 .antMatchers("/auth/create-agent").permitAll()
-                .antMatchers("/**").permitAll()
+                .antMatchers("/**").permitAll() //ovo obrisati
                 .anyRequest().authenticated().and()
 
                 .cors().and()
