@@ -2,13 +2,14 @@ insert into permission (name) values
     ('CREATE_AD'), ('VIEW_AD'), ('UPDATE_AD'), ('DELETE_AD'), ('POST_COMMENT'),
     ('READ_COMMENT'),  ('DELETE_COMMENT'), ('UPDATE_COMMENT'), ('POST_RATE'), ('READ_RATE'),
     ('UPDATE_RATE'), ('CREATE_REQUEST'), ('LOGIN'), ('RECEIVE_MESSAGE'), ('REGISTER'),
-    ('RENT_A_CAR'), ('SEARCH'), ('SEND_MESSAGE'), ('UPLOAD_PHOTO'), ('DELETE_RATE');
+    ('RENT_A_CAR'), ('SEARCH'), ('SEND_MESSAGE'), ('UPLOAD_PHOTO'), ('DELETE_RATE'),
+    ('CREATE_AGENT');
 
 insert into authority (name) values ('ROLE_ADMIN'), ('ROLE_AGENT'), ('ROLE_SIMPLE_USER'),
     ('ROLE_REVIEWER_USER'), ('ROLE_MESSAGE_USER'), ('ROLE_RENT_USER'), ('ROLE_COMMENT_USER');
 
 insert into authorities_permissions (authority_id, permission_id) values
-    (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (1, 12), (1, 13), (1, 14), (1, 15), (1, 16), (1, 17), (1, 18), (1, 19),
+    (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (1, 12), (1, 13), (1, 14), (1, 15), (1, 16), (1, 17), (1, 18), (1, 19), (1, 21),
     (2, 1), (2, 2), (2, 3), (2, 4), (2, 19),
     (3, 13), (3, 15), (3, 17), (3, 2), (3, 6), (3, 10),
     (4, 9), (4, 10), (4, 11), (4, 20),
@@ -16,13 +17,32 @@ insert into authorities_permissions (authority_id, permission_id) values
     (6, 16), (6, 12),
     (7, 5), (7, 6), (7, 7), (7, 8);
 
-insert into user_entity (id, username, password, deleted, has_signed_in, last_password_reset_date)
-    values ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 'admin@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', 'false', 'false', '2019-10-01 21:58:58.508-07');
+insert into user_entity (id, username, password, deleted, has_signed_in, last_password_reset_date) values
+    ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 'admin@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07'),
+    ('105496cd-30f2-4b62-8082-cc14d282e845', 'agent@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07'),
+    ('d0535564-08ec-464c-a2db-d930d2c4fcde', 'agent1@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07'),
+    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 'customer@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07');
 
-insert into user_authority (user_id, authority_id) values ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 1), ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 7);
+insert into user_authority (user_id, authority_id) values
+    ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 1),
+    ('105496cd-30f2-4b62-8082-cc14d282e845', 2),
+    ('105496cd-30f2-4b62-8082-cc14d282e845', 3),
+    ('105496cd-30f2-4b62-8082-cc14d282e845', 4),
+    ('d0535564-08ec-464c-a2db-d930d2c4fcde', 2),
+    ('d0535564-08ec-464c-a2db-d930d2c4fcde', 3),
+    ('d0535564-08ec-464c-a2db-d930d2c4fcde', 4),
+    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 3),
+    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 6);
 
 insert into admin (id, first_name, last_name, user_id) values
-('51d5e58d-ac22-4233-a1dc-e4251a18e815', 'Ms', 'Misoni', '9bbbd6c1-34b4-4ea6-8889-be247cfebc34');
+    ('51d5e58d-ac22-4233-a1dc-e4251a18e815', 'Ms', 'Misoni', '9bbbd6c1-34b4-4ea6-8889-be247cfebc34');
+
+insert into agent (id, bank_account_number, date_founded, name, tin, user_id) values
+    ('b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', 'DE72 3702 0500 0009 7097 00', '2020/02/25', 'Marko Kraljevic',  '123-45-6789', '105496cd-30f2-4b62-8082-cc14d282e845'),
+    ('c72721c4-437f-4a06-b3cc-00b9a86056bc', '0500 0009 3702 FE22 7097 00', '2020/02/25', 'Dragan Topalovic', '321-54-9876', 'd0535564-08ec-464c-a2db-d930d2c4fcde');
+
+insert into simple_user (id, address, city, country, first_name, last_name, request_status, ssn, user_id) values
+    ('1cfe4238-9b0c-4611-abea-ddd20b4cc415', 'Pionirska 26', 'Novi Sad', 'Serbia', 'Somi', 'Misoni', 'APPROVED', '1547854896523', '4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54');
 
 insert into car_brand (id, name, country, deleted) values
 ('52adb2e9-5f79-4839-bb9b-1b66bdd693c2', 'Audi', 'Germany', 'false'),
@@ -101,3 +121,24 @@ insert into fuel_type(id, type, tank_capacity, gas, deleted) values
 ('574930be-7738-48a3-8dc2-9b503b0fe7e3', 'Diesel', '90L', 'true', 'true'),
 ('0dc3ab55-1827-46b6-a2ad-309d83bbd28f', 'Benzine', '90L', 'false', 'false'),
 ('5343655c-07cf-45cf-b911-68fdc33dbf7d', 'Benzine', '90L', 'true', 'true');
+
+create extension if not exists "uuid-ossp";
+insert into address (id, street, number, city, country) values
+    ('04fe195c-5409-4657-a009-3732eedf1f6c', 'Pionirska', 21, 'Novi Sad', 'Serbia'),
+    ('7df3aad6-03bd-4724-9047-bb96403bdc16','Dusana Savica', 21, 'Beograd', 'Serbia'),
+    ('b65ac4e5-a5a8-46d4-897e-a7d080ff147e','Cara Lazara', 12, 'Nis', 'Serbia'),
+    ('72e5d652-a984-41c5-8e91-473d71f2c9b5','Milosa Obilica', 17, 'Subotica', 'Serbia');
+
+insert into car (id, deleted, kilometers_traveled, car_model_id, fuel_type_id, gear_shift_id) values
+    ('47463d55-7dd0-4612-b59c-a9e5686c2762', false, '145000', 'd19159ac-9ec3-4d27-9de1-83cbc78f1ea3', '7e3d3e0c-03d6-4acf-a620-f09fe00af45d', '26499388-9c1d-4836-972c-ba114a8753d5'),
+    ('8d58e543-cfb4-4eda-920c-9ace4d9e0413', false, '120000', '2e592145-a698-4c3e-9091-2fc298cfaf08', '8efd6379-3f8c-4c9b-b39f-03e2efee6a14', '21a367e0-fefb-457a-8bcc-bf3479f107a4'),
+    ('ef5cc250-a3d2-40fd-a85c-ade447e93125', false, '50000', '5276b54e-c459-4b19-989e-83e1351679db', '574930be-7738-48a3-8dc2-9b503b0fe7e3', '49d60643-6db1-4fb3-be69-9f1a3ba66ef5'),
+    ('93a1c7b0-2dda-441c-96e9-128698422851', false, '7000', '807812c2-88d3-4fc5-83bf-f1f706951f2a', 'c2cce5ed-723c-4cdc-8da3-2b56917d935e', 'd547d724-68ca-4a00-89a1-a9b6241c5fa7'),
+    ('c26d34ae-0cb7-4869-8a97-9063c355c94a', false, '250000', '2e592145-a698-4c3e-9091-2fc298cfaf08', '5343655c-07cf-45cf-b911-68fdc33dbf7d', '26499388-9c1d-4836-972c-ba114a8753d5');
+
+insert into ad (id, available, available_kilometers_per_rent, cdw, date, deleted, limited_distance, seats, agent_id, car_id) values
+    ('991938f8-4834-421c-b48e-c2e28e06aae9', true, 'UNLIMITED', true, '2020-02-08', false, false, 2, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', '47463d55-7dd0-4612-b59c-a9e5686c2762'),
+    ('6a22b2eb-705e-4311-ab90-bc438bc226fe', true, '10', true, '2020-01-25', false, true, 3, 'c72721c4-437f-4a06-b3cc-00b9a86056bc', '93a1c7b0-2dda-441c-96e9-128698422851'),
+    ('1124e496-a070-4b6e-b9c2-1b5e9aa00b60', true, 'UNLIMITED', true, '2020-03-04', false, false, 1, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', 'c26d34ae-0cb7-4869-8a97-9063c355c94a'),
+    ('92cc7fc1-5823-40cb-8b36-6162f1cdb5a0', true, '20', true, '2019-12-24', false, false, 1, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', '8d58e543-cfb4-4eda-920c-9ace4d9e0413'),
+    ('87ea3abc-1bef-4c17-9ce6-4938e947a917', true, 'UNLIMITED', true, '2019-12-21', false, false, 2, 'c72721c4-437f-4a06-b3cc-00b9a86056bc', 'ef5cc250-a3d2-40fd-a85c-ade447e93125');

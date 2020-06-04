@@ -33,4 +33,7 @@ public class SimpleUser extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private RequestStatus requestStatus;
+
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Request request;
 }
