@@ -59,7 +59,7 @@ public class AuthController extends ValidationControler {
     }
 
     @GetMapping("/registration-requests")
-//    @PreAuthorize("hasAuthority('LOGIN')")
+    @PreAuthorize("hasAuthority('LOGIN')")
     public List<UserResponse> getAllRegistrationRequests() throws Exception{
         return _authService.getAllRegistrationRequests();
     }
