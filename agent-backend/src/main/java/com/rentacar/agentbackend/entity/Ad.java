@@ -6,9 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -20,6 +19,13 @@ public class Ad extends BaseEntity {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Request> request;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agent_id", referencedColumnName = "id")
+    private Agent agent;
 
 //    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Comment> comments = new ArrayList<>();
@@ -33,11 +39,11 @@ public class Ad extends BaseEntity {
 
     private String availableKilometersPerRent; //if distance is limited
 
-    private String seats; //child seats
+    private int seats; //child seats
 
     private boolean cdw;
 
-    private Date date; //date when ad was created
+    private LocalDate date; //date when ad was created
 
     private boolean deleted;
 }
