@@ -28,6 +28,7 @@ public class AuthController extends ValidationControler {
     }
 
     @PostMapping("/create-agent")
+    @PreAuthorize("hasAuthority('CREATE_AGENT')")
     public UserResponse createAgent(@RequestBody CreateAgentRequest request) throws Exception{
 //        validateAgentJSON(request);
         return _authService.createAgent(request);

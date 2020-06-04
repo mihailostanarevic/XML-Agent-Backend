@@ -27,6 +27,10 @@ public class Agent extends BaseEntity {
     private Date dateFounded;
 
     private String bankAccountNumber;
+
+    @OneToOne(mappedBy = "agent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Ad ad;
+
 //
 //    @Enumerated(EnumType.STRING)
 //    private RequestStatus requestStatus;

@@ -17,4 +17,6 @@ public interface ISimpleUserRepository extends JpaRepository<SimpleUser, UUID> {
     List<SimpleUser> findAllByUser_Deleted(boolean deleted);
 
     List<Agent> findAllByRequestStatus(RequestStatus requestStatus);
+
+
 }
