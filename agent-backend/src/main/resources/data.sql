@@ -44,6 +44,18 @@ insert into agent (id, bank_account_number, date_founded, name, tin, user_id) va
 insert into simple_user (id, address, city, country, first_name, last_name, request_status, ssn, user_id) values
     ('1cfe4238-9b0c-4611-abea-ddd20b4cc415', 'Pionirska 26', 'Novi Sad', 'Serbia', 'Somi', 'Misoni', 'APPROVED', '1547854896523', '4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54');
 
+create extension if not exists "uuid-ossp";
+insert into address (id, street, number, city, country) values
+    ('04fe195c-5409-4657-a009-3732eedf1f6c', 'Pionirska', 21, 'Novi Sad', 'Serbia'),
+    ('7df3aad6-03bd-4724-9047-bb96403bdc16','Dusana Savica', 21, 'Beograd', 'Serbia'),
+    ('b65ac4e5-a5a8-46d4-897e-a7d080ff147e','Cara Lazara', 12, 'Nis', 'Serbia'),
+    ('72e5d652-a984-41c5-8e91-473d71f2c9b5','Milosa Obilica', 17, 'Subotica', 'Serbia');
+
+insert into agent_address (address_id, agent_id) values
+    ('04fe195c-5409-4657-a009-3732eedf1f6c', 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0'),
+    ('7df3aad6-03bd-4724-9047-bb96403bdc16', 'c72721c4-437f-4a06-b3cc-00b9a86056bc'),
+    ('b65ac4e5-a5a8-46d4-897e-a7d080ff147e', 'c72721c4-437f-4a06-b3cc-00b9a86056bc');
+
 insert into car_brand (id, name, country, deleted) values
 ('52adb2e9-5f79-4839-bb9b-1b66bdd693c2', 'Audi', 'Germany', 'false'),
 ('c1fc00da-de6c-4a42-89a5-792d462af560', 'BMW', 'Germany', 'false'),
@@ -121,13 +133,6 @@ insert into fuel_type(id, type, tank_capacity, gas, deleted) values
 ('574930be-7738-48a3-8dc2-9b503b0fe7e3', 'Diesel', '90L', 'true', 'true'),
 ('0dc3ab55-1827-46b6-a2ad-309d83bbd28f', 'Benzine', '90L', 'false', 'false'),
 ('5343655c-07cf-45cf-b911-68fdc33dbf7d', 'Benzine', '90L', 'true', 'true');
-
-create extension if not exists "uuid-ossp";
-insert into address (id, street, number, city, country) values
-    ('04fe195c-5409-4657-a009-3732eedf1f6c', 'Pionirska', 21, 'Novi Sad', 'Serbia'),
-    ('7df3aad6-03bd-4724-9047-bb96403bdc16','Dusana Savica', 21, 'Beograd', 'Serbia'),
-    ('b65ac4e5-a5a8-46d4-897e-a7d080ff147e','Cara Lazara', 12, 'Nis', 'Serbia'),
-    ('72e5d652-a984-41c5-8e91-473d71f2c9b5','Milosa Obilica', 17, 'Subotica', 'Serbia');
 
 insert into car (id, deleted, kilometers_traveled, car_model_id, fuel_type_id, gear_shift_id) values
     ('47463d55-7dd0-4612-b59c-a9e5686c2762', false, '145000', 'd19159ac-9ec3-4d27-9de1-83cbc78f1ea3', '7e3d3e0c-03d6-4acf-a620-f09fe00af45d', '26499388-9c1d-4836-972c-ba114a8753d5'),

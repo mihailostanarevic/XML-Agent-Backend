@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -31,7 +32,7 @@ public class Agent extends BaseEntity {
     @OneToOne(mappedBy = "agent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Ad ad;
 
-//
-//    @Enumerated(EnumType.STRING)
-//    private RequestStatus requestStatus;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Address> address;
+
 }

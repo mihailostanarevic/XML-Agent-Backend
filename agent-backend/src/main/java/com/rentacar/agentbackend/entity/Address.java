@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -21,5 +22,11 @@ public class Address extends BaseEntity {
     private String city;
 
     private String country;
+
+    @OneToMany(mappedBy = "pickUpAddress", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Request> request;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Agent> agent;
 
 }
