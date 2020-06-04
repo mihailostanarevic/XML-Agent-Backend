@@ -4,6 +4,8 @@ import com.rentacar.agentbackend.dto.request.CreateCarModelRequest;
 import com.rentacar.agentbackend.dto.request.UpdateCarModelRequest;
 import com.rentacar.agentbackend.dto.response.CarModelResponse;
 import com.rentacar.agentbackend.entity.CarModel;
+import com.rentacar.agentbackend.repository.ICarBrandRepository;
+import com.rentacar.agentbackend.repository.ICarClassRepository;
 import com.rentacar.agentbackend.repository.ICarModelRepository;
 import com.rentacar.agentbackend.service.ICarModelService;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,14 @@ public class CarModelService implements ICarModelService {
 
     private final ICarModelRepository _carModelRepository;
 
-    public CarModelService(ICarModelRepository carModelRepository) {
+    private final ICarBrandRepository _carBrandRepository;
+
+    private final ICarClassRepository _carClassRepository;
+
+    public CarModelService(ICarModelRepository carModelRepository, ICarBrandRepository carBrandRepository, ICarClassRepository carClassRepository) {
         _carModelRepository = carModelRepository;
+        _carBrandRepository = carBrandRepository;
+        _carClassRepository = carClassRepository;
     }
 
     @Override
@@ -26,6 +34,8 @@ public class CarModelService implements ICarModelService {
         CarModel carModel = new CarModel();
         carModel.setDeleted(false);
         carModel.setName(request.getName());
+        carModel.setCarBrand(_carBrandRepository.findOneById(request.getBrandId()));
+        carModel.setCarClass(_carClassRepository.findOneById(request.getClassId()));
         CarModel savedCarModel = _carModelRepository.save(carModel);
         return mapCarModelToCarModelResponse(savedCarModel);
     }
