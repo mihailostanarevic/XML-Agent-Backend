@@ -14,4 +14,8 @@ public class CarModelResponse {
     private UUID id;
 
     private String name;
+
+    private String brandName;
+
+    private String className;
 }
