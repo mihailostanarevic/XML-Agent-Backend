@@ -7,8 +7,6 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Data
-@Getter
-@Setter
 public class RequestDTO {
 
     private UUID adID;

@@ -46,6 +46,7 @@ public class User extends BaseEntity implements Serializable {
 //    private boolean enabled;
     //zakomentarisao sam jer ne znam zasto bismo to stavili u user entity, kad nam je i admin user a on ne treba da ima to polje
     //premestio sam u SimpleUser i nazvao sam RequestStatus, jer nam je tako u mikroservisnoj app pa da bude isto
+    // to si ti mito
 
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;

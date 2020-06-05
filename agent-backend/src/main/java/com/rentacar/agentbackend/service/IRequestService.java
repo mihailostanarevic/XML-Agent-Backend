@@ -13,4 +13,6 @@ public interface IRequestService {
 
     Request createBundleRequest(List<RequestDTO> requestList);
 
+    void changeAdAvailability(RequestDTO request);
+
 }

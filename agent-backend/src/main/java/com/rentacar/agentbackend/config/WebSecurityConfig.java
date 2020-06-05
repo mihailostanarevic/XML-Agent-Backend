@@ -3,7 +3,6 @@ package com.rentacar.agentbackend.config;
 import com.rentacar.agentbackend.auth.RestAuthenticationEntryPoint;
 import com.rentacar.agentbackend.auth.TokenAuthenticationFilter;
 import com.rentacar.agentbackend.security.TokenUtils;
-import com.rentacar.agentbackend.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -63,8 +62,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
                 .authorizeRequests()
-                .antMatchers("/auth/login").permitAll()
-                .antMatchers("/auth/create-simple-user").permitAll()
+                .antMatchers("/auth/registration-requests").permitAll()
+                .antMatchers("/auth/create-agent").permitAll()
+                .antMatchers("/ads/**").permitAll()
                 .antMatchers("/rent-request").permitAll()     // brisati ovo
                 .antMatchers("/search/**").permitAll()
                 .anyRequest().authenticated().and()

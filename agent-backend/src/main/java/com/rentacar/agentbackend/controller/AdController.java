@@ -1,27 +1,40 @@
 package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.AddAdRequest;
+import com.rentacar.agentbackend.dto.request.RequestDTO;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
 import com.rentacar.agentbackend.service.IAdService;
+import com.rentacar.agentbackend.service.IRequestService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/ads")
 public class AdController {
 
     private final IAdService _adService;
+    private final IRequestService _requestService;
 
-    public AdController(IAdService adService) {
+    public AdController(IAdService adService, IRequestService requestService) {
         _adService = adService;
+        _requestService = requestService;
     }
 
     @PostMapping
-    public AdResponse addAd(@RequestBody AddAdRequest request) throws Exception{
-        return _adService.createAd(request);
+    public ResponseEntity<AdResponse> addAd(@RequestBody AddAdRequest request) throws Exception{
+        return new ResponseEntity<>(_adService.createAd(request), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/availability")
+    public ResponseEntity<String> changeCarAvailability(@RequestBody RequestDTO request) throws Exception{
+        _requestService.changeAdAvailability(request);
+        return new ResponseEntity<>("succesfully changed", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/ad")

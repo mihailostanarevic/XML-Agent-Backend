@@ -30,4 +30,5 @@ public interface IAdService {
     List<AdResponse> getAllAdsByFuelType(UUID id) throws Exception;
 
     List<AdResponse> getAllAdsByGas() throws Exception;
+
 }
