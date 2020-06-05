@@ -143,4 +143,17 @@ public class RequestService implements IRequestService {
         }
     }
 
+    // napraviti novi request za taj ad
+    // obrisati zahteve u kojima je taj oglas vec iznajmljen u to vreme
+    @Override
+    public void changeAdAvailability(RequestDTO request) {
+        Ad requiredAd = _adRepository.findOneById(request.getAdID());
+        for (RequestAd requestAd : _requestAdRepository.findAllByAd(requiredAd)) {
+            if(!checkCarAvailability(requestAd.getAd(), request)) {
+                requestAd.getRequest().setDeleted(true);
+            }
+        }
+        createRequest(request);
+    }
+
 }

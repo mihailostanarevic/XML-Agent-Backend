@@ -42,7 +42,7 @@ insert into agent (id, bank_account_number, date_founded, name, tin, user_id) va
     ('c72721c4-437f-4a06-b3cc-00b9a86056bc', '0500 0009 3702 FE22 7097 00', '2020/02/25', 'Dragan Topalovic', '321-54-9876', 'd0535564-08ec-464c-a2db-d930d2c4fcde');
 
 insert into simple_user (id, address, city, country, first_name, last_name, request_status, ssn, user_id) values
-    ('1cfe4238-9b0c-4611-abea-ddd20b4cc415', 'Pionirska 26', 'Novi Sad', 'Serbia', 'Somi', 'Misoni', 'APPROVED', '1547854896523', '4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54');
+    ('1cfe4238-9b0c-4611-abea-ddd20b4cc415', 'Pionirska 26', 'Novi Sad', 'Serbia', 'Somi', 'Misoni', 'PENDING', '1547854896523', '4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54');
 
 create extension if not exists "uuid-ossp";
 insert into address (id, street, number, city, country) values

@@ -31,7 +31,7 @@ public class Request extends BaseEntity {
 
     private boolean deleted;
 
-    @OneToMany(mappedBy = "request")
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RequestAd> requestAds = new HashSet<RequestAd>();
 
     public Request() {

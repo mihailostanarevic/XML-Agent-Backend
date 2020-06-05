@@ -62,9 +62,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
 
                 .authorizeRequests()
-                .antMatchers("/auth/login").permitAll()
-                .antMatchers("/auth/create-simple-user").permitAll()
-                .antMatchers("/ads").permitAll()
+                .antMatchers("/auth/registration-requests").permitAll()
+                .antMatchers("/auth/create-agent").permitAll()
+                .antMatchers("/ads/**").permitAll()
                 .antMatchers("/rent-request").permitAll()     // brisati ovo
                 .anyRequest().authenticated().and()
 

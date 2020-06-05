@@ -10,9 +10,7 @@ import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IAdService;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings({"unused", "RedundantThrows"})
@@ -26,8 +24,9 @@ public class AdService implements IAdService {
     private final ICarRepository _carRepository;
     private final IAgentRepository _agentRepository;
     private final IPhotoRepository _photoRepository;
+    private final IRequestAdRepository _requestAdRepository;
 
-    public AdService(IAdRepository adRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarRepository carRepository, IAgentRepository agentRepository, IPhotoRepository photoRepository) {
+    public AdService(IAdRepository adRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarRepository carRepository, IAgentRepository agentRepository, IPhotoRepository photoRepository, IRequestAdRepository requestAdRepository) {
         _adRepository = adRepository;
         _carModelRepository = carModelRepository;
         _gearshiftTypeRepository = gearshiftTypeRepository;
@@ -35,6 +34,7 @@ public class AdService implements IAdService {
         _carRepository = carRepository;
         _agentRepository = agentRepository;
         _photoRepository = photoRepository;
+        _requestAdRepository = requestAdRepository;
     }
 
     @Override
@@ -118,4 +118,5 @@ public class AdService implements IAdService {
     public List<AdResponse> getAllAdsByGas() throws Exception {
         return null;
     }
+
 }

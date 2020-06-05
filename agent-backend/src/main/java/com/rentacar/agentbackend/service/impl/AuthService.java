@@ -254,14 +254,12 @@ public class AuthService implements IAuthService {
         List<User> requests = new ArrayList<>();
         for (User u: users){
             if(u.getRoles().contains(_authorityRepository.findByName("ROLE_SIMPLE_USER"))){
-                if(u.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
+                SimpleUser simpleUser = _simpleUserRepository.findOneByUser(u);
+                if(simpleUser != null && simpleUser.getRequestStatus().equals(RequestStatus.PENDING)){
                     requests.add(u);
                 }
             }
         }
-//        if(requests.isEmpty()){
-//            throw new Exception("There are no registration requests.");
-//        }
         return requests.stream()
                 .map(user -> mapUserToUserResponse(user))
                 .collect(Collectors.toList());
