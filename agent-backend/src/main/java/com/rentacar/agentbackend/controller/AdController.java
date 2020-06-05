@@ -4,11 +4,14 @@ import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
 import com.rentacar.agentbackend.service.IAdService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/ads")
 public class AdController {
@@ -20,8 +23,8 @@ public class AdController {
     }
 
     @PostMapping
-    public AdResponse addAd(@RequestBody AddAdRequest request) throws Exception{
-        return _adService.createAd(request);
+    public ResponseEntity<AdResponse> addAd(@RequestBody AddAdRequest request) throws Exception{
+        return new ResponseEntity<>(_adService.createAd(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/ad")

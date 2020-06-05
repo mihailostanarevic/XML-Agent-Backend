@@ -14,28 +14,18 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class Ad extends BaseEntity {
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
 
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    private Set<Request> request;
-
     @OneToMany(mappedBy = "ad")
     private Set<RequestAd> adRequests = new HashSet<RequestAd>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agent_id", referencedColumnName = "id")
     private Agent agent;
-
-//    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Comment> comments = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Photo> photos = new ArrayList<>();
 
     private boolean available; //is rented or available
 
@@ -47,7 +37,16 @@ public class Ad extends BaseEntity {
 
     private boolean cdw;
 
-    private LocalDate date; //date when ad was created
+    @OneToMany(mappedBy = "ad")
+    private Set<Photo> adPhotos;
+
+    private LocalDate creationDate; //date when ad was created
 
     private boolean deleted;
+
+    public Ad() {
+        this.available = true;
+        this.deleted = false;
+        this.creationDate = LocalDate.now();
+    }
 }

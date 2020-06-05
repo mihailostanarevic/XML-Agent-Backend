@@ -1,7 +1,6 @@
 package com.rentacar.agentbackend.security;
 
 import com.rentacar.agentbackend.entity.User;
-import com.rentacar.agentbackend.entity.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

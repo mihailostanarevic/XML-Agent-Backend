@@ -29,8 +29,8 @@ public class Agent extends BaseEntity {
 
     private String bankAccountNumber;
 
-    @OneToOne(mappedBy = "agent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Ad ad;
+    @OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Ad> ad;
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Address> address;
