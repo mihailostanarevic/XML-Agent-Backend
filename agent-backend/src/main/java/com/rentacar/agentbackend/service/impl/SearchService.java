@@ -111,7 +111,7 @@ public class SearchService implements ISearchService {
         retVal.setAvailableKilometersPerRent(ad.getAvailableKilometersPerRent());
         retVal.setSeats(ad.getSeats());
         retVal.setCdw(ad.isCdw());
-        retVal.setDate(ad.getDate());
+        retVal.setDate(ad.getCreationDate());
         retVal.setCarID(ad.getCar().getId());
         retVal.setCarBrand(ad.getCar().getCarModel().getCarBrand().getName());
         retVal.setCarModel(ad.getCar().getCarModel().getName());

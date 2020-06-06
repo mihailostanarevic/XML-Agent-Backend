@@ -65,8 +65,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/registration-requests").permitAll()
                 .antMatchers("/auth/create-agent").permitAll()
                 .antMatchers("/ads/**").permitAll()
-                .antMatchers("/rent-request").permitAll()     // brisati ovo
+                .antMatchers("/rent-request").permitAll()
                 .antMatchers("/search/**").permitAll()
+                .antMatchers("/**").permitAll() // brisati ovo
                 .anyRequest().authenticated().and()
 
                 .cors().and()
