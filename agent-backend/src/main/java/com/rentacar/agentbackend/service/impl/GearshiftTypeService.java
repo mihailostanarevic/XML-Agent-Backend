@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.request.CreateGearshiftTypeRequest;
+import com.rentacar.agentbackend.dto.request.GetGearshiftTypesWithFilterRequest;
 import com.rentacar.agentbackend.dto.request.UpdateGearshiftTypeRequest;
 import com.rentacar.agentbackend.dto.response.GearshiftTypeResponse;
 import com.rentacar.agentbackend.entity.GearshiftType;
@@ -58,6 +59,29 @@ public class GearshiftTypeService implements IGearshiftTypeService {
         List<GearshiftType> gearshiftTypes = _gearshiftTypeRepository.findAllByDeleted(false);
         return gearshiftTypes.stream()
                 .map(gearshiftType -> mapGearshiftTypeToGearshiftTypeResponse(gearshiftType))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GearshiftTypeResponse> getAllGearshiftTypesWithFilter(GetGearshiftTypesWithFilterRequest request) throws Exception {
+        List<GearshiftType> allGearshiftTypes = _gearshiftTypeRepository.findAllByDeleted(false);
+        return allGearshiftTypes
+                .stream()
+                .filter(gearshiftType -> {
+                    if(request.getType() != null) {
+                        return gearshiftType.getType().toLowerCase().contains(request.getType().toLowerCase());
+                    } else {
+                        return true;
+                    }
+                })
+                .filter(gearshiftType -> {
+                    if(request.getNumberOfGears() != null) {
+                        return gearshiftType.getNumberOfGears().toLowerCase().contains(request.getNumberOfGears().toLowerCase());
+                    } else {
+                        return true;
+                    }
+                })
+                .map(gt -> mapGearshiftTypeToGearshiftTypeResponse(gt))
                 .collect(Collectors.toList());
     }
 

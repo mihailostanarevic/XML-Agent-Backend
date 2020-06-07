@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.service;
 
 import com.rentacar.agentbackend.dto.request.CreateGearshiftTypeRequest;
+import com.rentacar.agentbackend.dto.request.GetGearshiftTypesWithFilterRequest;
 import com.rentacar.agentbackend.dto.request.UpdateGearshiftTypeRequest;
 import com.rentacar.agentbackend.dto.response.GearshiftTypeResponse;
 
@@ -19,4 +20,5 @@ public interface IGearshiftTypeService {
 
     List<GearshiftTypeResponse> getAllGearshiftTypes() throws Exception;
 
+    List<GearshiftTypeResponse> getAllGearshiftTypesWithFilter(GetGearshiftTypesWithFilterRequest request) throws Exception;
 }
