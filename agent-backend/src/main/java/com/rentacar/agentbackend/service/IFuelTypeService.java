@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.service;
 
 import com.rentacar.agentbackend.dto.request.CreateFuelTypeRequest;
+import com.rentacar.agentbackend.dto.request.GetFuelTypesWithFilterRequest;
 import com.rentacar.agentbackend.dto.request.UpdateFuelTypeRequest;
 import com.rentacar.agentbackend.dto.response.FuelTypeResponse;
 
@@ -18,4 +19,6 @@ public interface IFuelTypeService {
     FuelTypeResponse getFuelType(UUID id) throws Exception;
 
     List<FuelTypeResponse> getAllFuelTypes() throws Exception;
+
+    List<FuelTypeResponse> getAllFuelTypesWithFilter(GetFuelTypesWithFilterRequest request) throws Exception;
 }
