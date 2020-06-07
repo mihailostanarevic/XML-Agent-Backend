@@ -65,7 +65,6 @@ public class CarBrandService implements ICarBrandService {
     @Override
     public List<CarBrandResponse> getAllCarBrandsWithFilter(GetCarBrandsFilterRequest request) throws Exception {
         List<CarBrand> allCarBrands = _carBrandRepository.findAllByDeleted(false);
-
         return allCarBrands
                 .stream()
                 .filter(carBrand -> {
