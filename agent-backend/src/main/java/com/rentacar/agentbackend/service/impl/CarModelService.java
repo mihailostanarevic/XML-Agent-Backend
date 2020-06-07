@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.request.CreateCarModelRequest;
+import com.rentacar.agentbackend.dto.request.GetCarModelsFilterRequest;
 import com.rentacar.agentbackend.dto.request.UpdateCarModelRequest;
 import com.rentacar.agentbackend.dto.response.CarModelResponse;
 import com.rentacar.agentbackend.entity.CarModel;
@@ -10,6 +11,7 @@ import com.rentacar.agentbackend.repository.ICarModelRepository;
 import com.rentacar.agentbackend.service.ICarModelService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -66,6 +68,30 @@ public class CarModelService implements ICarModelService {
         List<CarModel> carModels = _carModelRepository.findAllByDeleted(false);
         return carModels.stream()
                 .map(carModel -> mapCarModelToCarModelResponse(carModel))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CarModelResponse> getAllCarModelsWithFilter(GetCarModelsFilterRequest request) throws Exception {
+        List<CarModel> allCarModels = _carModelRepository.findAllByDeleted(false);
+
+        return allCarModels
+                .stream()
+                .filter(carModel -> {
+                    if(request.getBrandName() != null) {
+                        return carModel.getCarBrand().getName().toLowerCase().contains(request.getBrandName().toLowerCase());
+                    } else {
+                        return true;
+                    }
+                })
+                .filter(carModel -> {
+                    if(request.getClassName() != null) {
+                        return carModel.getCarClass().getName().toLowerCase().contains(request.getClassName().toLowerCase());
+                    } else {
+                        return true;
+                    }
+                })
+                .map(cm -> mapCarModelToCarModelResponse(cm))
                 .collect(Collectors.toList());
     }
 
