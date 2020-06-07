@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.service;
 
 import com.rentacar.agentbackend.dto.request.CreateCarClassRequest;
+import com.rentacar.agentbackend.dto.request.GetCarClassesWithFilter;
 import com.rentacar.agentbackend.dto.request.UpdateCarClassRequest;
 import com.rentacar.agentbackend.dto.response.CarClassResponse;
 
@@ -18,4 +19,6 @@ public interface ICarClassService {
     CarClassResponse getCarClass(UUID id) throws Exception;
 
     List<CarClassResponse> getAllCarClasses() throws Exception;
+
+    List<CarClassResponse> getAllCarClassesWithFilter(GetCarClassesWithFilter request) throws Exception;
 }
