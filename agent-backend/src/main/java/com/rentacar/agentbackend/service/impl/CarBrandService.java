@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.request.CreateCarBrandRequest;
+import com.rentacar.agentbackend.dto.request.GetCarBrandsFilterRequest;
 import com.rentacar.agentbackend.dto.request.UpdateCarBrandRequest;
 import com.rentacar.agentbackend.dto.response.CarBrandResponse;
 import com.rentacar.agentbackend.entity.CarBrand;
@@ -58,6 +59,30 @@ public class CarBrandService implements ICarBrandService {
         List<CarBrand> carBrands = _carBrandRepository.findAllByDeleted(false);
         return  carBrands.stream()
                 .map(carBrand -> mapCarBrandToCarBrandResponse(carBrand))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CarBrandResponse> getAllCarBrandsWithFilter(GetCarBrandsFilterRequest request) throws Exception {
+        List<CarBrand> allCarBrands = _carBrandRepository.findAllByDeleted(false);
+
+        return allCarBrands
+                .stream()
+                .filter(carBrand -> {
+                    if(request.getBrandName() != null) {
+                        return carBrand.getName().toLowerCase().contains(request.getBrandName().toLowerCase());
+                    } else {
+                        return true;
+                    }
+                })
+                .filter(carBrand -> {
+                    if(request.getBrandCountry() != null) {
+                        return carBrand.getCountry().toLowerCase().contains(request.getBrandCountry().toLowerCase());
+                    } else {
+                        return true;
+                    }
+                })
+                .map(cb -> mapCarBrandToCarBrandResponse(cb))
                 .collect(Collectors.toList());
     }
 
