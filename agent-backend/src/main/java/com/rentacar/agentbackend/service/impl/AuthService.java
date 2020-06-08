@@ -22,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -246,6 +248,8 @@ public class AuthService implements IAuthService {
     public void confirmRegistrationRequest(GetIdRequest request) throws Exception {
         SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getId());
         simpleUser.setRequestStatus(RequestStatus.CONFIRMED);
+        LocalDateTime currentTime = LocalDateTime.now();
+        simpleUser.setConfirmationTime(currentTime);
         _simpleUserRepository.save(simpleUser);
 
         _emailService.approveRegistrationMail(simpleUser);
@@ -254,6 +258,11 @@ public class AuthService implements IAuthService {
     @Override
     public void approveRegistrationRequest(GetIdRequest request) throws Exception {
         SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getId());
+        if(simpleUser.getConfirmationTime().plusHours(12L).isBefore(LocalDateTime.now())){
+            simpleUser.setRequestStatus(RequestStatus.DENIED);
+            _simpleUserRepository.save(simpleUser);
+            throw new Exception("Your activation link has expired.");
+        }
         simpleUser.setRequestStatus(RequestStatus.APPROVED);
         _simpleUserRepository.save(simpleUser);
     }
