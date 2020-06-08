@@ -1,0 +1,32 @@
+2020-06-08 17:11:05,346 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 17:11:18,129 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 18.848 seconds (JVM running for 20.089)
+2020-06-08 17:26:31,213 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 17:26:44,625 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 17:35:56,839 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 17:39:40,614 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 17:45:13,896 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 17:45:21,657 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 10.98 seconds (JVM running for 11.414)
+2020-06-08 18:05:46,288 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 18:05:54,812 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 11.869 seconds (JVM running for 12.33)
+2020-06-08 18:09:46,836 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-2] dimitrijesalic@yahoo.com account has been successfully created as a simple user
+2020-06-08 18:10:20,955 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] Example of an error which will be displayed because its higher priority than INFO
+2020-06-08 18:10:21,052 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] admin@gmail.com has logged in
+2020-06-08 18:12:17,220 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 18:12:25,184 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 11.182 seconds (JVM running for 11.638)
+2020-06-08 18:13:03,472 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-1] lara.mimica@gmail.com account has been successfully created as a simple user
+2020-06-08 18:13:21,605 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-2] Example of an error which will be displayed because its higher priority than INFO
+2020-06-08 18:13:21,695 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-2] admin@gmail.com has logged in
+2020-06-08 18:14:32,482 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] Example of an error which will be displayed because its higher priority than INFO
+2020-06-08 18:14:32,554 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] lara.mimica@gmail.com has logged in
+2020-06-08 18:17:23,705 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 18:17:31,969 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 11.506 seconds (JVM running for 11.948)
+2020-06-08 18:17:55,326 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-1] lara.mimica@gmail.com account has been successfully created as a simple user
+2020-06-08 18:18:00,248 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-4] Example of an error which will be displayed because its higher priority than INFO
+2020-06-08 18:18:00,345 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-4] admin@gmail.com has logged in
+2020-06-08 18:20:42,722 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] Example of an error which will be displayed because its higher priority than INFO
+2020-06-08 18:20:42,793 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] lara.mimica@gmail.com has logged in
+2020-06-08 18:22:54,188 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-08 18:23:02,249 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 11.296 seconds (JVM running for 11.799)
+2020-06-08 18:23:27,538 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-1] lara.mimica@gmail.com account has been successfully created as a simple user
+2020-06-08 18:23:47,734 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-3] Example of an error which will be displayed because its higher priority than INFO
+2020-06-08 18:23:47,831 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-3] admin@gmail.com has logged in

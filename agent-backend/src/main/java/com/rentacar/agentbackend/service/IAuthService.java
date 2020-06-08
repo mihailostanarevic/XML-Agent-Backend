@@ -17,6 +17,8 @@ public interface IAuthService {
 
     UserResponse setNewPassword(UUID id, NewPassordRequest request) throws Exception;
 
+    void confirmRegistrationRequest(GetIdRequest request) throws Exception;
+
     void approveRegistrationRequest(GetIdRequest request) throws Exception;
 
     void denyRegistrationRequest(GetIdRequest request) throws Exception;

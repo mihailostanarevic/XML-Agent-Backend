@@ -3,5 +3,6 @@ package com.rentacar.agentbackend.util.enums;
 public enum RequestStatus {
     APPROVED,
     PENDING,
-    DENIED
+    DENIED,
+    CONFIRMED
 }
