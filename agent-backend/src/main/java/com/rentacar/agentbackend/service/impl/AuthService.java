@@ -7,6 +7,7 @@ import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.security.TokenUtils;
 import com.rentacar.agentbackend.service.IAuthService;
+import com.rentacar.agentbackend.service.IEmailService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,10 +46,12 @@ public class AuthService implements IAuthService {
 
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
+    private final IEmailService _emailService;
+
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils) {
+    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
@@ -56,6 +59,7 @@ public class AuthService implements IAuthService {
         _adminRepository = adminRepository;
         _authenticationManager = authenticationManager;
         _tokenUtils = tokenUtils;
+        _emailService = emailService;
     }
 
     /**
@@ -160,11 +164,15 @@ public class AuthService implements IAuthService {
     public UserResponse login(LoginRequest request) throws Exception {
         User user = _userRepository.findOneByUsername(request.getUsername());
         if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
-            throw new Exception("Your account hasn't been approved yet.");
+            throw new Exception("Your registration hasn't been approved yet.");
         }
 
         if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.DENIED)){
-            throw new Exception("Your account has been denied.");
+            throw new Exception("Your registration has been denied.");
+        }
+
+        if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.CONFIRMED)){
+            throw new Exception("Your registration has been approved by admin. Please activate your account.");
         }
         logger.error("Example of an error which will be displayed because its higher priority than INFO");
         String mail = request.getUsername();
@@ -232,6 +240,15 @@ public class AuthService implements IAuthService {
         }
 
         return mapUserToUserResponse(user);
+    }
+
+    @Override
+    public void confirmRegistrationRequest(GetIdRequest request) throws Exception {
+        SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getId());
+        simpleUser.setRequestStatus(RequestStatus.CONFIRMED);
+        _simpleUserRepository.save(simpleUser);
+
+        _emailService.approveRegistrationMail(simpleUser);
     }
 
     @Override

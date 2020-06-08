@@ -49,6 +49,11 @@ public class AuthController extends ValidationControler {
         return _authService.setNewPassword(id,request);
     }
 
+    @PutMapping("/confirm-registration-request")
+    public void confirmRegistrationRequest(@RequestBody GetIdRequest request) throws Exception{
+        _authService.confirmRegistrationRequest(request);
+    }
+
     @PutMapping("/approve-registration-request")
     public void approveRegistrationRequest(@RequestBody GetIdRequest request) throws Exception{
         _authService.approveRegistrationRequest(request);
