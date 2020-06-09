@@ -107,6 +107,7 @@ public class SearchService implements ISearchService {
 
     private SearchResultDTO makeDTO(Ad ad) {
         SearchResultDTO retVal = new SearchResultDTO();
+        retVal.setAdID(ad.getId());
         retVal.setLimitedDistance(ad.isLimitedDistance());
         retVal.setAvailableKilometersPerRent(ad.getAvailableKilometersPerRent());
         retVal.setSeats(ad.getSeats());
@@ -115,7 +116,7 @@ public class SearchService implements ISearchService {
         retVal.setCarID(ad.getCar().getId());
         retVal.setCarBrand(ad.getCar().getCarModel().getCarBrand().getName());
         retVal.setCarModel(ad.getCar().getCarModel().getName());
-        retVal.setCarModel(ad.getCar().getCarModel().getCarClass().getName());
+        retVal.setCarClass(ad.getCar().getCarModel().getCarClass().getName());
         retVal.setFuelType(ad.getCar().getFuelType().getType());
         retVal.setGearshiftType(ad.getCar().getGearshiftType().getType());
         retVal.setAgent(ad.getAgent().getId());
