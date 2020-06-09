@@ -12,6 +12,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class SearchResultDTO {
 
+    private UUID adID;
+
     private boolean limitedDistance;
 
     private String availableKilometersPerRent;
