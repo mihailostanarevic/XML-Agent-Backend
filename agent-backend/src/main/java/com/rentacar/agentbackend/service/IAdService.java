@@ -3,13 +3,14 @@ package com.rentacar.agentbackend.service;
 import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface IAdService {
 
-    AdResponse createAd(AddAdRequest request) throws Exception;
+    AdResponse createAd(List<MultipartFile> fileList, AddAdRequest request) throws Exception;
 
     AdResponse updateAd(UpdateAdRequest request, UUID id) throws Exception;
 

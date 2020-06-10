@@ -27,7 +27,7 @@ public class User extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private String password;
 
-//    private UserRole userRole;
+    private UserRole userRole;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Agent agent;

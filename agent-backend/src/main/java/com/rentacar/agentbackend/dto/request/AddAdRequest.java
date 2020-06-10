@@ -1,20 +1,22 @@
 package com.rentacar.agentbackend.dto.request;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @Data
 public class AddAdRequest {
 
-    private UUID carModelId;
+    private String carModel;
 
-    private UUID gearshifTypeId;
+    private String gearshifType;
 
-    private UUID fuelTypeId;
+    private String fuelType;
 
-    private Set<String> photoUrls;
+//    private List<String> photoUrls;
 
     private UUID agentId;
 

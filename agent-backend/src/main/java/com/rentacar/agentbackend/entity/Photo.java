@@ -4,18 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 public class Photo extends BaseEntity {
 
-    private String url;
+    private String name;
+
+    private String type;
+
+    @Column(name = "pic_byte", length = 1000)
+    private byte[] picByte;
 
     private boolean deleted;
 
@@ -24,5 +25,13 @@ public class Photo extends BaseEntity {
 
     public Photo() {
         this.deleted = false;
+    }
+
+    public Photo(String name, String type, byte[] picByte, boolean deleted, Ad ad) {
+        this.name = name;
+        this.type = type;
+        this.picByte = picByte;
+        this.deleted = deleted;
+        this.ad = ad;
     }
 }
