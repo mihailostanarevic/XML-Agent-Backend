@@ -1,6 +1,6 @@
 package com.rentacar.agentbackend.service.impl;
 
-import com.rentacar.agentbackend.dto.response.SearchResultDTO;
+import com.rentacar.agentbackend.dto.response.*;
 import com.rentacar.agentbackend.entity.Ad;
 import com.rentacar.agentbackend.entity.Address;
 import com.rentacar.agentbackend.entity.Request;
@@ -9,7 +9,6 @@ import com.rentacar.agentbackend.repository.IAdRepository;
 import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.service.ISearchService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
-import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,8 +30,8 @@ public class SearchService implements ISearchService {
     }
 
     @Override
-    public List<SearchResultDTO> search(String city, String from, String to) {
-        List<SearchResultDTO> retVal = new ArrayList<SearchResultDTO>();
+    public List<SearchResultResponse> search(String city, String from, String to) {
+        List<SearchResultResponse> retVal = new ArrayList<SearchResultResponse>();
 
         String paramTimeFrom = from.split(" ")[0];
         String paramDateFrom = from.split(" ")[1];
@@ -53,18 +52,26 @@ public class SearchService implements ISearchService {
         List<RequestAd> requestAds = passableRequests(allRequests, dateFrom, timeFrom, dateTo, timeTo, city);
         boolean found = false;
 
+        List<UUID> ids = new ArrayList<>();
+        for(Ad ad : allAds){
+            ids.add(ad.getId());
+        }
+
         for(Ad ad : allAds){
             found = false;
             for(RequestAd rqAd : requestAds){
                 if(rqAd.getAd().getId().equals(ad.getId())){
-                    SearchResultDTO dto = makeDTO(ad);
                     found = true;
-                    retVal.add(dto);
+                    if(ids.contains(rqAd.getAd().getId())) {
+                        ids.remove(rqAd.getAd().getId());
+                        SearchResultResponse dto = makeDTO(ad);
+                        retVal.add(dto);
+                    }
                 }
             }
 
             if(!found){
-                SearchResultDTO dto = makeDTO(ad);
+                SearchResultResponse dto = makeDTO(ad);
                 retVal.add(dto);
             }
         }
@@ -105,28 +112,32 @@ public class SearchService implements ISearchService {
         return retVal;
     }
 
-    private SearchResultDTO makeDTO(Ad ad) {
-        SearchResultDTO retVal = new SearchResultDTO();
-        retVal.setAdID(ad.getId());
-        retVal.setLimitedDistance(ad.isLimitedDistance());
-        retVal.setAvailableKilometersPerRent(ad.getAvailableKilometersPerRent());
-        retVal.setSeats(ad.getSeats());
-        retVal.setCdw(ad.isCdw());
-        retVal.setDate(ad.getCreationDate());
-        retVal.setCarID(ad.getCar().getId());
-        retVal.setCarBrand(ad.getCar().getCarModel().getCarBrand().getName());
-        retVal.setCarModel(ad.getCar().getCarModel().getName());
-        retVal.setCarClass(ad.getCar().getCarModel().getCarClass().getName());
-        retVal.setFuelType(ad.getCar().getFuelType().getType());
-        retVal.setGearshiftType(ad.getCar().getGearshiftType().getType());
-        retVal.setAgent(ad.getAgent().getId());
-        retVal.setAgentName(ad.getAgent().getName());
-        String x = "";
+    private SearchResultResponse makeDTO(Ad ad) {
+        SearchResultResponse retVal = new SearchResultResponse();
+        List<PhotoSearchResponse> photos = new ArrayList<PhotoSearchResponse>();
+        AdSearchResponse adDTO = new AdSearchResponse(ad.getId(), ad.isLimitedDistance(), ad.getSeats(), ad.isCdw(), ad.getCreationDate(), photos);
+        CarSearchResponse carDTO = new CarSearchResponse();
+        carDTO.setCarID(ad.getCar().getId());
+        carDTO.setCarModelName(ad.getCar().getCarModel().getName());
+        carDTO.setCarBrandName(ad.getCar().getCarModel().getCarBrand().getName());
+        carDTO.setCarClassName(ad.getCar().getCarModel().getCarClass().getName());
+        carDTO.setCarClassDesc(ad.getCar().getCarModel().getCarClass().getDescription());
+        carDTO.setFuelTypeType(ad.getCar().getFuelType().getType());
+        carDTO.setFuelTypeTankCapacity(ad.getCar().getFuelType().getTankCapacity());
+        carDTO.setFuelTypeGas(ad.getCar().getFuelType().isGas());
+        carDTO.setGearshiftTypeType(ad.getCar().getGearshiftType().getType());
+        carDTO.setGetGearshiftTypeNumberOfGears(ad.getCar().getGearshiftType().getNumberOfGears());
+        String allLocations = "";
         for(Address add : ad.getAgent().getAddress()){
-            x += add.getCity();
-            x += ", ";
+            allLocations += add.getCity();
+            if(ad.getAgent().getAddress().size() > 1){
+                allLocations += ", ";
+            }
         }
-        retVal.setLocation(x);
+        AgentSearchResponse agentDTO = new AgentSearchResponse(ad.getAgent().getId(), ad.getAgent().getName(), ad.getAgent().getDateFounded().toString(), allLocations);
+        retVal.setAd(adDTO);
+        retVal.setAgent(agentDTO);
+        retVal.setCar(carDTO);
         return retVal;
     }
 
