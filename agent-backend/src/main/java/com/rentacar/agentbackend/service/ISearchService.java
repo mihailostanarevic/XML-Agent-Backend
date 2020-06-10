@@ -1,11 +1,11 @@
 package com.rentacar.agentbackend.service;
 
-import com.rentacar.agentbackend.dto.response.SearchResultDTO;
+import com.rentacar.agentbackend.dto.response.SearchResultResponse;
 
 import java.util.List;
 
 public interface ISearchService {
 
-    List<SearchResultDTO> search(String city, String from, String to);
+    List<SearchResultResponse> search(String city, String from, String to);
 
 }
