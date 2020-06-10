@@ -9,6 +9,7 @@ import com.rentacar.agentbackend.security.TokenUtils;
 import com.rentacar.agentbackend.service.IAuthService;
 import com.rentacar.agentbackend.service.IEmailService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
+import com.rentacar.agentbackend.util.enums.UserRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,7 @@ public class AuthService implements IAuthService {
         authorities.add(_authorityRepository.findByName("ROLE_MESSAGE_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_AGENT"));
         user.setAuthorities(new HashSet<>(authorities));
+        user.setUserRole(UserRole.AGENT);
         agent.setName(request.getName());
         agent.setBankAccountNumber(request.getBankAccountNumber());
         agent.setDateFounded(request.getDateFounded());
@@ -146,6 +148,7 @@ public class AuthService implements IAuthService {
         authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_RENT_USER"));
         user.setAuthorities(new HashSet<>(authorities));
+        user.setUserRole(UserRole.SIMPLE_USER);
         simpleUser.setAddress(request.getAddress());
         simpleUser.setCity(request.getCity());
         simpleUser.setCountry(request.getCountry());
@@ -301,11 +304,11 @@ public class AuthService implements IAuthService {
             userResponse.setId(user.getAdmin().getId());
         }
         userResponse.setUsername(user.getUsername());
-        if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_ADMIN"))){
+        if(user.getUserRole().equals(UserRole.ADMIN)){
             userResponse.setUserRole("ADMIN_ROLE");
-        }else if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_AGENT"))){
+        }else if(user.getUserRole().equals(UserRole.AGENT)){
             userResponse.setUserRole("AGENT_ROLE");
-        }else if(user.getRoles().contains(_authorityRepository.findOneByName("ROLE_SIMPLE_USER"))){
+        }else if(user.getUserRole().equals(UserRole.SIMPLE_USER)){
             userResponse.setUserRole("SIMPLE_USER_ROLE");
         }
         return userResponse;

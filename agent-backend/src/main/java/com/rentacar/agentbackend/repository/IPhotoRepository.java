@@ -9,4 +9,5 @@ public interface IPhotoRepository extends JpaRepository<Photo, UUID> {
 
     Photo findOneById(UUID id);
 
+    Photo findOneByName(String name);
 }

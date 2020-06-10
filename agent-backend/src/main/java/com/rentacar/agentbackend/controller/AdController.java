@@ -4,12 +4,16 @@ import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.RequestDTO;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
+import com.rentacar.agentbackend.entity.Photo;
+import com.rentacar.agentbackend.repository.IPhotoRepository;
 import com.rentacar.agentbackend.service.IAdService;
 import com.rentacar.agentbackend.service.IRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,9 +30,15 @@ public class AdController {
         _requestService = requestService;
     }
 
-    @PostMapping
-    public ResponseEntity<AdResponse> addAd(@RequestBody AddAdRequest request) throws Exception{
-        return new ResponseEntity<>(_adService.createAd(request), HttpStatus.CREATED);
+    @PostMapping("/image")
+    public ResponseEntity<?> image(@RequestParam("imageFile") List<MultipartFile> file) throws Exception{
+        return new ResponseEntity<>("ok", HttpStatus.CREATED);
+    }
+
+    @PostMapping(consumes = { "multipart/form-data" })
+    public ResponseEntity<?> addAd(@RequestPart("imageFile") List<MultipartFile> fileList, @RequestPart("request") @Valid AddAdRequest request) throws Exception{
+        _adService.createAd(fileList, request);
+        return new ResponseEntity<>("ok", HttpStatus.CREATED);
     }
 
     @PutMapping("/availability")

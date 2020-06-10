@@ -23,6 +23,6 @@ public class RequestDTO {
 
     private UUID pickUpAddress;
 
-    private boolean bundle;
+    private boolean bundle;         // uvek false
 
 }

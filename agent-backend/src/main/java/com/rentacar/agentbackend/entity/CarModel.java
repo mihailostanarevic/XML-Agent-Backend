@@ -25,7 +25,6 @@ public class CarModel extends BaseEntity {
     @JoinColumn(name = "car_class_id")
     private CarClass carClass;
 
-
     @OneToMany(mappedBy = "carModel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Car> cars = new ArrayList<>();
 
