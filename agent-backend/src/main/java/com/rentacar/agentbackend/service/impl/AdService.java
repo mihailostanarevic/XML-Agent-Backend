@@ -139,9 +139,15 @@ public class AdService implements IAdService {
         String[] fuelTypeArray = fuelTypeString.split(",");
         String type = fuelTypeArray[0].trim();
         String tankCapacity = fuelTypeArray[1].trim();
+        String gas_string = fuelTypeArray[2].trim();
+        boolean gas = false;
+        if(gas_string.trim().equalsIgnoreCase("gas")) {
+            gas = true;
+        }
         for (FuelType fuelType : _fuelTypeRepository.findAll()) {
             if(fuelType.getType().equalsIgnoreCase(type)
-                && fuelType.getTankCapacity().equalsIgnoreCase(tankCapacity)) {
+                && fuelType.getTankCapacity().equalsIgnoreCase(tankCapacity)
+                    && fuelType.isGas() == gas) {
                     return fuelType;
             }
         }
