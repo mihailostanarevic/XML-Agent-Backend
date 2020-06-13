@@ -56,7 +56,7 @@
     </root>
 
     <logger name="com.rentacar" level="trace" additivity="false">
-        <appender-ref ref="SevereRollingFile" />
+        <!-- LOG everything at INFO level <appender-ref ref="SevereRollingFile" />-->
         <appender-ref ref="ErrorEmail"/>
     </logger>
 

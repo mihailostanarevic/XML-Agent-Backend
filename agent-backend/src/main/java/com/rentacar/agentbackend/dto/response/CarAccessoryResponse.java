@@ -4,15 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchResultResponse {
+public class CarAccessoryResponse {
 
-    private AdSearchResponse ad;
+    private UUID id;
 
-    private AgentSearchResponse agent;
-
-    private CarSearchResponse car;
-
+    private String description;
 }

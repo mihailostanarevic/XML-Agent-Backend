@@ -7,12 +7,20 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchResultResponse {
+public class UsersAdsResponse {
 
     private AdSearchResponse ad;
 
     private AgentSearchResponse agent;
 
     private CarSearchResponse car;
+
+    private String dateFrom;
+
+    private String dateTo;
+
+    private String timeFrom;
+
+    private String timeTo;
 
 }

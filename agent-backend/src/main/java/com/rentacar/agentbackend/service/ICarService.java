@@ -4,6 +4,7 @@ import com.rentacar.agentbackend.dto.request.AddCarAccessoriesRequest;
 import com.rentacar.agentbackend.dto.request.AddKilometersRequest;
 import com.rentacar.agentbackend.dto.request.CreateCarRequest;
 import com.rentacar.agentbackend.dto.request.UpdateCarRequest;
+import com.rentacar.agentbackend.dto.response.CarAccessoryResponse;
 import com.rentacar.agentbackend.dto.response.CarResponse;
 
 import java.util.List;
@@ -24,4 +25,6 @@ public interface ICarService {
     void addKilometers(AddKilometersRequest request, UUID id) throws Exception;
 
     void addCarAccessories(AddCarAccessoriesRequest request) throws Exception; //u request dva id-a
+
+    List<CarAccessoryResponse> getCarAccessories(UUID id);
 }
