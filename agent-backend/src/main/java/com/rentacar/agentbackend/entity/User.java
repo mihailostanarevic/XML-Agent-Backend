@@ -57,6 +57,12 @@ public class User extends BaseEntity implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private Set<Authority> authorities;
 
+    @OneToMany(mappedBy = "userSender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messagesSent = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userReceiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messagesReceived = new ArrayList<>();
+
     public List<GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> auth_list = new ArrayList<>();
         this.authorities.forEach(authority -> auth_list.addAll(authority.getPermissions()));

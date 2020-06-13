@@ -4,15 +4,16 @@ import com.rentacar.agentbackend.dto.request.AddCarAccessoriesRequest;
 import com.rentacar.agentbackend.dto.request.AddKilometersRequest;
 import com.rentacar.agentbackend.dto.request.CreateCarRequest;
 import com.rentacar.agentbackend.dto.request.UpdateCarRequest;
+import com.rentacar.agentbackend.dto.response.CarAccessoryResponse;
 import com.rentacar.agentbackend.dto.response.CarResponse;
 import com.rentacar.agentbackend.entity.Car;
 import com.rentacar.agentbackend.entity.CarAccessories;
 import com.rentacar.agentbackend.repository.*;
+import com.rentacar.agentbackend.service.ICarAccessoriesService;
 import com.rentacar.agentbackend.service.ICarService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,12 +29,15 @@ public class CarService implements ICarService {
 
     private final ICarAccessoriesRepository _carAccessoriesRepository;
 
-    public CarService(ICarRepository carRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarAccessoriesRepository carAccessoriesRepository) {
+    private final CarAccessoriesService _carAccessoriesService;
+
+    public CarService(ICarRepository carRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarAccessoriesRepository carAccessoriesRepository, CarAccessoriesService carAccessoriesService) {
         _carRepository = carRepository;
         _carModelRepository = carModelRepository;
         _gearshiftTypeRepository = gearshiftTypeRepository;
         _fuelTypeRepository = fuelTypeRepository;
         _carAccessoriesRepository = carAccessoriesRepository;
+        _carAccessoriesService = carAccessoriesService;
     }
 
     @Override
@@ -96,6 +100,18 @@ public class CarService implements ICarService {
         _carRepository.save(car);
         carAccessories.getCars().add(car);
         _carAccessoriesRepository.save(carAccessories);
+    }
+
+    @Override
+    public List<CarAccessoryResponse> getCarAccessories(UUID id) {
+        /////////////////////////////
+        List<Car> cars = _carRepository.findAll();
+        for(Car car : cars){
+            if(car.getId().equals(id)){
+                return _carAccessoriesService.mapCarAccessoriesToResponse(car.getCarAccessories());
+            }
+        }
+        return new ArrayList<CarAccessoryResponse>();
     }
 
     private CarResponse mapCarToCarResponse(Car car) {
