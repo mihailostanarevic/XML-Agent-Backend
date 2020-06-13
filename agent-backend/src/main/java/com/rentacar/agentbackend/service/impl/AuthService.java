@@ -166,18 +166,21 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public UserResponse login(LoginRequest request) throws Exception {
+    public UserResponse login(LoginRequest request) throws GeneralException {
         User user = _userRepository.findOneByUsername(request.getUsername());
+        if(user == null) {
+            throw new GeneralException("Unknown user", HttpStatus.BAD_REQUEST);
+        }
         if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
-            throw new Exception("Your registration hasn't been approved yet.");
+            throw new GeneralException("Your registration hasn't been approved yet.", HttpStatus.BAD_REQUEST);
         }
 
         if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.DENIED)){
-            throw new Exception("Your registration has been denied.");
+            throw new GeneralException("Your registration has been denied.", HttpStatus.BAD_REQUEST);
         }
 
         if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.CONFIRMED)){
-            throw new Exception("Your registration has been approved by admin. Please activate your account.");
+            throw new GeneralException("Your registration has been approved by admin. Please activate your account.", HttpStatus.BAD_REQUEST);
         }
         logger.error("Example of an error which will be displayed because its higher priority than INFO");
         String mail = request.getUsername();
