@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class AdSearchResponse {
 
-    private UUID adID;
+    private UUID adID;          //
 
     private boolean limitedDistance;
 
@@ -23,5 +23,5 @@ public class AdSearchResponse {
 
     private LocalDate creationDate;
 
-    private List<PhotoSearchResponse> photos;
+    private List<PhotoSearchResponse> photos;       //
 }

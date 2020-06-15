@@ -13,22 +13,22 @@ public class CarSearchResponse {
 
     private UUID carID;
 
-    private String carModelName;
+    private String carModelName;        //
 
-    private String carBrandName;
+    private String carBrandName;        //
 
-    private String carClassName;
+    private String carClassName;        //
 
     private String carClassDesc;
 
-    private String fuelTypeType;
+    private String fuelTypeType;        //
 
-    private String fuelTypeTankCapacity;
+    private String fuelTypeTankCapacity;        //
 
-    private boolean fuelTypeGas;
+    private boolean fuelTypeGas;            //
 
-    private String gearshiftTypeType;
+    private String gearshiftTypeType;   //
 
-    private String getGearshiftTypeNumberOfGears;
+    private String getGearshiftTypeNumberOfGears;       //
 
 }

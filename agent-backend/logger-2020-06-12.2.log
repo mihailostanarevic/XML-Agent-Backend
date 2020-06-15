@@ -1,0 +1,31 @@
+2020-06-12 15:54:25,726 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-5] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 15:54:25,745 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-5] agent@gmail.com has logged in
+2020-06-12 15:55:06,062 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 15:55:06,068 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] entered incorrect credentials!
+2020-06-12 15:55:07,865 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-7] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 15:55:07,869 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-7] entered incorrect credentials!
+2020-06-12 15:55:08,510 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-4] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 15:55:08,524 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-4] entered incorrect credentials!
+2020-06-12 15:55:09,220 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-3] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 15:55:09,225 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-3] entered incorrect credentials!
+2020-06-12 16:00:16,827 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-9] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 16:00:16,860 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-9] agent@gmail.com has logged in
+2020-06-12 16:00:21,954 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-10] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 16:00:21,961 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-10] entered incorrect credentials!
+2020-06-12 18:17:03,444 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 18:17:03,473 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] entered incorrect credentials!
+2020-06-12 18:17:05,585 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 18:17:05,589 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] entered incorrect credentials!
+2020-06-12 18:17:06,623 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-7] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 18:17:06,628 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-7] entered incorrect credentials!
+2020-06-12 18:19:43,759 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 18:19:43,779 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] entered incorrect credentials!
+2020-06-12 18:19:49,614 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 18:19:49,619 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] entered incorrect credentials!
+2020-06-12 18:19:50,345 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-7] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 18:19:50,349 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-7] entered incorrect credentials!
+2020-06-12 18:19:52,606 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-4] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 18:19:52,610 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-4] entered incorrect credentials!
+2020-06-12 18:26:30,894 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] Example of an error which will be displayed because its higher priority than INFO
+2020-06-12 18:26:30,925 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-8] agent@gmail.com has logged in
+2020-06-12 18:26:34,904 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-1] Example of an error which will be displayed because its higher priority than INFO

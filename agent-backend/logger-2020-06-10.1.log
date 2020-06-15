@@ -1,0 +1,36 @@
+2020-06-10 13:37:58,622 ERROR com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] Example of an error which will be displayed because its higher priority than INFO
+2020-06-10 13:37:58,753 INFO com.rentacar.agentbackend.service.impl.AuthService [https-jsse-nio-8443-exec-6] agent@gmail.com has logged in
+2020-06-10 13:41:51,601 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 13:42:03,173 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 13.582 seconds (JVM running for 14.642)
+2020-06-10 13:45:11,828 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 13:45:23,766 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 14.294 seconds (JVM running for 15.682)
+2020-06-10 13:50:04,808 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 13:50:24,215 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 21.603 seconds (JVM running for 22.775)
+2020-06-10 13:51:00,295 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 13:52:37,320 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 13:52:52,239 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 17.278 seconds (JVM running for 18.273)
+2020-06-10 13:53:54,072 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 13:54:08,394 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 16.402 seconds (JVM running for 17.543)
+2020-06-10 13:56:04,624 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 13:56:29,965 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 29.786 seconds (JVM running for 31.793)
+2020-06-10 13:59:30,667 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 13:59:44,921 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 17.227 seconds (JVM running for 19.116)
+2020-06-10 14:03:04,259 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 14:03:16,785 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 14.155 seconds (JVM running for 14.88)
+2020-06-10 14:09:44,426 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 14:09:55,624 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 13.249 seconds (JVM running for 14.1)
+2020-06-10 14:13:15,361 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 14:13:29,093 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 15.785 seconds (JVM running for 16.885)
+2020-06-10 15:14:36,360 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 15:14:45,723 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 11.093 seconds (JVM running for 12.106)
+2020-06-10 15:17:45,731 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 15:18:06,002 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 15:18:25,889 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 21.755 seconds (JVM running for 22.827)
+2020-06-10 15:21:37,815 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 15:21:46,916 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 10.837 seconds (JVM running for 11.571)
+2020-06-10 15:41:33,424 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 15:41:41,567 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 9.809 seconds (JVM running for 10.613)
+2020-06-10 15:42:14,430 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 15:42:23,700 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 10.982 seconds (JVM running for 11.768)
+2020-06-10 15:52:51,320 INFO org.springframework.boot.SpringApplication [main] No active profile set, falling back to default profiles: default
+2020-06-10 15:52:58,254 INFO org.springframework.boot.StartupInfoLogger [main] Started AgentBackendApplication in 8.378 seconds (JVM running for 8.985)
