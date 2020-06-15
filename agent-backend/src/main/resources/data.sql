@@ -147,3 +147,15 @@ insert into ad (id, available, available_kilometers_per_rent, cdw, creation_date
     ('1124e496-a070-4b6e-b9c2-1b5e9aa00b60', true, 'UNLIMITED', true, '2020-03-04', false, false, 1, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', 'c26d34ae-0cb7-4869-8a97-9063c355c94a'),
     ('92cc7fc1-5823-40cb-8b36-6162f1cdb5a0', true, '20', true, '2019-12-24', false, false, 1, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', '8d58e543-cfb4-4eda-920c-9ace4d9e0413'),
     ('87ea3abc-1bef-4c17-9ce6-4938e947a917', true, 'UNLIMITED', true, '2019-12-21', false, false, 2, 'c72721c4-437f-4a06-b3cc-00b9a86056bc', 'ef5cc250-a3d2-40fd-a85c-ade447e93125');
+
+insert into car_accessories (id, description, deleted) values
+    ('4d3a07c8-c2c5-418c-b96c-8bf86417a6c1', 'Spear tyre', false),
+    ('57d5ebbf-51a1-4aea-879b-663103c7f0a3', 'Medical kit', false),
+    ('5349191d-962d-4eeb-a2b5-06bdfe2e711f', 'Fire extinguisher', false),
+    ('b26855c2-6b55-410e-952b-5a15faeb443e', 'Triangle for accidents', false),
+    ('a8ac2d3a-a4eb-40a2-ad90-771267903c2b', 'Something else', false);
+
+insert into car_accessories_car (car_id, car_accessories_id) values
+    ('c26d34ae-0cb7-4869-8a97-9063c355c94a', '4d3a07c8-c2c5-418c-b96c-8bf86417a6c1'),
+    ('c26d34ae-0cb7-4869-8a97-9063c355c94a', '57d5ebbf-51a1-4aea-879b-663103c7f0a3'),
+    ('c26d34ae-0cb7-4869-8a97-9063c355c94a', 'b26855c2-6b55-410e-952b-5a15faeb443e');

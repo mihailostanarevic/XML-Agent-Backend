@@ -6,10 +6,7 @@ import com.rentacar.agentbackend.dto.response.CarAccessoryResponse;
 import com.rentacar.agentbackend.dto.response.MessageResponse;
 import com.rentacar.agentbackend.dto.response.UserMessageResponse;
 import com.rentacar.agentbackend.entity.*;
-import com.rentacar.agentbackend.repository.IAdRepository;
-import com.rentacar.agentbackend.repository.ICarAccessoriesRepository;
-import com.rentacar.agentbackend.repository.IMessageCarAccessoriesRepository;
-import com.rentacar.agentbackend.repository.IMessageRepository;
+import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IMessageService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.UserRole;
@@ -41,6 +38,12 @@ public class MessageService implements IMessageService {
     @Autowired
     private ICarAccessoriesRepository _carAccessoriesRepository;
 
+    @Autowired
+    private ISimpleUserRepository _simpleUserRepository;
+
+    @Autowired
+    private IAgentRepository _agentRepository;
+
     @Override
     public List<MessageResponse> getAllReceivedMessagesForUser(UUID id) {
         User user = _userService.getUser(id);
@@ -50,23 +53,27 @@ public class MessageService implements IMessageService {
     @Override
     public ResponseEntity<String> sendMessage(SendMessageRequest request) {
 
-        //Jebiga moze nas neko sjebati sa XSS-om
-        Pattern pattern = Pattern.compile("<.+?>");
-        if(pattern.matcher(request.getText()).matches()){
-            return new ResponseEntity<>("Possible XSS attack", HttpStatus.BAD_REQUEST);
-        }
-        //valja se proveriti da nas teodora ne bi smarala
-
         Message newMessage = new Message();
         newMessage.setText(request.getText());
 
         Ad ad = _adRepository.getOne(request.getAd());
         newMessage.setAd(ad);
 
-        User userSender = _userService.getUser(request.getSender());
-        User userReceiver = _userService.getUser(request.getReceiver());
-        newMessage.setUserSender(userSender);
-        newMessage.setUserReceiver(userReceiver);
+        SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getSender());
+        if(simpleUser != null){
+            newMessage.setUserSender(simpleUser.getUser());
+        }else {
+            Agent agent = _agentRepository.findOneById(request.getSender());
+            newMessage.setUserSender(agent.getUser());
+        }
+
+        SimpleUser simpleUser1 = _simpleUserRepository.findOneById(request.getSender());
+        if(simpleUser != null){
+            newMessage.setUserReceiver(simpleUser1.getUser());
+        }else {
+            Agent agent = _agentRepository.findOneById(request.getSender());
+            newMessage.setUserReceiver(agent.getUser());
+        }
 
         Message msg = _messageRepository.save(newMessage);
         for(UUID id : request.getAccessories()){
