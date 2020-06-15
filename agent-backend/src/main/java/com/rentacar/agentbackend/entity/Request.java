@@ -20,7 +20,7 @@ public class Request extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private SimpleUser customer;
 
-    private CarRequestStatus status;
+    private RequestStatus status;
 
     private LocalDate receptionDate;       // datum prijema zahteva
 
