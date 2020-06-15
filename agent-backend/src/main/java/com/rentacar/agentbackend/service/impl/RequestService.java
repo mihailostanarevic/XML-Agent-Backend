@@ -7,6 +7,7 @@ import com.rentacar.agentbackend.entity.Request;
 import com.rentacar.agentbackend.entity.RequestAd;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IRequestService;
+import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 
@@ -103,7 +104,7 @@ public class RequestService implements IRequestService {
         Set<Ad> adSet = new HashSet<>();
         adSet.add(_adRepository.findOneById(requestDTO.getAdID()));
         request.setCustomer(_simpleUserRepository.findOneById(requestDTO.getCustomerID()));
-        request.setStatus(RequestStatus.PENDING);
+        request.setStatus(CarRequestStatus.PENDING);
         request.setPickUpAddress(_addressRepository.findOneById(requestDTO.getPickUpAddress()));
         request.setDeleted(false);
         List<RequestDTO> requestDTOList = new ArrayList<>();
@@ -122,7 +123,7 @@ public class RequestService implements IRequestService {
             adSet.add(ad);
         }
         request.setCustomer(_simpleUserRepository.findOneById(requestList.get(0).getCustomerID()));
-        request.setStatus(RequestStatus.PENDING);
+        request.setStatus(CarRequestStatus.PENDING);
         request.setPickUpAddress(_addressRepository.findOneById(requestList.get(0).getPickUpAddress()));
         request.setDeleted(false);
         _requestRepository.save(request);
