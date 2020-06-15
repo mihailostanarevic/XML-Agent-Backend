@@ -18,5 +18,7 @@ public interface IUserService {
 
     List<UsersAdsResponse> getUsersAdsFromStatus(UUID id, RequestStatus status);
 
-    List<SimpleUserRequests> getAllUserRequests(UUID id, CarRequestStatus reserved);
+    List<SimpleUserRequests> getAllUserRequests(UUID id, RequestStatus reserved);
+
+    String payRequest(UUID userId, UUID resID);
 }

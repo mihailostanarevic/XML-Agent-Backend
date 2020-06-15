@@ -1,13 +1,9 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.request.RequestDTO;
-import com.rentacar.agentbackend.entity.Ad;
-import com.rentacar.agentbackend.entity.Agent;
-import com.rentacar.agentbackend.entity.Request;
-import com.rentacar.agentbackend.entity.RequestAd;
+import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IRequestService;
-import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +21,18 @@ public class RequestService implements IRequestService {
     private final IAgentRepository _agentRepository;
     private final IAdRepository _adRepository;
     private final ISimpleUserRepository _simpleUserRepository;
+    private final IUserRepository _userRepository;
+    private final IAuthorityRepository _authorityRepository;
     private final IAddressRepository _addressRepository;
     private final IRequestAdRepository _requestAdRepository;
 
-    public RequestService(IRequestRepository requestRepository, IAgentRepository agentRepository, IAdRepository adRepository, ISimpleUserRepository simpleUserRepository, IAddressRepository addressRepository, IRequestAdRepository requestAdRepository) {
+    public RequestService(IRequestRepository requestRepository, IAgentRepository agentRepository, IAdRepository adRepository, ISimpleUserRepository simpleUserRepository, IUserRepository userRepository, IAuthorityRepository authorityRepository, IAddressRepository addressRepository, IRequestAdRepository requestAdRepository) {
         _requestRepository = requestRepository;
         _agentRepository = agentRepository;
         _adRepository = adRepository;
         _simpleUserRepository = simpleUserRepository;
+        _userRepository = userRepository;
+        _authorityRepository = authorityRepository;
         _addressRepository = addressRepository;
         _requestAdRepository = requestAdRepository;
     }
@@ -103,14 +103,19 @@ public class RequestService implements IRequestService {
         Request request = new Request();
         Set<Ad> adSet = new HashSet<>();
         adSet.add(_adRepository.findOneById(requestDTO.getAdID()));
-        request.setCustomer(_simpleUserRepository.findOneById(requestDTO.getCustomerID()));
-        request.setStatus(CarRequestStatus.PENDING);
+        SimpleUser simpleUser = _simpleUserRepository.findOneById(requestDTO.getCustomerID());
+        request.setCustomer(simpleUser);
+        request.setStatus(RequestStatus.PENDING);
         request.setPickUpAddress(_addressRepository.findOneById(requestDTO.getPickUpAddress()));
         request.setDeleted(false);
         List<RequestDTO> requestDTOList = new ArrayList<>();
         requestDTOList.add(requestDTO);
         _requestRepository.save(request);
         createRequestAd(request, requestDTOList);
+        User user = _userRepository.findOneById(simpleUser.getUser().getId());
+        Authority authority = _authorityRepository.findByName("ROLE_REQUEST");
+        user.getRoles().add(authority);
+        _userRepository.save(user);
         return request;
     }
 
@@ -123,7 +128,7 @@ public class RequestService implements IRequestService {
             adSet.add(ad);
         }
         request.setCustomer(_simpleUserRepository.findOneById(requestList.get(0).getCustomerID()));
-        request.setStatus(CarRequestStatus.PENDING);
+        request.setStatus(RequestStatus.PENDING);
         request.setPickUpAddress(_addressRepository.findOneById(requestList.get(0).getPickUpAddress()));
         request.setDeleted(false);
         _requestRepository.save(request);

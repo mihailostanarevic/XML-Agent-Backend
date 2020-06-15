@@ -10,6 +10,7 @@ import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,19 +53,26 @@ public class UserController {
         return _userService.getUsersAdsFromStatus(userId,status);
     }
 
-    // @GetMapping("/{id}/requests")
-    @GetMapping("/requests")
-    public ResponseEntity<List<SimpleUserRequests>> usersRequestFromStatus(@RequestBody RequestsSimpleUser requestsSimpleUser){
+    @GetMapping("/{id}/requests/{status}")
+//    @GetMapping("/requests")
+    @PreAuthorize("hasAuthority('READ_REQUEST')")
+    public ResponseEntity<List<SimpleUserRequests>> usersRequestFromStatus(@PathVariable("id") UUID userId, @PathVariable("status") String status){
         List<SimpleUserRequests> simpleUserRequests;
-        if(requestsSimpleUser.getRequestStatus().equalsIgnoreCase("PENDING")) {
-            simpleUserRequests = _userService.getAllUserRequests(requestsSimpleUser.getId(), CarRequestStatus.PENDING);
-        } else if(requestsSimpleUser.getRequestStatus().equalsIgnoreCase("RESERVED")) {
-            simpleUserRequests = _userService.getAllUserRequests(requestsSimpleUser.getId(), CarRequestStatus.RESERVED);
-        } else if(requestsSimpleUser.getRequestStatus().equalsIgnoreCase("PAID")) {
-            simpleUserRequests = _userService.getAllUserRequests(requestsSimpleUser.getId(), CarRequestStatus.PAID);
+        if(status.equalsIgnoreCase("PENDING")) {
+            simpleUserRequests = _userService.getAllUserRequests(userId, RequestStatus.PENDING);
+        } else if(status.equalsIgnoreCase("RESERVED")) {
+            simpleUserRequests = _userService.getAllUserRequests(userId, RequestStatus.RESERVED);
+        } else if(status.equalsIgnoreCase("PAID")) {
+            simpleUserRequests = _userService.getAllUserRequests(userId, RequestStatus.PAID);
         } else {
-            simpleUserRequests = _userService.getAllUserRequests(requestsSimpleUser.getId(), CarRequestStatus.CANCELED);
+            simpleUserRequests = _userService.getAllUserRequests(userId, RequestStatus.CANCELED);
         }
         return new ResponseEntity<>(simpleUserRequests, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/requests/{resID}/pay")
+    @PreAuthorize("hasAuthority('CREATE_REQUEST')")
+    public ResponseEntity<?> userPay(@PathVariable("id") UUID userId, @PathVariable("resID") UUID resID){
+        return new ResponseEntity<>(_userService.payRequest(userId, resID), HttpStatus.OK);
     }
 }

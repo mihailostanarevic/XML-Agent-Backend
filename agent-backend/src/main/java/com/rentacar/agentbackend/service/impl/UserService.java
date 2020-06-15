@@ -64,7 +64,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<SimpleUserRequests> getAllUserRequests(UUID id, CarRequestStatus requestStatus) {
+    public List<SimpleUserRequests> getAllUserRequests(UUID id, RequestStatus requestStatus) {
         List<Request> requestList = new ArrayList<>();
         for (Request request : _requestRepository.findAll()) {
             if(request.getCustomer().getId().equals(id) && request.getStatus().equals(requestStatus)) {
@@ -74,6 +74,17 @@ public class UserService implements IUserService {
             }
         }
         return mapToSimpleUserRequest(requestList);
+    }
+
+    @Override
+    public String payRequest(UUID userId, UUID resID) {
+        Request request = _requestRepository.findOneById(resID);
+        if(request.getStatus().equals(RequestStatus.RESERVED)) {
+            request.setStatus(RequestStatus.PAID);
+            _requestRepository.save(request);
+            return "You have paid successfuly!";
+        }
+        return "The agent must first approve the request. Payment is canceled.";
     }
 
     private List<SimpleUserRequests> mapToSimpleUserRequest(List<Request> requestList) {
