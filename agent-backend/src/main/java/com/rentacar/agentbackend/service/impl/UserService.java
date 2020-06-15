@@ -6,6 +6,7 @@ import com.rentacar.agentbackend.repository.IRequestAdRepository;
 import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.repository.IUserRepository;
 import com.rentacar.agentbackend.service.IUserService;
+import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +61,40 @@ public class UserService implements IUserService {
         }
 
         return retVal;
+    }
+
+    @Override
+    public List<SimpleUserRequests> getAllUserRequests(UUID id, CarRequestStatus requestStatus) {
+        List<Request> requestList = new ArrayList<>();
+        for (Request request : _requestRepository.findAll()) {
+            if(request.getCustomer().getId().equals(id) && request.getStatus().equals(requestStatus)) {
+                if(!requestList.contains(request)) {
+                    requestList.add(request);
+                }
+            }
+        }
+        return mapToSimpleUserRequest(requestList);
+    }
+
+    private List<SimpleUserRequests> mapToSimpleUserRequest(List<Request> requestList) {
+        List<SimpleUserRequests> simpleUserRequestList = new ArrayList<>();
+        for (Request request : requestList) {
+            SimpleUserRequests simpleUserRequests = new SimpleUserRequests();
+            Agent agent = _requestAdRepository.findAllByRequest(request).get(0).getAd().getAgent();
+            simpleUserRequests.setAgent(agent.getName());
+            simpleUserRequests.setPickUpAddress(request.getPickUpAddress().getCity() + ", " + request.getPickUpAddress().getStreet() + " " + request.getPickUpAddress().getNumber());
+            simpleUserRequests.setReceptionDate(request.getReceptionDate().toString());
+            simpleUserRequests.setId(request.getId());
+            String ads = "";
+            for (RequestAd requestAd : _requestAdRepository.findAllByRequest(request)) {
+                ads += requestAd.getAd().getCar().getCarModel().getCarBrand().getName() + " " + requestAd.getAd().getCar().getCarModel().getName() + ",";
+            }
+            ads = ads.substring(0, ads.length() -1);
+            simpleUserRequests.setAd(ads);
+            simpleUserRequestList.add(simpleUserRequests);
+        }
+
+        return simpleUserRequestList;
     }
 
     private UsersAdsResponse makeUsersAdDTO(RequestAd requestAd){
