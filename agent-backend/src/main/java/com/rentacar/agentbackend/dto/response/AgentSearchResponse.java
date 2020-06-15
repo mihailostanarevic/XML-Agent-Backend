@@ -12,13 +12,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AgentSearchResponse {
 
-    private UUID agentID;       //
+    private UUID agentID;
 
-    private String agentName;       //
+    private String agentName;
 
     private String dateFounded;
 
-    private String locations;       //
+    private String locations;
 
     private List<AddressDTO> fullLocations;
 }
