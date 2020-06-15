@@ -1,5 +1,6 @@
 package com.rentacar.agentbackend.entity;
 
+import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +8,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,11 +17,10 @@ import java.util.Set;
 @AllArgsConstructor
 public class Request extends BaseEntity {
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private SimpleUser customer;
 
-    private RequestStatus status;
+    private CarRequestStatus status;
 
     private LocalDate receptionDate;       // datum prijema zahteva
 

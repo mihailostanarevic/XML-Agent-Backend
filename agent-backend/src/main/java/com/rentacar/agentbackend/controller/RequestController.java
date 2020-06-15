@@ -1,6 +1,8 @@
 package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.RequestDTO;
+import com.rentacar.agentbackend.dto.response.RequestResponseDTO;
+import com.rentacar.agentbackend.entity.Request;
 import com.rentacar.agentbackend.service.IRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +26,11 @@ public class RequestController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createRequest(@RequestBody List<RequestDTO> requestList){
+    public ResponseEntity<RequestResponseDTO> createRequest(@RequestBody List<RequestDTO> requestList){
         _requestService.processRequests(requestList);
-        return new ResponseEntity<>("Hello from Rent service", HttpStatus.OK);
+        RequestResponseDTO responseDTO = new RequestResponseDTO();
+        responseDTO.setMessage("Request is successfully created!");
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 }
