@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CommentService implements ICommentService {
@@ -81,6 +82,13 @@ public class CommentService implements ICommentService {
         _simpleUserRepository.save(simpleUser);
 
         return mapCommentToCommentResponse(savedComment);
+    }
+
+    @Override
+    public void approveComment(UUID id) throws Exception {
+        Comment comment = _commentRepository.findOneById(id);
+        comment.setStatus(RequestStatus.APPROVED);
+        _commentRepository.save(comment);
     }
 
     private CommentResponse mapCommentToCommentResponse(Comment comment){
