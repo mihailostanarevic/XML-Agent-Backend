@@ -17,4 +17,5 @@ public interface IRequestRepository extends JpaRepository<Request, UUID> {
 
     List<Request> findAllByStatus(RequestStatus requestStatus);
 
+    List<Request> findAllByCustomer_Id(UUID id); //
 }

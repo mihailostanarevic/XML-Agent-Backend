@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -43,6 +44,9 @@ public class Ad extends BaseEntity {
     private LocalDate creationDate; //date when ad was created
 
     private boolean deleted;
+
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
+    private List<Rating> ratings;
 
     public Ad() {
         this.available = true;
