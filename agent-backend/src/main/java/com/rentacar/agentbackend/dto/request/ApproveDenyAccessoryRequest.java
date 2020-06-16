@@ -1,4 +1,4 @@
-package com.rentacar.agentbackend.dto.response;
+package com.rentacar.agentbackend.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,11 +9,9 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CarAccessoryResponse {
+public class ApproveDenyAccessoryRequest {
 
     private UUID id;
 
-    private UUID messageAccessoryID;
-
-    private String description;
+    private boolean approved;
 }

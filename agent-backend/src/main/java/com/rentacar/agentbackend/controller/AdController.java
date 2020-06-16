@@ -5,6 +5,7 @@ import com.rentacar.agentbackend.dto.request.RequestDTO;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
 import com.rentacar.agentbackend.dto.response.PhotoResponse;
+import com.rentacar.agentbackend.dto.response.RequestResponse;
 import com.rentacar.agentbackend.entity.Photo;
 import com.rentacar.agentbackend.repository.IPhotoRepository;
 import com.rentacar.agentbackend.service.IAdService;
@@ -47,10 +48,10 @@ public class AdController {
         return new ResponseEntity<>(_adService.getPhoto(adId), HttpStatus.OK);
     }
 
-    @PutMapping("/availability")
-    public ResponseEntity<String> changeCarAvailability(@RequestBody RequestDTO request) throws Exception{
+    @PostMapping("/availability")
+    public ResponseEntity<?> changeCarAvailability(@RequestBody RequestDTO request) throws Exception{
         _requestService.changeAdAvailability(request);
-        return new ResponseEntity<>("succesfully changed", HttpStatus.OK);
+        return new ResponseEntity<>(new RequestResponse("succesfully changed"), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/ad")

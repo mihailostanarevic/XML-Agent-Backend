@@ -1,15 +1,13 @@
 package com.rentacar.agentbackend.service.impl;
 
+import com.rentacar.agentbackend.dto.request.SeenRequest;
 import com.rentacar.agentbackend.dto.request.SendMessageRequest;
 import com.rentacar.agentbackend.dto.response.AdMessageResponse;
 import com.rentacar.agentbackend.dto.response.CarAccessoryResponse;
 import com.rentacar.agentbackend.dto.response.MessageResponse;
 import com.rentacar.agentbackend.dto.response.UserMessageResponse;
 import com.rentacar.agentbackend.entity.*;
-import com.rentacar.agentbackend.repository.IAdRepository;
-import com.rentacar.agentbackend.repository.ICarAccessoriesRepository;
-import com.rentacar.agentbackend.repository.IMessageCarAccessoriesRepository;
-import com.rentacar.agentbackend.repository.IMessageRepository;
+import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IMessageService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.UserRole;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 @Service
 public class MessageService implements IMessageService {
@@ -41,21 +38,27 @@ public class MessageService implements IMessageService {
     @Autowired
     private ICarAccessoriesRepository _carAccessoriesRepository;
 
+    @Autowired
+    private ISimpleUserRepository _simpleUserRepository;
+
+    @Autowired
+    private IAgentRepository _agentRepository;
+
     @Override
     public List<MessageResponse> getAllReceivedMessagesForUser(UUID id) {
-        User user = _userService.getUser(id);
+        SimpleUser simpleUser = _simpleUserRepository.findOneById(id);
+        User user;
+        if(simpleUser != null){
+            user = _userService.getUser(simpleUser.getUser().getId());
+        }else {
+            Agent agent = _agentRepository.findOneById(id);
+            user = _userService.getUser(agent.getUser().getId());
+        }
         return mapMessagesToResponseDTO(user);
     }
 
     @Override
     public ResponseEntity<String> sendMessage(SendMessageRequest request) {
-
-        //Jebiga moze nas neko sjebati sa XSS-om
-        Pattern pattern = Pattern.compile("<.+?>");
-        if(pattern.matcher(request.getText()).matches()){
-            return new ResponseEntity<>("Possible XSS attack", HttpStatus.BAD_REQUEST);
-        }
-        //valja se proveriti da nas teodora ne bi smarala
 
         Message newMessage = new Message();
         newMessage.setText(request.getText());
@@ -63,10 +66,21 @@ public class MessageService implements IMessageService {
         Ad ad = _adRepository.getOne(request.getAd());
         newMessage.setAd(ad);
 
-        User userSender = _userService.getUser(request.getSender());
-        User userReceiver = _userService.getUser(request.getReceiver());
-        newMessage.setUserSender(userSender);
-        newMessage.setUserReceiver(userReceiver);
+        SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getSender());
+        if(simpleUser != null){
+            newMessage.setUserSender(simpleUser.getUser());
+        }else {
+            Agent agent = _agentRepository.findOneById(request.getSender());
+            newMessage.setUserSender(agent.getUser());
+        }
+
+        SimpleUser simpleUser1 = _simpleUserRepository.findOneById(request.getReceiver());
+        if(simpleUser1 != null){
+            newMessage.setUserReceiver(simpleUser1.getUser());
+        }else {
+            Agent agent = _agentRepository.findOneById(request.getReceiver());
+            newMessage.setUserReceiver(agent.getUser());
+        }
 
         Message msg = _messageRepository.save(newMessage);
         for(UUID id : request.getAccessories()){
@@ -84,27 +98,38 @@ public class MessageService implements IMessageService {
         return null;
     }
 
+    @Override
+    public void seen(SeenRequest request, UUID id) {
+        Message msg = _messageRepository.findOneById(id);
+        msg.setSeen(request.isSeen());
+        _messageRepository.save(msg);
+    }
+
     private List<MessageResponse> mapMessagesToResponseDTO(User user) {
         List<MessageResponse> retVal = new ArrayList<>();
 
         for(Message message : user.getMessagesReceived()){
             MessageResponse msg = new MessageResponse();
+            msg.setId(message.getId());
             msg.setText(message.getText());
             msg.setDateSent(message.getDateSent().toString());
-            msg.setTimeSent(message.getText());
+            msg.setTimeSent(message.getTimeSent().toString());
             AdMessageResponse ad = new AdMessageResponse(message.getAd().getCreationDate().toString()
                     , makeShortCarDescription(message)
                     , message.getAd().getId());
             msg.setAd(ad);
             UserMessageResponse userDTO = new UserMessageResponse();
-            userDTO.setId(user.getId());
 
-            if(user.getUserRole().equals(UserRole.AGENT)){
-                userDTO.setName(user.getAgent().getName());
-            }else if(user.getUserRole().equals(UserRole.ADMIN)){
-                userDTO.setName(user.getAdmin().getFirstName() + " " + user.getAdmin().getLastName());
+
+            if(message.getUserSender().getUserRole().equals(UserRole.AGENT)){
+                userDTO.setId(message.getUserSender().getAgent().getId());
+                userDTO.setName(message.getUserSender().getAgent().getName());
+            }else if(message.getUserSender().getUserRole().equals(UserRole.ADMIN)){
+                userDTO.setId(message.getUserSender().getAdmin().getId());
+                userDTO.setName(message.getUserSender().getAdmin().getFirstName() + " " + message.getUserSender().getAdmin().getLastName());
             }else {
-                userDTO.setName(user.getSimpleUser().getFirstName() + " " + user.getAdmin().getLastName());
+                userDTO.setId(message.getUserSender().getSimpleUser().getId());
+                userDTO.setName(message.getUserSender().getSimpleUser().getFirstName() + " " + message.getUserSender().getSimpleUser().getLastName());
             }
             msg.setUser(userDTO);
 
@@ -112,13 +137,17 @@ public class MessageService implements IMessageService {
             List<CarAccessoryResponse> accessories = new ArrayList<>();
             for(MessageCarAccessories item : list){
                 if(item.getMessage().getId().equals(message.getId())){
-                    CarAccessoryResponse carAccessoryResponse = new CarAccessoryResponse(
-                            item.getCar_accessory().getId()
-                            ,item.getCar_accessory().getDescription());
-                    accessories.add(carAccessoryResponse);
+                    if(!item.isReviewed()){
+                        CarAccessoryResponse carAccessoryResponse = new CarAccessoryResponse(
+                                item.getCar_accessory().getId(),
+                                item.getId(),
+                                item.getCar_accessory().getDescription());
+                        accessories.add(carAccessoryResponse);
+                    }
                 }
             }
             msg.setCarAccessories(accessories);
+            msg.setSeen(message.isSeen());
             retVal.add(msg);
         }
 
