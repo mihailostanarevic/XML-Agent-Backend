@@ -7,6 +7,7 @@ import com.rentacar.agentbackend.entity.User;
 import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,5 +21,5 @@ public interface IUserService {
 
     List<SimpleUserRequests> getAllUserRequests(UUID id, RequestStatus reserved);
 
-    String payRequest(UUID userId, UUID resID);
+    Collection<SimpleUserRequests> payRequest(UUID userId, UUID resID);
 }

@@ -11,6 +11,7 @@ import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -77,14 +78,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String payRequest(UUID userId, UUID resID) {
+    public Collection<SimpleUserRequests> payRequest(UUID userId, UUID resID) {
         Request request = _requestRepository.findOneById(resID);
         if(request.getStatus().equals(RequestStatus.RESERVED)) {
             request.setStatus(RequestStatus.PAID);
             _requestRepository.save(request);
-            return "You have paid successfuly!";
         }
-        return "The agent must first approve the request. Payment is canceled.";
+        return getAllUserRequests(userId, RequestStatus.RESERVED);
     }
 
     private List<SimpleUserRequests> mapToSimpleUserRequest(List<Request> requestList) {
@@ -96,6 +96,7 @@ public class UserService implements IUserService {
             simpleUserRequests.setPickUpAddress(request.getPickUpAddress().getCity() + ", " + request.getPickUpAddress().getStreet() + " " + request.getPickUpAddress().getNumber());
             simpleUserRequests.setReceptionDate(request.getReceptionDate().toString());
             simpleUserRequests.setId(request.getId());
+            simpleUserRequests.setRequestStatus(request.getStatus().toString());
             String ads = "";
             for (RequestAd requestAd : _requestAdRepository.findAllByRequest(request)) {
                 ads += requestAd.getAd().getCar().getCarModel().getCarBrand().getName() + " " + requestAd.getAd().getCar().getCarModel().getName() + ",";

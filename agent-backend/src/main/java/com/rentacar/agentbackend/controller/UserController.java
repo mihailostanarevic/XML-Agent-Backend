@@ -1,18 +1,17 @@
 package com.rentacar.agentbackend.controller;
 
-import com.rentacar.agentbackend.dto.request.RequestsSimpleUser;
+import com.rentacar.agentbackend.dto.request.RequestBodyID;
 import com.rentacar.agentbackend.dto.response.SimpleUserRequests;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.dto.response.UsersAdsResponse;
-import com.rentacar.agentbackend.entity.Request;
 import com.rentacar.agentbackend.service.IUserService;
-import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,8 +52,8 @@ public class UserController {
         return _userService.getUsersAdsFromStatus(userId,status);
     }
 
+    //    @GetMapping("/requests")
     @GetMapping("/{id}/requests/{status}")
-//    @GetMapping("/requests")
     @PreAuthorize("hasAuthority('READ_REQUEST')")
     public ResponseEntity<List<SimpleUserRequests>> usersRequestFromStatus(@PathVariable("id") UUID userId, @PathVariable("status") String status){
         List<SimpleUserRequests> simpleUserRequests;
@@ -72,7 +71,7 @@ public class UserController {
 
     @PutMapping("/{id}/requests/{resID}/pay")
     @PreAuthorize("hasAuthority('CREATE_REQUEST')")
-    public ResponseEntity<?> userPay(@PathVariable("id") UUID userId, @PathVariable("resID") UUID resID){
-        return new ResponseEntity<>(_userService.payRequest(userId, resID), HttpStatus.OK);
+    public ResponseEntity<Collection<SimpleUserRequests>> userPay(@RequestBody RequestBodyID requestBodyID){
+        return new ResponseEntity<>(_userService.payRequest(requestBodyID.getId(), requestBodyID.getRequestID()), HttpStatus.OK);
     }
 }

@@ -9,4 +9,6 @@ public class RequestBodyID {
 
     private UUID id;
 
+    private UUID requestID;
+
 }

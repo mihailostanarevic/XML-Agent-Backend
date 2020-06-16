@@ -17,4 +17,6 @@ public class AgentRequests {
 
     private String pickUpAddress;
 
+    private String requestStatus;
+
 }

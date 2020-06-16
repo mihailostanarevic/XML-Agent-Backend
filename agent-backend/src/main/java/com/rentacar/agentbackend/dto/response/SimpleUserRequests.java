@@ -17,4 +17,6 @@ public class SimpleUserRequests {
 
     private String pickUpAddress;
 
+    private String requestStatus;
+
 }

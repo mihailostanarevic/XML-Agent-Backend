@@ -50,7 +50,7 @@ public class RequestService implements IRequestService {
                     Ad ad1 = _adRepository.findOneById(agentRequest.getAdID());
                     Agent agent1 = _agentRepository.findOneById(ad1.getAgent().getId());
                     if(agentRequest.isBundle() && agent.equals(agent1) && !bundleList.contains(agentRequest)) {
-                        if (checkCarAvailability(ad, requestDTO) && ad.isAvailable()) {
+                        if (ad.isAvailable()) {
                             bundleList.add(agentRequest);
                             processedList.add(agentRequest);
                         } else {
@@ -62,7 +62,7 @@ public class RequestService implements IRequestService {
                     createBundleRequest(bundleList);
                 }
             } else if (!requestDTO.isBundle()) {
-                if (checkCarAvailability(ad, requestDTO) && ad.isAvailable()) {
+                if (ad.isAvailable()) {
                     createRequest(requestDTO);
                 }
             }

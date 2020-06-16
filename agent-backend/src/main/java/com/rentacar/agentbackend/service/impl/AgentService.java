@@ -41,7 +41,7 @@ public class AgentService implements IAgentService {
     }
 
     @Override
-    public String approveRequest(UUID agentId, UUID requestID) {
+    public Collection<AgentRequests> approveRequest(UUID agentId, UUID requestID) {
         Request request = _requestRepository.findOneById(requestID);
         request.setStatus(RequestStatus.RESERVED);
         _requestRepository.save(request);
@@ -49,36 +49,37 @@ public class AgentService implements IAgentService {
         for (RequestAd requestAd : _requestAdRepository.findAllByRequest(request)) {
             for (RequestAd requestAdAll : _requestAdRepository.findAll()) {
                 if (requestAdAll.getRequest().getStatus().equals(RequestStatus.PENDING) &&
-                        checkRequestMatching(requestAd, requestAdAll)) {
+                        checkRequestMatching(requestAd, requestAdAll) && !requestAd.equals(requestAdAll)) {
                     requestAdAll.getRequest().setStatus(RequestStatus.CANCELED);
                     _requestRepository.save(requestAdAll.getRequest());
                 }
             }
         }
-        return "Successfuly reserve this request and denied other matchers!";
+        return getAllAgentRequests(agentId, RequestStatus.PENDING);
     }
 
     private boolean checkRequestMatching(RequestAd requestFirst, RequestAd requestSecond) {
-        if(requestFirst.getReturnDate().isBefore(requestSecond.getPickUpDate())) {
-            return false;
-        } else {
-            if(requestFirst.getPickUpDate().isAfter(requestSecond.getReturnDate())) {
+        if(requestFirst.getAd().equals(requestSecond.getAd())) {
+            if (requestFirst.getReturnDate().isBefore(requestSecond.getPickUpDate())) {
                 return false;
             } else {
-                if(requestFirst.getReturnDate().isEqual(requestSecond.getPickUpDate())) {
-                    if (requestFirst.getReturnTime().isAfter(requestSecond.getPickUpTime())) {
-                        return true;
-                    }
-                } else if(requestSecond.getReturnDate().isEqual(requestFirst.getPickUpDate())) {
-                    if (requestFirst.getPickUpTime().isBefore(requestSecond.getReturnTime())) {
-                        return true;
-                    }
+                if (requestFirst.getPickUpDate().isAfter(requestSecond.getReturnDate())) {
+                    return false;
                 } else {
-                    return true;
+                    if (requestFirst.getReturnDate().isEqual(requestSecond.getPickUpDate())) {
+                        if (requestFirst.getReturnTime().isAfter(requestSecond.getPickUpTime())) {
+                            return true;
+                        }
+                    } else if (requestSecond.getReturnDate().isEqual(requestFirst.getPickUpDate())) {
+                        if (requestFirst.getPickUpTime().isBefore(requestSecond.getReturnTime())) {
+                            return true;
+                        }
+                    } else {
+                        return true;
+                    }
                 }
             }
         }
-
         return false;
     }
 
@@ -90,6 +91,7 @@ public class AgentService implements IAgentService {
             agentRequest.setPickUpAddress(request.getPickUpAddress().getCity() + ", " + request.getPickUpAddress().getStreet() + " " + request.getPickUpAddress().getNumber());
             agentRequest.setReceptionDate(request.getReceptionDate().toString());
             agentRequest.setId(request.getId());
+            agentRequest.setRequestStatus(request.getStatus().toString());
             String ads = "";
             for (RequestAd requestAd : _requestAdRepository.findAllByRequest(request)) {
                 ads += requestAd.getAd().getCar().getCarModel().getCarBrand().getName() + " " + requestAd.getAd().getCar().getCarModel().getName() + ",";

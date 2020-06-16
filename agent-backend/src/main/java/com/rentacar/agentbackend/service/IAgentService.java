@@ -13,5 +13,5 @@ public interface IAgentService {
 
     Collection<AgentRequests> getAllAgentRequests(UUID id, RequestStatus carRequestStatus);       // agent id
 
-    String approveRequest(UUID agentId, UUID requestID);
+    Collection<AgentRequests> approveRequest(UUID agentId, UUID requestID);
 }
