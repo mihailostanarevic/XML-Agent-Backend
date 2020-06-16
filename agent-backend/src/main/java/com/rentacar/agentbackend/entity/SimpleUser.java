@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -37,8 +38,11 @@ public class SimpleUser extends BaseEntity {
     private RequestStatus requestStatus;
 
 //    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
     private Set<Request> request;
 
     private LocalDateTime confirmationTime;
+
+    @OneToMany(mappedBy = "simpleUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
+    private List<Rating> ratings;
 }
