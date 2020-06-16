@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class RatingService implements IRatingService {
@@ -85,6 +87,22 @@ public class RatingService implements IRatingService {
         _simpleUserRepository.save(simpleUser);
 
         return mapRatingToRatingResponse(savedRating);
+    }
+
+    @Override
+    public List<RatingResponse> getAllRatingsByCustomer(UUID id) throws Exception {
+        List<Rating> ratings = _ratingRepository.findAllBySimpleUser_Id(id);
+        return ratings.stream()
+                .map(rating -> mapRatingToRatingResponse(rating))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RatingResponse> getAllRatingsByAd(UUID id) throws Exception {
+        List<Rating> ratings = _ratingRepository.findAllByAd_Id(id);
+        return ratings.stream()
+                .map(rating -> mapRatingToRatingResponse(rating))
+                .collect(Collectors.toList());
     }
 
     private RatingResponse mapRatingToRatingResponse(Rating rating){
