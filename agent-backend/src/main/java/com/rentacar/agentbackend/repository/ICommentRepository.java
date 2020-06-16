@@ -14,4 +14,6 @@ public interface ICommentRepository extends JpaRepository<Comment, UUID> {
     Comment findOneById(UUID id);
 
     List<Comment> findAllByAd_IdAndStatus(UUID id, RequestStatus status);
+
+    List<Comment> findAllByStatus(RequestStatus status);
 }
