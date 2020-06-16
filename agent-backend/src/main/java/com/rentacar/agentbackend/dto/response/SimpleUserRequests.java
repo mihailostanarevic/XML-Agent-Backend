@@ -5,11 +5,11 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class AgentRequests {
+public class SimpleUserRequests {
 
     private UUID id;
 
-    private String customer;
+    private String agent;
 
     private String ad;
 

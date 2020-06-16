@@ -22,7 +22,7 @@ public class TokenUtils {
     @Value("somesecret")
     public String SECRET;
 
-    @Value("1200000")
+    @Value("3600000")
     private int EXPIRES_IN;             // koliko mi dugo vazi token
 
     @Value("Auth-Token")

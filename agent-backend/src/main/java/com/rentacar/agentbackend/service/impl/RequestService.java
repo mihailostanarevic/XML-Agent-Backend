@@ -1,23 +1,18 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.request.RequestDTO;
-import com.rentacar.agentbackend.entity.Ad;
-import com.rentacar.agentbackend.entity.Agent;
-import com.rentacar.agentbackend.entity.Request;
-import com.rentacar.agentbackend.entity.RequestAd;
+import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
+import com.rentacar.agentbackend.service.IAgentService;
 import com.rentacar.agentbackend.service.IRequestService;
-import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Service
 public class RequestService implements IRequestService {
 
@@ -25,14 +20,18 @@ public class RequestService implements IRequestService {
     private final IAgentRepository _agentRepository;
     private final IAdRepository _adRepository;
     private final ISimpleUserRepository _simpleUserRepository;
+    private final IUserRepository _userRepository;
+    private final IAuthorityRepository _authorityRepository;
     private final IAddressRepository _addressRepository;
     private final IRequestAdRepository _requestAdRepository;
 
-    public RequestService(IRequestRepository requestRepository, IAgentRepository agentRepository, IAdRepository adRepository, ISimpleUserRepository simpleUserRepository, IAddressRepository addressRepository, IRequestAdRepository requestAdRepository) {
+    public RequestService(IRequestRepository requestRepository, IAgentRepository agentRepository, IAdRepository adRepository, ISimpleUserRepository simpleUserRepository, IUserRepository userRepository, IAuthorityRepository authorityRepository, IAddressRepository addressRepository, IRequestAdRepository requestAdRepository) {
         _requestRepository = requestRepository;
         _agentRepository = agentRepository;
         _adRepository = adRepository;
         _simpleUserRepository = simpleUserRepository;
+        _userRepository = userRepository;
+        _authorityRepository = authorityRepository;
         _addressRepository = addressRepository;
         _requestAdRepository = requestAdRepository;
     }
@@ -50,7 +49,7 @@ public class RequestService implements IRequestService {
                     Ad ad1 = _adRepository.findOneById(agentRequest.getAdID());
                     Agent agent1 = _agentRepository.findOneById(ad1.getAgent().getId());
                     if(agentRequest.isBundle() && agent.equals(agent1) && !bundleList.contains(agentRequest)) {
-                        if (checkCarAvailability(ad, requestDTO) && ad.isAvailable()) {
+                        if (ad.isAvailable()) {
                             bundleList.add(agentRequest);
                             processedList.add(agentRequest);
                         } else {
@@ -62,7 +61,7 @@ public class RequestService implements IRequestService {
                     createBundleRequest(bundleList);
                 }
             } else if (!requestDTO.isBundle()) {
-                if (checkCarAvailability(ad, requestDTO) && ad.isAvailable()) {
+                if (ad.isAvailable()) {
                     createRequest(requestDTO);
                 }
             }
@@ -103,7 +102,8 @@ public class RequestService implements IRequestService {
         Request request = new Request();
         Set<Ad> adSet = new HashSet<>();
         adSet.add(_adRepository.findOneById(requestDTO.getAdID()));
-        request.setCustomer(_simpleUserRepository.findOneById(requestDTO.getCustomerID()));
+        SimpleUser simpleUser = _simpleUserRepository.findOneById(requestDTO.getCustomerID());
+        request.setCustomer(simpleUser);
         request.setStatus(RequestStatus.PENDING);
         request.setPickUpAddress(_addressRepository.findOneById(requestDTO.getPickUpAddress()));
         request.setDeleted(false);
@@ -111,6 +111,26 @@ public class RequestService implements IRequestService {
         requestDTOList.add(requestDTO);
         _requestRepository.save(request);
         createRequestAd(request, requestDTOList);
+        User user = _userRepository.findOneById(simpleUser.getUser().getId());
+        Authority authority = _authorityRepository.findByName("ROLE_REQUEST");
+        user.getRoles().add(authority);
+        _userRepository.save(user);
+
+        TimerTask taskPending = new TimerTask() {
+            public void run() {
+                System.out.println("Request performed on: " + LocalTime.now() + ", " +
+                        "Request id: " + Thread.currentThread().getName());
+                if(request.getStatus().equals(RequestStatus.PENDING)) {
+                    request.setStatus(RequestStatus.CANCELED);
+                    _requestRepository.save(request);
+                }
+            }
+        };
+        Timer timer = new Timer(request.getId().toString());
+        long delay = (24 * 60 * 60 * 1000);
+        System.out.println("Request received at: " + LocalTime.now());
+        timer.schedule(taskPending, delay);
+
         return request;
     }
 
@@ -128,6 +148,20 @@ public class RequestService implements IRequestService {
         request.setDeleted(false);
         _requestRepository.save(request);
         createRequestAd(request, requestList);
+        TimerTask taskPending = new TimerTask() {
+            public void run() {
+                System.out.println("Bundle request performed on: " + LocalTime.now() + ", " +
+                        "Request id: " + Thread.currentThread().getName());
+                if(request.getStatus().equals(RequestStatus.PENDING)) {
+                    request.setStatus(RequestStatus.CANCELED);
+                    _requestRepository.save(request);
+                }
+            }
+        };
+        Timer timer = new Timer(request.getId().toString());
+        long delay = (24 * 60 * 60 * 1000);
+        System.out.println("Bundle received at: " + LocalTime.now());
+        timer.schedule(taskPending, delay);
         return request;
     }
 

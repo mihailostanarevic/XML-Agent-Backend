@@ -5,12 +5,14 @@ import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.IRequestAdRepository;
 import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.repository.IUserRepository;
+import com.rentacar.agentbackend.service.IAgentService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,15 +21,15 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService {
 
     private final IRequestAdRepository _requestAdRepository;
-
     private final IRequestRepository _requestRepository;
-
     private final IUserRepository _userRepository;
+    private final IAgentService _agentService;
 
-    public UserService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository, IUserRepository userRepository) {
+    public UserService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository, IUserRepository userRepository, IAgentService agentService) {
         _requestAdRepository = requestAdRepository;
         _requestRepository = requestRepository;
         _userRepository = userRepository;
+        _agentService = agentService;
     }
 
     public User findOneByUsername(String mail) {
@@ -61,6 +63,53 @@ public class UserService implements IUserService {
         }
 
         return retVal;
+    }
+
+    @Override
+    public List<SimpleUserRequests> getAllUserRequests(UUID id, RequestStatus requestStatus) {
+        List<Request> requestList = new ArrayList<>();
+        for (Request request : _requestRepository.findAll()) {
+            if(request.getCustomer().getId().equals(id) && request.getStatus().equals(requestStatus)) {
+                if(!requestList.contains(request)) {
+                    requestList.add(request);
+                }
+            }
+        }
+        return mapToSimpleUserRequest(requestList);
+    }
+
+    @Override
+    public Collection<SimpleUserRequests> payRequest(UUID userId, UUID resID) {
+        Request request = _requestRepository.findOneById(resID);
+        if(request.getStatus().equals(RequestStatus.RESERVED)) {
+            request.setStatus(RequestStatus.PAID);
+            _requestRepository.save(request);
+        }
+
+        _agentService.changeStatusOfRequests(request, RequestStatus.CHECKED, RequestStatus.CANCELED);
+        return getAllUserRequests(userId, RequestStatus.RESERVED);
+    }
+
+    private List<SimpleUserRequests> mapToSimpleUserRequest(List<Request> requestList) {
+        List<SimpleUserRequests> simpleUserRequestList = new ArrayList<>();
+        for (Request request : requestList) {
+            SimpleUserRequests simpleUserRequests = new SimpleUserRequests();
+            Agent agent = _requestAdRepository.findAllByRequest(request).get(0).getAd().getAgent();
+            simpleUserRequests.setAgent(agent.getName());
+            simpleUserRequests.setPickUpAddress(request.getPickUpAddress().getCity() + ", " + request.getPickUpAddress().getStreet() + " " + request.getPickUpAddress().getNumber());
+            simpleUserRequests.setReceptionDate(request.getReceptionDate().toString());
+            simpleUserRequests.setId(request.getId());
+            simpleUserRequests.setRequestStatus(request.getStatus().toString());
+            String ads = "";
+            for (RequestAd requestAd : _requestAdRepository.findAllByRequest(request)) {
+                ads += requestAd.getAd().getCar().getCarModel().getCarBrand().getName() + " " + requestAd.getAd().getCar().getCarModel().getName() + ",";
+            }
+            ads = ads.substring(0, ads.length() -1);
+            simpleUserRequests.setAd(ads);
+            simpleUserRequestList.add(simpleUserRequests);
+        }
+
+        return simpleUserRequestList;
     }
 
     private UsersAdsResponse makeUsersAdDTO(RequestAd requestAd){

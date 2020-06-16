@@ -102,17 +102,17 @@ public class CarService implements ICarService {
         _carAccessoriesRepository.save(carAccessories);
     }
 
-    @Override
-    public List<CarAccessoryResponse> getCarAccessories(UUID id) {
-        /////////////////////////////
-        List<Car> cars = _carRepository.findAll();
-        for(Car car : cars){
-            if(car.getId().equals(id)){
-                return _carAccessoriesService.mapCarAccessoriesToResponse(car.getCarAccessories());
-            }
-        }
-        return new ArrayList<CarAccessoryResponse>();
-    }
+//    @Override
+//    public List<CarAccessoryResponse> getCarAccessories(UUID id) {
+//        /////////////////////////////
+//        List<Car> cars = _carRepository.findAll();
+//        for(Car car : cars){
+//            if(car.getId().equals(id)){
+//                return _carAccessoriesService.mapCarAccessoriesToResponse(car.getCarAccessories());
+//            }
+//        }
+//        return new ArrayList<CarAccessoryResponse>();
+//    }
 
     private CarResponse mapCarToCarResponse(Car car) {
         CarResponse response = new CarResponse();

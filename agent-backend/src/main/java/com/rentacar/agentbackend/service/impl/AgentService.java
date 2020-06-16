@@ -4,36 +4,97 @@ import com.rentacar.agentbackend.dto.response.AgentRequests;
 import com.rentacar.agentbackend.entity.Request;
 import com.rentacar.agentbackend.entity.RequestAd;
 import com.rentacar.agentbackend.repository.IRequestAdRepository;
+import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.service.IAgentService;
-import com.rentacar.agentbackend.util.enums.CarRequestStatus;
+import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalTime;
+import java.util.*;
 
 @SuppressWarnings({"StringConcatenationInLoop", "unused"})
 @Service
 public class AgentService implements IAgentService {
 
     private final IRequestAdRepository _requestAdRepository;
+    private final IRequestRepository _requestRepository;
 
-    public AgentService(IRequestAdRepository requestAdRepository) {
+    public AgentService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository) {
         _requestAdRepository = requestAdRepository;
+        _requestRepository = requestRepository;
     }
 
     @Override
-    public Collection<AgentRequests> getAllPendingRequests(UUID id) {
+    public Collection<AgentRequests> getAllAgentRequests(UUID id, RequestStatus carRequestStatus) {
         List<Request> requestList = new ArrayList<>();
         for (RequestAd requestAd : _requestAdRepository.findAll()) {
-            if(requestAd.getAd().getAgent().getId().equals(id) && requestAd.getRequest().getStatus().equals(CarRequestStatus.PENDING)) {
+            if(requestAd.getAd().getAgent().getId().equals(id) && requestAd.getRequest().getStatus().equals(carRequestStatus)) {
                 if(!requestList.contains(requestAd.getRequest())) {
                     requestList.add(requestAd.getRequest());
                 }
             }
         }
         return mapToAgentRequest(requestList);
+    }
+
+    @Override
+    public Collection<AgentRequests> approveRequest(UUID agentId, UUID requestID) {
+        Request request = _requestRepository.findOneById(requestID);
+        request.setStatus(RequestStatus.RESERVED);
+        _requestRepository.save(request);
+
+        changeStatusOfRequests(request, RequestStatus.PENDING, RequestStatus.CHECKED);
+
+        TimerTask taskPaid = new TimerTask() {
+            public void run() {
+                System.out.println("Approved request performed on: " + LocalTime.now() + ", " +
+                        "Request id: " + Thread.currentThread().getName());
+                if(!request.getStatus().equals(RequestStatus.PAID)) {
+                    request.setStatus(RequestStatus.CANCELED);
+                    _requestRepository.save(request);
+
+                    changeStatusOfRequests(request, RequestStatus.CHECKED, RequestStatus.PENDING);
+                }
+            }
+        };
+        Timer timer = new Timer(request.getId().toString());
+        long delay = (12 * 60 * 60 * 1000);
+        System.out.println("Approved request received at: " + LocalTime.now());
+        timer.schedule(taskPaid, delay);
+        return getAllAgentRequests(agentId, RequestStatus.PENDING);
+    }
+
+    public void changeStatusOfRequests(Request baseRequest, RequestStatus wakeUpStatus, RequestStatus finalStatus) {
+        for (RequestAd requestAd : _requestAdRepository.findAllByRequest(baseRequest)) {
+            for (RequestAd requestAdAll : _requestAdRepository.findAll()) {
+                if (requestAdAll.getRequest().getStatus().equals(wakeUpStatus)
+                        && checkRequestMatching(requestAd, requestAdAll)) {
+                    requestAdAll.getRequest().setStatus(finalStatus);
+                    _requestRepository.save(requestAdAll.getRequest());
+                }
+            }
+        }
+    }
+
+    public boolean checkRequestMatching(RequestAd requestFirst, RequestAd requestSecond) {
+        if(requestFirst.getAd().getId().equals(requestSecond.getAd().getId())) {
+            if (requestFirst.getReturnDate().isBefore(requestSecond.getPickUpDate())) {
+                return false;
+            } else {
+                if (requestFirst.getPickUpDate().isAfter(requestSecond.getReturnDate())) {
+                    return false;
+                } else {
+                    if (requestFirst.getReturnDate().isEqual(requestSecond.getPickUpDate())) {
+                        return requestFirst.getReturnTime().isAfter(requestSecond.getPickUpTime());
+                    } else if (requestSecond.getReturnDate().isEqual(requestFirst.getPickUpDate())) {
+                        return requestFirst.getPickUpTime().isBefore(requestSecond.getReturnTime());
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private Collection<AgentRequests> mapToAgentRequest(List<Request> requestList) {
@@ -44,6 +105,7 @@ public class AgentService implements IAgentService {
             agentRequest.setPickUpAddress(request.getPickUpAddress().getCity() + ", " + request.getPickUpAddress().getStreet() + " " + request.getPickUpAddress().getNumber());
             agentRequest.setReceptionDate(request.getReceptionDate().toString());
             agentRequest.setId(request.getId());
+            agentRequest.setRequestStatus(request.getStatus().toString());
             String ads = "";
             for (RequestAd requestAd : _requestAdRepository.findAllByRequest(request)) {
                 ads += requestAd.getAd().getCar().getCarModel().getCarBrand().getName() + " " + requestAd.getAd().getCar().getCarModel().getName() + ",";

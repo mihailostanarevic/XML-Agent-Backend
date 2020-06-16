@@ -5,10 +5,10 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class RequestBodyID {
+public class RequestsSimpleUser {
 
     private UUID id;
 
-    private UUID requestID;
+    private String requestStatus;
 
 }
