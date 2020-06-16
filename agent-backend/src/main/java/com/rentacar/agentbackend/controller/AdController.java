@@ -4,6 +4,7 @@ import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.RequestDTO;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
+import com.rentacar.agentbackend.dto.response.PhotoResponse;
 import com.rentacar.agentbackend.entity.Photo;
 import com.rentacar.agentbackend.repository.IPhotoRepository;
 import com.rentacar.agentbackend.service.IAdService;
@@ -38,8 +39,12 @@ public class AdController {
 
     @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<?> addAd(@RequestPart("imageFile") List<MultipartFile> fileList, @RequestPart("request") @Valid AddAdRequest request) throws Exception{
-        _adService.createAd(fileList, request);
-        return new ResponseEntity<>("ok", HttpStatus.CREATED);
+        return new ResponseEntity<>(_adService.createAd(fileList, request), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}/image" )
+    public ResponseEntity<PhotoResponse> getImage(@PathVariable("id") UUID adId) {
+        return new ResponseEntity<>(_adService.getPhoto(adId), HttpStatus.OK);
     }
 
     @PutMapping("/availability")
