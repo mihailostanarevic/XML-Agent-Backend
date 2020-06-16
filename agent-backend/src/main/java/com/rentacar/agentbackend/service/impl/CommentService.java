@@ -107,6 +107,14 @@ public class CommentService implements ICommentService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<CommentResponse> getAllPendingComments() throws Exception {
+        List<Comment> comments = _commentRepository.findAllByStatus(RequestStatus.PENDING);
+        return comments.stream()
+                .map(comment -> mapCommentToCommentResponse(comment))
+                .collect(Collectors.toList());
+    }
+
     private CommentResponse mapCommentToCommentResponse(Comment comment){
         CommentResponse response = new CommentResponse();
         response.setComment(comment.getComment());

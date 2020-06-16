@@ -15,4 +15,6 @@ public interface ICommentService {
     void denyComment(UUID id) throws Exception;
 
     List<CommentResponse> getAllCommentsByAd(UUID id) throws Exception;
+
+    List<CommentResponse> getAllPendingComments() throws Exception;
 }

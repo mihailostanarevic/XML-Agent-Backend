@@ -37,4 +37,9 @@ public class CommentController {
     List<CommentResponse> getAllCommentsByAd(@PathVariable UUID id) throws Exception {
         return _commentService.getAllCommentsByAd(id);
     }
+
+    @GetMapping("/pending")
+    List<CommentResponse> getAllPendingComments() throws Exception {
+        return _commentService.getAllPendingComments();
+    }
 }
