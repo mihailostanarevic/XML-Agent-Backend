@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/requests")
-    public List<UsersAdsResponse> usersRequestFromStatus(@PathVariable("id") UUID userId, @RequestParam("status") String string){
+    public List<UsersAdsResponse> usersAdsFromStatus(@PathVariable("id") UUID userId, @RequestParam("status") String string){
         String stringStatus = string.toUpperCase();
         RequestStatus status;
         switch (stringStatus){
