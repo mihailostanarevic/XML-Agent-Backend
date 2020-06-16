@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService implements ICommentService {
@@ -96,6 +97,14 @@ public class CommentService implements ICommentService {
         Comment comment = _commentRepository.findOneById(id);
         comment.setStatus(RequestStatus.DENIED);
         _commentRepository.save(comment);
+    }
+
+    @Override
+    public List<CommentResponse> getAllCommentsByAd(UUID id) throws Exception {
+        List<Comment> comments = _commentRepository.findAllByAd_IdAndStatus(id, RequestStatus.APPROVED);
+        return comments.stream()
+                .map(comment -> mapCommentToCommentResponse(comment))
+                .collect(Collectors.toList());
     }
 
     private CommentResponse mapCommentToCommentResponse(Comment comment){
