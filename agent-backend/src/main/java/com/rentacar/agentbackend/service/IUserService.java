@@ -22,4 +22,6 @@ public interface IUserService {
     List<SimpleUserRequests> getAllUserRequests(UUID id, RequestStatus reserved);
 
     Collection<SimpleUserRequests> payRequest(UUID userId, UUID resID);
+  
+    List<UsersAdsResponse> getUsersRequestFromStatus(UUID id, RequestStatus status);
 }

@@ -18,8 +18,10 @@ import java.util.Set;
 public class Request extends BaseEntity {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "simple_user_id") //
     private SimpleUser customer;
 
+    @Enumerated(EnumType.STRING) //
     private RequestStatus status;
 
     private LocalDate receptionDate;       // datum prijema zahteva

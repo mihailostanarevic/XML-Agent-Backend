@@ -5,11 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageResponse {
+
+    private UUID id;
 
     private String text;
 
@@ -22,4 +25,6 @@ public class MessageResponse {
     private UserMessageResponse user;
 
     private List<CarAccessoryResponse> carAccessories;
+
+    private boolean seen;
 }
