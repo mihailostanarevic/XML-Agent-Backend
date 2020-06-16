@@ -26,5 +26,5 @@ public interface ICarService {
 
     void addCarAccessories(AddCarAccessoriesRequest request) throws Exception; //u request dva id-a
 
-//    List<CarAccessoryResponse> getCarAccessories(UUID id);
+    List<CarAccessoryResponse> getCarAccessories(UUID id);
 }

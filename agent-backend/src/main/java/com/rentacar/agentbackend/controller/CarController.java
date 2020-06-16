@@ -58,7 +58,7 @@ public class CarController {
     }
 
     @GetMapping("/{id}/car-accessories")
-    public List<CarAccessoryResponse> getCarAccessories(@PathVariable("id") UUID id){
+    public List<CarAccessoryResponse> getCarAccessories1(@PathVariable("id") UUID id){
         return _carService.getCarAccessories(id);
     }
 
