@@ -19,9 +19,10 @@ insert into authorities_permissions (authority_id, permission_id) values
 
 insert into user_entity (id, username, password, deleted, has_signed_in, last_password_reset_date, user_role) values
     ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 'admin@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07', 2),
-    ('105496cd-30f2-4b62-8082-cc14d282e845', 'agent@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07', 1),
+    ('105496cd-30f2-4b62-8082-cc14d282e845', 'agent@gmail.com', '$2y$10$WM5csMgLUWk7D8OfQgGQWuX3vrZBoUrOxzO671yoVeI28F9aBDs3i', false, false, '2019-10-01 21:58:58.508-07', 1),
     ('d0535564-08ec-464c-a2db-d930d2c4fcde', 'agent1@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07', 1),
-    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 'customer@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07', 0);
+    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 'customer@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07', 0),
+    ('b9362264-17db-411e-8ed0-db8310cba9f1', 'customer2@gmail.com', '$2y$10$.YHs6oWKNn3ZqfLwxWYrouWDw54jjJ62Q9kUT.D0NPSsTYE/v8nMK', false, false, '2020-10-01 21:58:58.508-07', 0);
 
 insert into user_authority (user_id, authority_id) values
     ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 1),
@@ -32,7 +33,9 @@ insert into user_authority (user_id, authority_id) values
     ('d0535564-08ec-464c-a2db-d930d2c4fcde', 3),
     ('d0535564-08ec-464c-a2db-d930d2c4fcde', 4),
     ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 3),
-    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 6);
+    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 6),
+    ('b9362264-17db-411e-8ed0-db8310cba9f1', 3),
+    ('b9362264-17db-411e-8ed0-db8310cba9f1', 6);
 
 insert into admin (id, first_name, last_name, user_id) values
     ('51d5e58d-ac22-4233-a1dc-e4251a18e815', 'Ms', 'Misoni', '9bbbd6c1-34b4-4ea6-8889-be247cfebc34');
@@ -42,7 +45,8 @@ insert into agent (id, bank_account_number, date_founded, name, tin, user_id) va
     ('c72721c4-437f-4a06-b3cc-00b9a86056bc', '0500 0009 3702 FE22 7097 00', '2020/02/25', 'Dragan Topalovic', '321-54-9876', 'd0535564-08ec-464c-a2db-d930d2c4fcde');
 
 insert into simple_user (id, address, city, country, first_name, last_name, request_status, ssn, user_id) values
-    ('1cfe4238-9b0c-4611-abea-ddd20b4cc415', 'Pionirska 26', 'Novi Sad', 'Serbia', 'Somi', 'Misoni', 'PENDING', '1547854896523', '4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54');
+    ('1cfe4238-9b0c-4611-abea-ddd20b4cc415', 'Pionirska 26', 'Novi Sad', 'Serbia', 'Somi', 'Misoni', 'PENDING', '1547854896523', '4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54'),
+    ('9220c03b-b0b5-46af-a821-249e2a97dcaa', 'Njegoseva 55', 'Novi Sad', 'Serbia', 'Didi', 'Mimica-Kostovic', 'APPROVED', '1547858576523', 'b9362264-17db-411e-8ed0-db8310cba9f1');
 
 create extension if not exists "uuid-ossp";
 insert into address (id, street, number, city, country) values
@@ -159,3 +163,12 @@ insert into car_accessories_car (car_id, car_accessories_id) values
     ('c26d34ae-0cb7-4869-8a97-9063c355c94a', '4d3a07c8-c2c5-418c-b96c-8bf86417a6c1'),
     ('c26d34ae-0cb7-4869-8a97-9063c355c94a', '57d5ebbf-51a1-4aea-879b-663103c7f0a3'),
     ('c26d34ae-0cb7-4869-8a97-9063c355c94a', 'b26855c2-6b55-410e-952b-5a15faeb443e');
+
+insert into message (id, date_sent, seen, text, time_sent, ad_id, user_receiver_id, user_sender_id) values
+    ('f786d538-7e0d-412d-b1a4-c4db725c1c67', '2020-06-16', false, 'Message text', '16:50', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', '105496cd-30f2-4b62-8082-cc14d282e845','b9362264-17db-411e-8ed0-db8310cba9f1'),
+    ('04f5cfc3-b4b3-4f99-be7b-f59c558ba4cc', '2020-06-16', false, 'Message reply', '16:51', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', 'b9362264-17db-411e-8ed0-db8310cba9f1','105496cd-30f2-4b62-8082-cc14d282e845'),
+    ('1cfd2251-3969-4204-b463-744dff0e21c4', '2020-06-16', false, 'Message text 2', '16:52', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', '105496cd-30f2-4b62-8082-cc14d282e845','b9362264-17db-411e-8ed0-db8310cba9f1');
+
+insert into message_car_accessories (id, approved, reviewed, car_accessories_id, message_id) values
+    ('73e4a31a-de45-4ffd-9030-513094bb6bfd', false, false, '4d3a07c8-c2c5-418c-b96c-8bf86417a6c1', '1cfd2251-3969-4204-b463-744dff0e21c4'),
+    ('44b160bd-bfc2-44a9-889e-81d6a5aee362', false, false, '57d5ebbf-51a1-4aea-879b-663103c7f0a3', '1cfd2251-3969-4204-b463-744dff0e21c4');

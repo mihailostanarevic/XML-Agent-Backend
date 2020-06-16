@@ -25,8 +25,8 @@ public class UserController {
         return _userService.getAllUsers();
     }
 
-    @GetMapping("/{id}/ads")
-    public List<UsersAdsResponse> usersAdsFromStatus(@PathVariable("id") UUID userId, @RequestParam("status") String string){
+    @GetMapping("/{id}/requests")
+    public List<UsersAdsResponse> usersRequestFromStatus(@PathVariable("id") UUID userId, @RequestParam("status") String string){
         String stringStatus = string.toUpperCase();
         RequestStatus status;
         switch (stringStatus){
@@ -40,10 +40,12 @@ public class UserController {
                 break;
             case "APPROVED" : status = RequestStatus.APPROVED;
                 break;
+            case "RESERVED" : status = RequestStatus.RESERVED;
+                break;
             default: status = RequestStatus.PENDING;
         }
 
-        return _userService.getUsersAdsFromStatus(userId,status);
+        return _userService.getUsersRequestFromStatus(userId,status);
     }
 
 }

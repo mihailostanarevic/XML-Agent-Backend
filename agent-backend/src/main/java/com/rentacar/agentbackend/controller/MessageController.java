@@ -1,5 +1,6 @@
 package com.rentacar.agentbackend.controller;
 
+import com.rentacar.agentbackend.dto.request.SeenRequest;
 import com.rentacar.agentbackend.dto.request.SendMessageRequest;
 import com.rentacar.agentbackend.dto.response.MessageResponse;
 import com.rentacar.agentbackend.service.IMessageService;
@@ -29,5 +30,10 @@ public class MessageController {
     @GetMapping
     public List<MessageResponse> getMessages(@RequestParam("receiver") UUID receiverID){
         return _messageService.getAllReceivedMessagesForUser(receiverID);
+    }
+
+    @PutMapping("/{id}")
+    public void seen(@RequestBody SeenRequest request, @PathVariable("id") UUID id){
+        _messageService.seen(request, id);
     }
 }

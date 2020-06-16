@@ -26,7 +26,7 @@ public class CarAccessoriesService implements ICarAccessoriesService {
 
         for(CarAccessories carAccessory : carAccessories){
             if(!carAccessory.isDeleted()){
-                CarAccessoryResponse dto = new CarAccessoryResponse(carAccessory.getId(), carAccessory.getDescription());
+                CarAccessoryResponse dto = new CarAccessoryResponse(carAccessory.getId(), null, carAccessory.getDescription());
                 retVal.add(dto);
             }
         }
