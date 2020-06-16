@@ -3,10 +3,10 @@ package com.rentacar.agentbackend.controller;
 import com.rentacar.agentbackend.dto.request.RateAdRequest;
 import com.rentacar.agentbackend.dto.response.RatingResponse;
 import com.rentacar.agentbackend.service.IRatingService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/ratings")
@@ -21,5 +21,15 @@ public class RatingController {
     @PostMapping
     RatingResponse rateAd(@RequestBody RateAdRequest request) throws Exception {
         return _ratingService.rateAd(request);
+    }
+
+    @GetMapping("/{id}/simple-user")
+    List<RatingResponse> getAllRatingsBySimpleUser(@PathVariable UUID id) throws Exception {
+        return _ratingService.getAllRatingsByCustomer(id);
+    }
+
+    @GetMapping("/{id}/ad")
+    List<RatingResponse> getAllRatingsByAd(@PathVariable UUID id) throws Exception {
+        return _ratingService.getAllRatingsByAd(id);
     }
 }
