@@ -62,4 +62,10 @@ public class CarController {
         return _carService.getCarAccessories(id);
     }
 
+    //uzmi na frontu promeni kada gadjas bek na ovu moju gornju putanju /car-accessories jer ovako sa cars/{id} dobijas jedan auto samo a ne accessories 
+    @GetMapping("/{id}")
+    public List<CarAccessoryResponse> getCarAccessories(@PathVariable("id") UUID id){
+        return _carService.getCarAccessories(id);
+    }
+
 }

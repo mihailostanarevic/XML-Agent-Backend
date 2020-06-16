@@ -7,6 +7,7 @@ import com.rentacar.agentbackend.entity.Request;
 import com.rentacar.agentbackend.entity.RequestAd;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IRequestService;
+import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 

@@ -48,6 +48,7 @@ insert into simple_user (id, address, city, country, first_name, last_name, requ
     ('1cfe4238-9b0c-4611-abea-ddd20b4cc415', 'Pionirska 26', 'Novi Sad', 'Serbia', 'Somi', 'Misoni', 'PENDING', '1547854896523', '4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54'),
     ('9220c03b-b0b5-46af-a821-249e2a97dcaa', 'Njegoseva 55', 'Novi Sad', 'Serbia', 'Didi', 'Mimica-Kostovic', 'APPROVED', '1547858576523', 'b9362264-17db-411e-8ed0-db8310cba9f1');
 
+
 create extension if not exists "uuid-ossp";
 insert into address (id, street, number, city, country) values
     ('04fe195c-5409-4657-a009-3732eedf1f6c', 'Pionirska', 21, 'Novi Sad', 'Serbia'),
@@ -136,7 +137,7 @@ insert into fuel_type(id, type, tank_capacity, gas, deleted) values
 ('446e7318-ba50-4b5e-949c-8c1baf8f0a36', 'Diesel', '90L', 'false', 'false'),
 ('574930be-7738-48a3-8dc2-9b503b0fe7e3', 'Diesel', '90L', 'true', 'true'),
 ('0dc3ab55-1827-46b6-a2ad-309d83bbd28f', 'Benzine', '90L', 'false', 'false'),
-('5343655c-07cf-45cf-b911-68fdc33dbf7d', 'Benzine', '90L', 'true', 'true');
+('5343655c-07cf-45cf-b911-68fdc33dbf7d', 'Benzine', '90L', 'true', 'false');
 
 insert into car (id, deleted, kilometers_traveled, car_model_id, fuel_type_id, gear_shift_id) values
     ('47463d55-7dd0-4612-b59c-a9e5686c2762', false, '145000', 'd19159ac-9ec3-4d27-9de1-83cbc78f1ea3', '7e3d3e0c-03d6-4acf-a620-f09fe00af45d', '26499388-9c1d-4836-972c-ba114a8753d5'),

@@ -11,6 +11,8 @@ public class RequestDTO {
 
     private UUID adID;
 
+    private UUID agentID;
+
     private UUID customerID;
 
     private String pickUpDate;      // format -> "2016-06-12"
@@ -23,6 +25,6 @@ public class RequestDTO {
 
     private UUID pickUpAddress;
 
-    private boolean bundle;         // uvek false
+    private boolean bundle;
 
 }

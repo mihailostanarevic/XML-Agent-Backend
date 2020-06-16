@@ -4,12 +4,14 @@ import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.RequestDTO;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
+import com.rentacar.agentbackend.dto.response.RequestResponse;
 import com.rentacar.agentbackend.entity.Photo;
 import com.rentacar.agentbackend.repository.IPhotoRepository;
 import com.rentacar.agentbackend.service.IAdService;
 import com.rentacar.agentbackend.service.IRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,10 +43,10 @@ public class AdController {
         return new ResponseEntity<>("ok", HttpStatus.CREATED);
     }
 
-    @PutMapping("/availability")
-    public ResponseEntity<String> changeCarAvailability(@RequestBody RequestDTO request) throws Exception{
+    @PostMapping("/availability")
+    public ResponseEntity<?> changeCarAvailability(@RequestBody RequestDTO request) throws Exception{
         _requestService.changeAdAvailability(request);
-        return new ResponseEntity<>("succesfully changed", HttpStatus.OK);
+        return new ResponseEntity<>(new RequestResponse("succesfully changed"), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/ad")
