@@ -19,4 +19,6 @@ public class AgentRequests {
 
     private String requestStatus;
 
+    private String description;
+
 }
