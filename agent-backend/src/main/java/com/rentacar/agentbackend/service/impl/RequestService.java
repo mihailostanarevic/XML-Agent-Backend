@@ -3,17 +3,16 @@ package com.rentacar.agentbackend.service.impl;
 import com.rentacar.agentbackend.dto.request.RequestDTO;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
+import com.rentacar.agentbackend.service.IAgentService;
 import com.rentacar.agentbackend.service.IRequestService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Service
 public class RequestService implements IRequestService {
 
@@ -116,6 +115,22 @@ public class RequestService implements IRequestService {
         Authority authority = _authorityRepository.findByName("ROLE_REQUEST");
         user.getRoles().add(authority);
         _userRepository.save(user);
+
+        TimerTask taskPending = new TimerTask() {
+            public void run() {
+                System.out.println("Request performed on: " + LocalTime.now() + ", " +
+                        "Request id: " + Thread.currentThread().getName());
+                if(request.getStatus().equals(RequestStatus.PENDING)) {
+                    request.setStatus(RequestStatus.CANCELED);
+                    _requestRepository.save(request);
+                }
+            }
+        };
+        Timer timer = new Timer(request.getId().toString());
+        long delay = (24 * 60 * 60 * 1000);
+        System.out.println("Request received at: " + LocalTime.now());
+        timer.schedule(taskPending, delay);
+
         return request;
     }
 
@@ -133,6 +148,20 @@ public class RequestService implements IRequestService {
         request.setDeleted(false);
         _requestRepository.save(request);
         createRequestAd(request, requestList);
+        TimerTask taskPending = new TimerTask() {
+            public void run() {
+                System.out.println("Bundle request performed on: " + LocalTime.now() + ", " +
+                        "Request id: " + Thread.currentThread().getName());
+                if(request.getStatus().equals(RequestStatus.PENDING)) {
+                    request.setStatus(RequestStatus.CANCELED);
+                    _requestRepository.save(request);
+                }
+            }
+        };
+        Timer timer = new Timer(request.getId().toString());
+        long delay = (24 * 60 * 60 * 1000);
+        System.out.println("Bundle received at: " + LocalTime.now());
+        timer.schedule(taskPending, delay);
         return request;
     }
 

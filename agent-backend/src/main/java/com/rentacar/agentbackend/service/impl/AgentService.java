@@ -10,10 +10,7 @@ import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @SuppressWarnings({"StringConcatenationInLoop", "unused"})
 @Service
@@ -46,20 +43,41 @@ public class AgentService implements IAgentService {
         request.setStatus(RequestStatus.RESERVED);
         _requestRepository.save(request);
 
-        for (RequestAd requestAd : _requestAdRepository.findAllByRequest(request)) {
+        changeStatusOfRequests(request, RequestStatus.PENDING, RequestStatus.CHECKED);
+
+        TimerTask taskPaid = new TimerTask() {
+            public void run() {
+                System.out.println("Approved request performed on: " + LocalTime.now() + ", " +
+                        "Request id: " + Thread.currentThread().getName());
+                if(!request.getStatus().equals(RequestStatus.PAID)) {
+                    request.setStatus(RequestStatus.CANCELED);
+                    _requestRepository.save(request);
+
+                    changeStatusOfRequests(request, RequestStatus.CHECKED, RequestStatus.PENDING);
+                }
+            }
+        };
+        Timer timer = new Timer(request.getId().toString());
+        long delay = (12 * 60 * 60 * 1000);
+        System.out.println("Approved request received at: " + LocalTime.now());
+        timer.schedule(taskPaid, delay);
+        return getAllAgentRequests(agentId, RequestStatus.PENDING);
+    }
+
+    public void changeStatusOfRequests(Request baseRequest, RequestStatus wakeUpStatus, RequestStatus finalStatus) {
+        for (RequestAd requestAd : _requestAdRepository.findAllByRequest(baseRequest)) {
             for (RequestAd requestAdAll : _requestAdRepository.findAll()) {
-                if (requestAdAll.getRequest().getStatus().equals(RequestStatus.PENDING) &&
-                        checkRequestMatching(requestAd, requestAdAll) && !requestAd.equals(requestAdAll)) {
-                    requestAdAll.getRequest().setStatus(RequestStatus.CANCELED);
+                if (requestAdAll.getRequest().getStatus().equals(wakeUpStatus)
+                        && checkRequestMatching(requestAd, requestAdAll)) {
+                    requestAdAll.getRequest().setStatus(finalStatus);
                     _requestRepository.save(requestAdAll.getRequest());
                 }
             }
         }
-        return getAllAgentRequests(agentId, RequestStatus.PENDING);
     }
 
-    private boolean checkRequestMatching(RequestAd requestFirst, RequestAd requestSecond) {
-        if(requestFirst.getAd().equals(requestSecond.getAd())) {
+    public boolean checkRequestMatching(RequestAd requestFirst, RequestAd requestSecond) {
+        if(requestFirst.getAd().getId().equals(requestSecond.getAd().getId())) {
             if (requestFirst.getReturnDate().isBefore(requestSecond.getPickUpDate())) {
                 return false;
             } else {
@@ -67,13 +85,9 @@ public class AgentService implements IAgentService {
                     return false;
                 } else {
                     if (requestFirst.getReturnDate().isEqual(requestSecond.getPickUpDate())) {
-                        if (requestFirst.getReturnTime().isAfter(requestSecond.getPickUpTime())) {
-                            return true;
-                        }
+                        return requestFirst.getReturnTime().isAfter(requestSecond.getPickUpTime());
                     } else if (requestSecond.getReturnDate().isEqual(requestFirst.getPickUpDate())) {
-                        if (requestFirst.getPickUpTime().isBefore(requestSecond.getReturnTime())) {
-                            return true;
-                        }
+                        return requestFirst.getPickUpTime().isBefore(requestSecond.getReturnTime());
                     } else {
                         return true;
                     }

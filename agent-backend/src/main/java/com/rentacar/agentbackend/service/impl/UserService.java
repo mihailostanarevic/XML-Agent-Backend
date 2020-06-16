@@ -5,8 +5,8 @@ import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.IRequestAdRepository;
 import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.repository.IUserRepository;
+import com.rentacar.agentbackend.service.IAgentService;
 import com.rentacar.agentbackend.service.IUserService;
-import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +20,15 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService {
 
     private final IRequestAdRepository _requestAdRepository;
-
     private final IRequestRepository _requestRepository;
-
     private final IUserRepository _userRepository;
+    private final IAgentService _agentService;
 
-    public UserService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository, IUserRepository userRepository) {
+    public UserService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository, IUserRepository userRepository, IAgentService agentService) {
         _requestAdRepository = requestAdRepository;
         _requestRepository = requestRepository;
         _userRepository = userRepository;
+        _agentService = agentService;
     }
 
     public User findOneByUsername(String mail) {
@@ -84,6 +84,8 @@ public class UserService implements IUserService {
             request.setStatus(RequestStatus.PAID);
             _requestRepository.save(request);
         }
+
+        _agentService.changeStatusOfRequests(request, RequestStatus.CHECKED, RequestStatus.CANCELED);
         return getAllUserRequests(userId, RequestStatus.RESERVED);
     }
 

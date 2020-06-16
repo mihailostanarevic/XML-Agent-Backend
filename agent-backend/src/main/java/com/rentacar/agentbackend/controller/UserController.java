@@ -63,6 +63,8 @@ public class UserController {
             simpleUserRequests = _userService.getAllUserRequests(userId, RequestStatus.RESERVED);
         } else if(status.equalsIgnoreCase("PAID")) {
             simpleUserRequests = _userService.getAllUserRequests(userId, RequestStatus.PAID);
+        } else if(status.equalsIgnoreCase("CHECKED")) {
+            simpleUserRequests = _userService.getAllUserRequests(userId, RequestStatus.PAID);
         } else {
             simpleUserRequests = _userService.getAllUserRequests(userId, RequestStatus.CANCELED);
         }

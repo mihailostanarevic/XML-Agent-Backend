@@ -1,9 +1,7 @@
 package com.rentacar.agentbackend.controller;
 
-import com.rentacar.agentbackend.dto.request.RequestsSimpleUser;
 import com.rentacar.agentbackend.dto.response.AgentRequests;
 import com.rentacar.agentbackend.service.IAgentService;
-import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +31,8 @@ public class AgentController {
             carRequestStatus = RequestStatus.RESERVED;
         } else if(status.equalsIgnoreCase("PAID")) {
             carRequestStatus = RequestStatus.PAID;
+        } else if(status.equalsIgnoreCase("CHECKED")) {
+            carRequestStatus = RequestStatus.CHECKED;
         } else {
             carRequestStatus = RequestStatus.CANCELED;
         }
