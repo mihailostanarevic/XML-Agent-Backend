@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.RateAdRequest;
+import com.rentacar.agentbackend.dto.response.AvgRatingResponse;
 import com.rentacar.agentbackend.dto.response.RatingResponse;
 import com.rentacar.agentbackend.service.IRatingService;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +32,10 @@ public class RatingController {
     @GetMapping("/{id}/ad")
     List<RatingResponse> getAllRatingsByAd(@PathVariable UUID id) throws Exception {
         return _ratingService.getAllRatingsByAd(id);
+    }
+
+    @GetMapping("/avg/{id}/ad")
+    AvgRatingResponse getAvgRatingByAd(@PathVariable UUID id) throws Exception {
+        return _ratingService.getAvgRatingByAd(id);
     }
 }
