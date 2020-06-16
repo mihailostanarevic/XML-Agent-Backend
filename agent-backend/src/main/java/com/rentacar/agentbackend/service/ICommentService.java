@@ -10,4 +10,6 @@ public interface ICommentService {
     CommentResponse commentAd(CommentAdRequest request) throws Exception;
 
     void approveComment(UUID id) throws Exception;
+
+    void denyComment(UUID id) throws Exception;
 }

@@ -26,4 +26,9 @@ public class CommentController {
     void approveComment(@PathVariable UUID id) throws Exception {
         _commentService.approveComment(id);
     }
+
+    @PutMapping("deny/{id}/comment")
+    void denyComment(@PathVariable UUID id) throws Exception {
+        _commentService.denyComment(id);
+    }
 }

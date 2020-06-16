@@ -91,6 +91,13 @@ public class CommentService implements ICommentService {
         _commentRepository.save(comment);
     }
 
+    @Override
+    public void denyComment(UUID id) throws Exception {
+        Comment comment = _commentRepository.findOneById(id);
+        comment.setStatus(RequestStatus.DENIED);
+        _commentRepository.save(comment);
+    }
+
     private CommentResponse mapCommentToCommentResponse(Comment comment){
         CommentResponse response = new CommentResponse();
         response.setComment(comment.getComment());
