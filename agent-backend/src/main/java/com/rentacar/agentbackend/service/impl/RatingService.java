@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.request.RateAdRequest;
+import com.rentacar.agentbackend.dto.response.AvgRatingResponse;
 import com.rentacar.agentbackend.dto.response.RatingResponse;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
@@ -103,6 +104,28 @@ public class RatingService implements IRatingService {
         return ratings.stream()
                 .map(rating -> mapRatingToRatingResponse(rating))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public AvgRatingResponse getAvgRatingByAd(UUID id) throws Exception {
+        List<Rating> ratings = _ratingRepository.findAllByAd_Id(id);
+        float sum = 0;
+        float counter = 0;
+        for(Rating r: ratings){
+            sum += Float.valueOf(r.getGrade());
+            counter++;
+        }
+        AvgRatingResponse response = new AvgRatingResponse();
+        response.setAgentEmail(_adRepository.findOneById(id).getAgent().getUser().getUsername());
+        response.setAgentName(_adRepository.findOneById(id).getAgent().getName());
+        response.setCarBrandName(_adRepository.findOneById(id).getCar().getCarModel().getCarBrand().getName());
+        response.setCarModelName(_adRepository.findOneById(id).getCar().getCarModel().getName());
+        if(counter == 0){
+            response.setAvgRating("0");
+            return response;
+        }
+        response.setAvgRating(String.valueOf(sum / counter));
+        return response;
     }
 
     private RatingResponse mapRatingToRatingResponse(Rating rating){
