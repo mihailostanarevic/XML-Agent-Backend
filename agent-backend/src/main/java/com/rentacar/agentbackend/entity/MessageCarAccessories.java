@@ -25,7 +25,10 @@ public class MessageCarAccessories extends BaseEntity{
 
     private boolean approved;
 
+    private boolean reviewed;
+
     public MessageCarAccessories(){
         this.approved = false;
+        this.reviewed = false;
     }
 }

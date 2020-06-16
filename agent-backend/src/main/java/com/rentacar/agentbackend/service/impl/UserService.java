@@ -7,6 +7,7 @@ import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.repository.IUserRepository;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
+import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UsersAdsResponse> getUsersAdsFromStatus(UUID id, RequestStatus status) {
+    public List<UsersAdsResponse> getUsersRequestFromStatus(UUID id, RequestStatus status) {
         List<UsersAdsResponse> retVal = new ArrayList<>();
         List<Request> requests = _requestRepository.findAllByStatus(status);
 
