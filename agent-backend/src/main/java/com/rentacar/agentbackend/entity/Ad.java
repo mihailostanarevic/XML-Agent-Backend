@@ -48,6 +48,9 @@ public class Ad extends BaseEntity {
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
     private List<Rating> ratings;
 
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
+    private List<Comment> comments;
+
     public Ad() {
         this.available = true;
         this.deleted = false;

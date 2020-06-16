@@ -45,4 +45,7 @@ public class SimpleUser extends BaseEntity {
 
     @OneToMany(mappedBy = "simpleUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
     private List<Rating> ratings;
+
+    @OneToMany(mappedBy = "simpleUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
+    private List<Comment> comments;
 }
