@@ -27,4 +27,8 @@ public class Comment extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agent_id")
+    private Agent agent;
 }
