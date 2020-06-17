@@ -3,6 +3,7 @@ package com.rentacar.agentbackend.service.impl;
 import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
+import com.rentacar.agentbackend.dto.response.AddressDTO;
 import com.rentacar.agentbackend.dto.response.PhotoResponse;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.DataFormatException;
@@ -48,6 +50,18 @@ public class AdService implements IAdService {
         Photo photo = ad.getAdPhotos().iterator().next();   // bilo koja slika
         Photo img = new Photo(photo.getName(), photo.getType(), decompressBytes(photo.getPicByte()), false, ad);
         return mapToPhotoResponse(img);
+    }
+
+    @Override
+    public List<AdResponse> getAgentAds(UUID id) {
+        Agent agent = _agentRepository.findOneById(id);
+        List<AdResponse> retAdResponseList = new ArrayList<>();
+        if(agent != null) {
+            for (Ad agentAd : agent.getAd()) {
+                retAdResponseList.add(mapAdToAdResponse(agentAd));
+            }
+        }
+        return retAdResponseList;
     }
 
     private PhotoResponse mapToPhotoResponse(Photo img) {
@@ -174,6 +188,22 @@ public class AdService implements IAdService {
     private AdResponse mapAdToAdResponse(Ad ad) {
         AdResponse adResponse = new AdResponse();
         adResponse.setId(ad.getId());
+        adResponse.setAgentID(ad.getAgent().getId());
+        adResponse.setAvailableKilometersPerRent(ad.getAvailableKilometersPerRent());
+        adResponse.setCdw(ad.isCdw());
+        adResponse.setLimitedDistance(ad.isLimitedDistance());
+        adResponse.setSeats(ad.getSeats());
+        adResponse.setName(ad.getCar().getCarModel().getCarBrand().getName() + " " + ad.getCar().getCarModel().getName());
+        List<AddressDTO> fullLocations = new ArrayList<>();
+        for (Address address : ad.getAgent().getAddress()) {
+            AddressDTO addressDTO = new AddressDTO();
+            addressDTO.setId(address.getId());
+            addressDTO.setCity(address.getCity());
+            addressDTO.setStreet(address.getStreet());
+            addressDTO.setNumber(address.getNumber());
+            fullLocations.add(addressDTO);
+        }
+        adResponse.setFullLocations(fullLocations);
         return adResponse;
     }
 

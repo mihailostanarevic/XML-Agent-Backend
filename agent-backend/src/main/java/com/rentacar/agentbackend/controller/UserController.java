@@ -1,9 +1,11 @@
 package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.RequestBodyID;
+import com.rentacar.agentbackend.dto.response.AdResponse;
 import com.rentacar.agentbackend.dto.response.SimpleUserRequests;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.dto.response.UsersAdsResponse;
+import com.rentacar.agentbackend.service.IAdService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.http.HttpStatus;
@@ -21,9 +23,11 @@ import java.util.UUID;
 public class UserController {
 
     private final IUserService _userService;
+    private final IAdService _adService;
 
-    public UserController(IUserService userService) {
+    public UserController(IUserService userService, IAdService adService) {
         _userService = userService;
+        _adService = adService;
     }
 
     @GetMapping
@@ -77,5 +81,17 @@ public class UserController {
     @PreAuthorize("hasAuthority('CREATE_REQUEST')")
     public ResponseEntity<Collection<SimpleUserRequests>> userPay(@RequestBody RequestBodyID requestBodyID){
         return new ResponseEntity<>(_userService.payRequest(requestBodyID.getId(), requestBodyID.getRequestID()), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/requests/{resID}/drop")
+    @PreAuthorize("hasAuthority('CREATE_REQUEST')")
+    public ResponseEntity<Collection<SimpleUserRequests>> userDrop(@RequestBody RequestBodyID requestBodyID){
+        return new ResponseEntity<>(_userService.dropRequest(requestBodyID.getId(), requestBodyID.getRequestID()), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/ads")
+    @PreAuthorize("hasAuthority('VIEW_AD')")
+    public List<AdResponse> getAd(@PathVariable UUID id) throws Exception{
+        return _adService.getAgentAds(id);
     }
 }

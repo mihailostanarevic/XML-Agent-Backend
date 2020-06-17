@@ -10,6 +10,7 @@ import com.rentacar.agentbackend.entity.Photo;
 import com.rentacar.agentbackend.repository.IPhotoRepository;
 import com.rentacar.agentbackend.service.IAdService;
 import com.rentacar.agentbackend.service.IRequestService;
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,6 +50,7 @@ public class AdController {
     }
 
     @PostMapping("/availability")
+    @PreAuthorize("hasAuthority('UPDATE_AD')")
     public ResponseEntity<?> changeCarAvailability(@RequestBody RequestDTO request) throws Exception{
         _requestService.changeAdAvailability(request);
         return new ResponseEntity<>(new RequestResponse("succesfully changed"), HttpStatus.OK);

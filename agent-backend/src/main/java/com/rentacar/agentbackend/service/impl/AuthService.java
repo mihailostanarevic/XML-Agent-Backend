@@ -211,6 +211,7 @@ public class AuthService implements IAuthService {
         userResponse.setToken(jwt);
         userResponse.setTokenExpiresIn(expiresIn);
 
+//        System.out.println(jwt);
         logger.info(user.getUsername() + " has logged in");
         return userResponse;
     }

@@ -8,5 +8,6 @@ public enum RequestStatus {
     PAID,
     CANCELED,
     RESERVED,
-    CHECKED
+    CHECKED,
+    DROPPED
 }
