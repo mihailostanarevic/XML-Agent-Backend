@@ -1,5 +1,6 @@
 package com.rentacar.agentbackend.controller;
 
+import com.rentacar.agentbackend.dto.request.ApproveOrDenyCommentRequest;
 import com.rentacar.agentbackend.dto.request.CommentAdRequest;
 import com.rentacar.agentbackend.dto.response.CommentResponse;
 import com.rentacar.agentbackend.service.ICommentService;
@@ -23,14 +24,14 @@ public class CommentController {
         return _commentService.commentAd(request);
     }
 
-    @PutMapping("approve/{id}/comment")
-    void approveComment(@PathVariable UUID id) throws Exception {
-        _commentService.approveComment(id);
+    @PutMapping("approve-comment")
+    void approveComment(@RequestBody ApproveOrDenyCommentRequest request) throws Exception {
+        _commentService.approveComment(request);
     }
 
-    @PutMapping("deny/{id}/comment")
-    void denyComment(@PathVariable UUID id) throws Exception {
-        _commentService.denyComment(id);
+    @PutMapping("deny-comment")
+    void denyComment(@RequestBody ApproveOrDenyCommentRequest request) throws Exception {
+        _commentService.denyComment(request);
     }
 
     @GetMapping("/{id}/ad")

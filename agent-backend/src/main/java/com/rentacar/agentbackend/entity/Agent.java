@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -35,4 +36,6 @@ public class Agent extends BaseEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Address> address;
 
+    @OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
+    private List<Comment> comments;
 }

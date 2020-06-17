@@ -7,7 +7,7 @@ import java.util.UUID;
 @Data
 public class CommentAdRequest {
 
-    private UUID simpleUserId;
+    private UUID userId;
 
     private String comment;
 
