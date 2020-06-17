@@ -23,5 +23,5 @@ public class AdSearchResponse {
 
     private LocalDate creationDate;
 
-    private List<PhotoSearchResponse> photos;       //
+    private List<PhotoResponse> photos;       //
 }

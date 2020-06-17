@@ -1,10 +1,7 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.response.*;
-import com.rentacar.agentbackend.entity.Ad;
-import com.rentacar.agentbackend.entity.Address;
-import com.rentacar.agentbackend.entity.Request;
-import com.rentacar.agentbackend.entity.RequestAd;
+import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.IAdRepository;
 import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.service.ISearchService;
@@ -114,7 +111,11 @@ public class SearchService implements ISearchService {
 
     private SearchResultResponse makeDTO(Ad ad) {
         SearchResultResponse retVal = new SearchResultResponse();
-        List<PhotoSearchResponse> photos = new ArrayList<PhotoSearchResponse>();
+        List<PhotoResponse> photos = new ArrayList<PhotoResponse>();
+        for(Photo photo : ad.getAdPhotos()){
+            PhotoResponse dto = new PhotoResponse(photo.getName(), photo.getType(), photo.getPicByte());
+            photos.add(dto);
+        }
         AdSearchResponse adDTO = new AdSearchResponse(ad.getId(), ad.isLimitedDistance(), ad.getSeats(), ad.isCdw(), ad.getCreationDate(), photos);
         CarSearchResponse carDTO = new CarSearchResponse();
         carDTO.setCarID(ad.getCar().getId());
@@ -129,6 +130,7 @@ public class SearchService implements ISearchService {
         carDTO.setGetGearshiftTypeNumberOfGears(ad.getCar().getGearshiftType().getNumberOfGears());
         String allLocations = "";
         List<AddressDTO> fullLocations = new ArrayList<>();
+        int i = 0;
         for(Address add : ad.getAgent().getAddress()){
             allLocations += add.getCity();
             AddressDTO addressDTO = new AddressDTO();
@@ -138,10 +140,12 @@ public class SearchService implements ISearchService {
             addressDTO.setNumber(add.getNumber());
             fullLocations.add(addressDTO);
             if(ad.getAgent().getAddress().size() > 1){
-                allLocations += ",";
+                if(i < ad.getAgent().getAddress().size() - 2){
+                    allLocations += ",";
+                }
             }
+            i++;
         }
-        allLocations = allLocations.substring(0, allLocations.length()-1);
         AgentSearchResponse agentDTO = new AgentSearchResponse(ad.getAgent().getId(), ad.getAgent().getName(), ad.getAgent().getDateFounded().toString(), allLocations, fullLocations);
         retVal.setAd(adDTO);
         retVal.setAgent(agentDTO);

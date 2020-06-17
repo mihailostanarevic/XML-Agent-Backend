@@ -115,8 +115,7 @@ public class UserService implements IUserService {
     private UsersAdsResponse makeUsersAdDTO(RequestAd requestAd){
         Ad ad = requestAd.getAd();
         UsersAdsResponse retVal = new UsersAdsResponse();
-
-        List<PhotoSearchResponse> photos = new ArrayList<PhotoSearchResponse>();
+        List<PhotoResponse> photos = new ArrayList<PhotoResponse>();
         AdSearchResponse adDTO = new AdSearchResponse(ad.getId(), ad.isLimitedDistance(), ad.getSeats(), ad.isCdw(), ad.getCreationDate(), photos);
         CarSearchResponse carDTO = new CarSearchResponse();
         carDTO.setCarID(ad.getCar().getId());
