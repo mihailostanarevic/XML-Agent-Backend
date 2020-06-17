@@ -1,6 +1,5 @@
 package com.rentacar.agentbackend.entity;
 
-import com.rentacar.agentbackend.util.enums.CarRequestStatus;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
