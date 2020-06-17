@@ -90,6 +90,17 @@ public class UserService implements IUserService {
         return getAllUserRequests(userId, RequestStatus.RESERVED);
     }
 
+    @Override
+    public Collection<SimpleUserRequests> dropRequest(UUID userId, UUID resID) {
+        Request request = _requestRepository.findOneById(resID);
+        RequestStatus retStatus = request.getStatus();
+        if(!request.getStatus().equals(RequestStatus.PAID)) {
+            request.setStatus(RequestStatus.DROPPED);
+            _requestRepository.save(request);
+        }
+        return getAllUserRequests(userId, retStatus);
+    }
+
     private List<SimpleUserRequests> mapToSimpleUserRequest(List<Request> requestList) {
         List<SimpleUserRequests> simpleUserRequestList = new ArrayList<>();
         for (Request request : requestList) {

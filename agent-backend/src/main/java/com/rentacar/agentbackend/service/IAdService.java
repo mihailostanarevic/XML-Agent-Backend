@@ -35,4 +35,6 @@ public interface IAdService {
     List<AdResponse> getAllAdsByGas() throws Exception;
 
     PhotoResponse getPhoto(UUID adId);
+
+    List<AdResponse> getAgentAds(UUID id);
 }
