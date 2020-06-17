@@ -107,10 +107,15 @@ public class AgentService implements IAgentService {
             agentRequest.setId(request.getId());
             agentRequest.setRequestStatus(request.getStatus().toString());
             String ads = "";
+            String description = "";
             for (RequestAd requestAd : _requestAdRepository.findAllByRequest(request)) {
                 ads += requestAd.getAd().getCar().getCarModel().getCarBrand().getName() + " " + requestAd.getAd().getCar().getCarModel().getName() + ",";
+                description += "Ad: " + ads.substring(0, ads.length()-1) + " in period: " + requestAd.getPickUpDate() + " at " +
+                        requestAd.getPickUpTime() + " to " + requestAd.getReturnDate() + " at " + requestAd.getReturnTime() + ", ";
             }
+            description = description.substring(0, description.length() - 2);
             ads = ads.substring(0, ads.length() -1);
+            agentRequest.setDescription(description);
             agentRequest.setAd(ads);
             agentRequestList.add(agentRequest);
         }

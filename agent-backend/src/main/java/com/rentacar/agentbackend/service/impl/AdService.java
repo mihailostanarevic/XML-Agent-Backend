@@ -3,6 +3,7 @@ package com.rentacar.agentbackend.service.impl;
 import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
+import com.rentacar.agentbackend.dto.response.PhotoResponse;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IAdService;
@@ -39,6 +40,22 @@ public class AdService implements IAdService {
         _agentRepository = agentRepository;
         _photoRepository = photoRepository;
         _requestAdRepository = requestAdRepository;
+    }
+
+    @Override
+    public PhotoResponse getPhoto(UUID adId) {
+        Ad ad = _adRepository.findOneById(adId);
+        Photo photo = ad.getAdPhotos().iterator().next();   // bilo koja slika
+        Photo img = new Photo(photo.getName(), photo.getType(), decompressBytes(photo.getPicByte()), false, ad);
+        return mapToPhotoResponse(img);
+    }
+
+    private PhotoResponse mapToPhotoResponse(Photo img) {
+        PhotoResponse photoResponse = new PhotoResponse();
+        photoResponse.setName(img.getName());
+        photoResponse.setType(img.getType());
+        photoResponse.setPicByte(img.getPicByte());
+        return photoResponse;
     }
 
     @Override

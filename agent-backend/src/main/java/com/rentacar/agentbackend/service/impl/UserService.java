@@ -101,10 +101,15 @@ public class UserService implements IUserService {
             simpleUserRequests.setId(request.getId());
             simpleUserRequests.setRequestStatus(request.getStatus().toString());
             String ads = "";
+            String description = "";
             for (RequestAd requestAd : _requestAdRepository.findAllByRequest(request)) {
-                ads += requestAd.getAd().getCar().getCarModel().getCarBrand().getName() + " " + requestAd.getAd().getCar().getCarModel().getName() + ",";
+                ads += requestAd.getAd().getCar().getCarModel().getCarBrand().getName() + " " + requestAd.getAd().getCar().getCarModel().getName() + ", ";
+                description += "Ad: " + ads.substring(0, ads.length()-1) + " in period: " + requestAd.getPickUpDate() + " at " +
+                        requestAd.getPickUpTime() + " to " + requestAd.getReturnDate() + " at " + requestAd.getReturnTime() + ", ";
             }
-            ads = ads.substring(0, ads.length() -1);
+            ads = ads.substring(0, ads.length() -2);
+            description = description.substring(0, description.length() - 2);
+            simpleUserRequests.setDescription(description);
             simpleUserRequests.setAd(ads);
             simpleUserRequestList.add(simpleUserRequests);
         }

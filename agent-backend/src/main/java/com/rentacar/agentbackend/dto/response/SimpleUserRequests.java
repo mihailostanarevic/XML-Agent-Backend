@@ -19,4 +19,6 @@ public class SimpleUserRequests {
 
     private String requestStatus;
 
+    private String description;
+
 }
