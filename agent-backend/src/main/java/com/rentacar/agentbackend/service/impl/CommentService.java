@@ -152,6 +152,7 @@ public class CommentService implements ICommentService {
         }
         response.setCarBrandName(comment.getAd().getCar().getCarModel().getCarBrand().getName());
         response.setCarModelName(comment.getAd().getCar().getCarModel().getName());
+        response.setCommentId(comment.getId());
         return response;
     }
 }

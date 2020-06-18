@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.repository;
 
 import com.rentacar.agentbackend.entity.Ad;
+import com.rentacar.agentbackend.entity.Report;
 import com.rentacar.agentbackend.entity.Request;
 import com.rentacar.agentbackend.entity.RequestAd;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,5 @@ public interface IRequestAdRepository extends JpaRepository<RequestAd, UUID> {
 
     List<RequestAd> findAllByRequest(Request request);
 
+    List<RequestAd> findAllByReport(Report report);
 }

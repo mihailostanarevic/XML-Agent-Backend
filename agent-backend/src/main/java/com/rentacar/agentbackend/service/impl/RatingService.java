@@ -138,6 +138,7 @@ public class RatingService implements IRatingService {
         response.setCustomerLastName(rating.getSimpleUser().getLastName());
         response.setCarBrandName(rating.getAd().getCar().getCarModel().getCarBrand().getName());
         response.setCarModelName(rating.getAd().getCar().getCarModel().getName());
+        response.setRatingId(rating.getId());
         return response;
     }
 }
