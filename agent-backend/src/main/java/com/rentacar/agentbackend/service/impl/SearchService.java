@@ -4,6 +4,7 @@ import com.rentacar.agentbackend.dto.response.*;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.IAdRepository;
 import com.rentacar.agentbackend.repository.IRequestRepository;
+import com.rentacar.agentbackend.service.IAdService;
 import com.rentacar.agentbackend.service.ISearchService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,13 @@ public class SearchService implements ISearchService {
 
     private final IAdRepository _adRepository;
 
+    private final IAdService _adService;
+
     private final IRequestRepository _requestRepository;
 
-    public SearchService(IAdRepository adRepository, IRequestRepository requestRepository) {
+    public SearchService(IAdRepository adRepository, IAdService adService, IRequestRepository requestRepository) {
         _adRepository = adRepository;
+        _adService = adService;
         _requestRepository = requestRepository;
     }
 
@@ -111,11 +115,7 @@ public class SearchService implements ISearchService {
 
     private SearchResultResponse makeDTO(Ad ad) {
         SearchResultResponse retVal = new SearchResultResponse();
-        List<PhotoResponse> photos = new ArrayList<PhotoResponse>();
-        for(Photo photo : ad.getAdPhotos()){
-            PhotoResponse dto = new PhotoResponse(photo.getName(), photo.getType(), photo.getPicByte());
-            photos.add(dto);
-        }
+        List<PhotoResponse> photos = _adService.getAllPhotos(ad.getId());
         AdSearchResponse adDTO = new AdSearchResponse(ad.getId(), ad.isLimitedDistance(), ad.getSeats(), ad.isCdw(), ad.getCreationDate(), photos);
         CarSearchResponse carDTO = new CarSearchResponse();
         carDTO.setCarID(ad.getCar().getId());
