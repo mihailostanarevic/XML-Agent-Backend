@@ -28,8 +28,11 @@ public class MessageController {
     }
 
     @GetMapping
-    public List<MessageResponse> getMessages(@RequestParam("receiver") UUID receiverID){
-        return _messageService.getAllReceivedMessagesForUser(receiverID);
+    public List<MessageResponse> getMessages(@RequestParam("receiver") UUID receiverID, @RequestParam("sender") UUID senderID){
+        if(senderID == null)
+            return _messageService.getAllReceivedMessagesForUser(receiverID);
+        else
+            return _messageService.getMessagesBetweenUsers(receiverID, senderID);
     }
 
     @PutMapping("/{id}")

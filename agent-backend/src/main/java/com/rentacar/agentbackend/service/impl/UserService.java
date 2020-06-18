@@ -145,6 +145,7 @@ public class UserService implements IUserService {
         carDTO.setGearshiftTypeType(ad.getCar().getGearshiftType().getType());
         carDTO.setGetGearshiftTypeNumberOfGears(ad.getCar().getGearshiftType().getNumberOfGears());
         String allLocations = "";
+        int i = 0;
         List<AddressDTO> fullLocations = new ArrayList<>();
         for(Address add : ad.getAgent().getAddress()){
             allLocations += add.getCity();
@@ -155,10 +156,12 @@ public class UserService implements IUserService {
             addressDTO.setNumber(add.getNumber());
             fullLocations.add(addressDTO);
             if(ad.getAgent().getAddress().size() > 1){
-                allLocations += ",";
+                if(i < ad.getAgent().getAddress().size() - 1){
+                    allLocations += ",";
+                }
             }
+            i++;
         }
-        allLocations = allLocations.substring(0, allLocations.length()-1);
         AgentSearchResponse agentDTO = new AgentSearchResponse(ad.getAgent().getId(), ad.getAgent().getName(), ad.getAgent().getDateFounded().toString(), allLocations, fullLocations);
         retVal.setAd(adDTO);
         retVal.setAgent(agentDTO);

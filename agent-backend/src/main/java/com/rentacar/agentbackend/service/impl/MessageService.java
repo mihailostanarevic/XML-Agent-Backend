@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService implements IMessageService {
@@ -103,6 +104,82 @@ public class MessageService implements IMessageService {
         Message msg = _messageRepository.findOneById(id);
         msg.setSeen(request.isSeen());
         _messageRepository.save(msg);
+    }
+
+    @Override
+    public List<MessageResponse> getMessagesBetweenUsers(UUID receiver, UUID sender) {
+        SimpleUser simpleUserReceiver = _simpleUserRepository.findOneById(receiver);
+        User userReceiver;
+        if(simpleUserReceiver != null){
+            userReceiver = _userService.getUser(simpleUserReceiver.getUser().getId());
+        }else {
+            Agent agentReceiver = _agentRepository.findOneById(receiver);
+            userReceiver = _userService.getUser(agentReceiver.getUser().getId());
+        }
+
+        SimpleUser simpleUserSender = _simpleUserRepository.findOneById(sender);
+        User userSender;
+        if(simpleUserSender != null){
+            userSender = _userService.getUser(simpleUserSender.getUser().getId());
+        }else {
+            Agent agentSender = _agentRepository.findOneById(sender);
+            userSender = _userService.getUser(agentSender.getUser().getId());
+        }
+
+        List<Message> allMessages = _messageRepository.findAll();
+        allMessages = allMessages.stream().filter(message -> ((message.getUserSender().getId().equals(userSender.getId()) && message.getUserReceiver().getId().equals(userReceiver.getId())) || (message.getUserReceiver().getId().equals(userSender.getId()) && message.getUserSender().getId().equals(userReceiver.getId()))))
+                .collect(Collectors.toList());
+
+        return mapMessagesBetweenTwoUsersToDTO(allMessages);
+    }
+
+    private List<MessageResponse> mapMessagesBetweenTwoUsersToDTO(List<Message> allMessages) {
+        List<MessageResponse> retVal = new ArrayList<>();
+        for(Message message : allMessages){
+            MessageResponse dto = new MessageResponse();
+            dto.setId(message.getId());
+            dto.setText(message.getText());
+            dto.setDateSent(message.getDateSent().toString());
+            dto.setTimeSent(message.getTimeSent().toString());
+
+            AdMessageResponse adDTO = new AdMessageResponse();
+            adDTO.setShortCarDescription(makeShortCarDescription(message));
+            adDTO.setAdID(message.getAd().getId());
+            adDTO.setDateIssued(message.getAd().getCreationDate().toString());
+            dto.setAd(adDTO);
+
+            UserMessageResponse userDTO = new UserMessageResponse();
+            if(message.getUserSender().getUserRole().equals(UserRole.AGENT)){
+                userDTO.setId(message.getUserSender().getAgent().getId());
+                userDTO.setName(message.getUserSender().getAgent().getName());
+            }else if(message.getUserSender().getUserRole().equals(UserRole.ADMIN)){
+                userDTO.setId(message.getUserSender().getAdmin().getId());
+                userDTO.setName(message.getUserSender().getAdmin().getFirstName() + " " + message.getUserSender().getAdmin().getLastName());
+            }else {
+                userDTO.setId(message.getUserSender().getSimpleUser().getId());
+                userDTO.setName(message.getUserSender().getSimpleUser().getFirstName() + " " + message.getUserSender().getSimpleUser().getLastName());
+            }
+            dto.setUser(userDTO);
+
+            List<MessageCarAccessories> list = _messageCarAccessoriesRepository.findAll();
+            List<CarAccessoryResponse> accessories = new ArrayList<>();
+            for(MessageCarAccessories item : list){
+                if(item.getMessage().getId().equals(message.getId())){
+                    if(!item.isReviewed()){
+                        CarAccessoryResponse carAccessoryResponse = new CarAccessoryResponse(
+                                item.getCar_accessory().getId(),
+                                item.getId(),
+                                item.getCar_accessory().getDescription());
+                        accessories.add(carAccessoryResponse);
+                    }
+                }
+            }
+            dto.setCarAccessories(accessories);
+            dto.setSeen(message.isSeen());
+            retVal.add(dto);
+        }
+
+        return retVal;
     }
 
     private List<MessageResponse> mapMessagesToResponseDTO(User user) {

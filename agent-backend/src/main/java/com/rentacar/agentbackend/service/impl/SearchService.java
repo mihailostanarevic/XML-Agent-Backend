@@ -140,7 +140,7 @@ public class SearchService implements ISearchService {
             addressDTO.setNumber(add.getNumber());
             fullLocations.add(addressDTO);
             if(ad.getAgent().getAddress().size() > 1){
-                if(i < ad.getAgent().getAddress().size() - 2){
+                if(i < ad.getAgent().getAddress().size() - 1){
                     allLocations += ",";
                 }
             }
