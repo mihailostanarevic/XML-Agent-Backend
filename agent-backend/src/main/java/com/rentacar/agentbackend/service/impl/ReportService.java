@@ -3,14 +3,13 @@ package com.rentacar.agentbackend.service.impl;
 import com.rentacar.agentbackend.dto.request.CreateReportRequest;
 import com.rentacar.agentbackend.dto.response.ReportResponse;
 import com.rentacar.agentbackend.dto.response.RequestAdResponse;
-import com.rentacar.agentbackend.entity.Agent;
-import com.rentacar.agentbackend.entity.Car;
-import com.rentacar.agentbackend.entity.Report;
-import com.rentacar.agentbackend.entity.RequestAd;
+import com.rentacar.agentbackend.dto.response.StatisticResponse;
+import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.IAgentRepository;
 import com.rentacar.agentbackend.repository.ICarRepository;
 import com.rentacar.agentbackend.repository.IReportRepository;
 import com.rentacar.agentbackend.repository.IRequestAdRepository;
+import com.rentacar.agentbackend.service.IRatingService;
 import com.rentacar.agentbackend.service.IReportService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,11 +32,14 @@ public class ReportService implements IReportService {
 
     private final IAgentRepository _agentRepository;
 
-    public ReportService(IReportRepository reportRepository, IRequestAdRepository requestAdRepository, ICarRepository carRepository, IAgentRepository agentRepository) {
+    private final IRatingService _ratingService;
+
+    public ReportService(IReportRepository reportRepository, IRequestAdRepository requestAdRepository, ICarRepository carRepository, IAgentRepository agentRepository, IRatingService ratingService) {
         _reportRepository = reportRepository;
         _requestAdRepository = requestAdRepository;
         _carRepository = carRepository;
         _agentRepository = agentRepository;
+        _ratingService = ratingService;
     }
 
     @Override
@@ -79,6 +82,96 @@ public class ReportService implements IReportService {
         return agentsRequestAds.stream()
                 .map(requestAd -> mapRequestAdToRequestAdResponse(requestAd))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public StatisticResponse getStatisticByAgent(UUID id) throws Exception {
+        Agent agent = _agentRepository.findOneById(id);
+
+        Set<Ad> set = agent.getAd();
+        List<Ad> ads = new ArrayList<>();
+        ads.addAll(set);
+
+        StatisticResponse response = new StatisticResponse();
+        Ad mostKilometersTraveledAd = ads.get(0);
+        Ad leastKilometersTraveledAd = ads.get(0);
+
+        Ad mostCommentedAd = ads.get(0);
+        Ad leastCommentedAd = ads.get(0);
+
+        Ad mostRatedAd = ads.get(0);
+        Ad leastRatedAd = ads.get(0);
+        Ad beastRatingAd = ads.get(0);
+        Ad worstRatingAd = ads.get(0);
+
+        for(int i = 1;i < ads.size();i++){
+            if(Float.valueOf(ads.get(i).getCar().getKilometersTraveled()) > Float.valueOf(mostKilometersTraveledAd.getCar().getKilometersTraveled())){
+                mostKilometersTraveledAd = ads.get(i);
+            }
+            if(Float.valueOf(ads.get(i).getCar().getKilometersTraveled()) < Float.valueOf(leastKilometersTraveledAd.getCar().getKilometersTraveled())){
+                leastKilometersTraveledAd = ads.get(i);
+            }
+
+            if(Float.valueOf(ads.get(i).getComments().size()) > Float.valueOf(mostCommentedAd.getComments().size())){
+                mostCommentedAd = ads.get(i);
+            }
+            if(Float.valueOf(ads.get(i).getComments().size()) < Float.valueOf(leastCommentedAd.getComments().size())){
+                leastCommentedAd = ads.get(i);
+            }
+
+            if(Float.valueOf(ads.get(i).getRatings().size()) > Float.valueOf(mostRatedAd.getRatings().size())){
+                mostRatedAd = ads.get(i);
+            }
+            if(Float.valueOf(ads.get(i).getRatings().size()) < Float.valueOf(leastRatedAd.getComments().size())){
+                leastRatedAd = ads.get(i);
+            }
+
+            if(Float.valueOf(_ratingService.getAvgRatingByAd(ads.get(i).getId()).getAvgRating()) > Float.valueOf(_ratingService.getAvgRatingByAd(beastRatingAd.getId()).getAvgRating())){
+                beastRatingAd = ads.get(i);
+            }
+            if(Float.valueOf(_ratingService.getAvgRatingByAd(ads.get(i).getId()).getAvgRating()) < Float.valueOf(_ratingService.getAvgRatingByAd(worstRatingAd.getId()).getAvgRating())){
+                worstRatingAd = ads.get(i);
+            }
+        }
+
+        response.setMostKilometersTraveled(mostKilometersTraveledAd.getCar().getKilometersTraveled());
+        response.setLeastKilometersTraveled(leastKilometersTraveledAd.getCar().getKilometersTraveled());
+        response.setMostCommentedAd(String.valueOf(mostCommentedAd.getComments().size()));
+        response.setLeastCommentedAd(String.valueOf(leastCommentedAd.getComments().size()));
+        response.setMostRateddAd(String.valueOf(mostRatedAd.getComments().size()));
+        response.setLeastRatedAd(String.valueOf(leastRatedAd.getComments().size()));
+
+        response.setAdIdLeastCommented(leastCommentedAd.getId());
+        response.setAdIdLeastKilometersTraveled(leastKilometersTraveledAd.getId());
+        response.setAdIdLeastRated(leastRatedAd.getId());
+        response.setAdIdMostCommented(mostCommentedAd.getId());
+        response.setAdIdMostKilometersTraveled(mostKilometersTraveledAd.getId());
+        response.setAdIdMostRated(mostRatedAd.getId());
+
+        response.setBrandNameLeastCommented(leastCommentedAd.getCar().getCarModel().getCarBrand().getName());
+        response.setBrandNameLeastKilometersTraveled(leastKilometersTraveledAd.getCar().getCarModel().getCarBrand().getName());
+        response.setBrandNameLeastRated(leastRatedAd.getCar().getCarModel().getCarBrand().getName());
+        response.setBrandNameMostCommented(mostCommentedAd.getCar().getCarModel().getCarBrand().getName());
+        response.setBrandNameMostKilometersTraveled(mostKilometersTraveledAd.getCar().getCarModel().getCarBrand().getName());
+        response.setBrandNameMostRated(mostRatedAd.getCar().getCarModel().getCarBrand().getName());
+
+        response.setModelNameLeastCommented(leastCommentedAd.getCar().getCarModel().getName());
+        response.setModelNameLeastKilometersTraveled(leastKilometersTraveledAd.getCar().getCarModel().getName());
+        response.setModelNameLeastRated(leastRatedAd.getCar().getCarModel().getName());
+        response.setModelNameMostCommented(mostCommentedAd.getCar().getCarModel().getName());
+        response.setModelNameMostKilometersTraveled(mostKilometersTraveledAd.getCar().getCarModel().getName());
+        response.setModelNameMostRated(mostRatedAd.getCar().getCarModel().getName());
+
+        response.setBestAvgRating(_ratingService.getAvgRatingByAd(beastRatingAd.getId()).getAvgRating());
+        response.setWorstAvgRating(_ratingService.getAvgRatingByAd(worstRatingAd.getId()).getAvgRating());
+        response.setAdIdBestRated(beastRatingAd.getId());
+        response.setBrandNameBestRated(beastRatingAd.getCar().getCarModel().getCarBrand().getName());
+        response.setModelNameBestRated(beastRatingAd.getCar().getCarModel().getName());
+        response.setAdIdWorstRated(worstRatingAd.getId());
+        response.setBrandNameWorstRated(worstRatingAd.getCar().getCarModel().getCarBrand().getName());
+        response.setModelNameWorstRated(worstRatingAd.getCar().getCarModel().getName());
+
+        return response;
     }
 
     private ReportResponse mapReportToReportResponse(Report report) {

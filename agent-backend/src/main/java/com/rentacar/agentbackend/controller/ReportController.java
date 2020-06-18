@@ -3,6 +3,7 @@ package com.rentacar.agentbackend.controller;
 import com.rentacar.agentbackend.dto.request.CreateReportRequest;
 import com.rentacar.agentbackend.dto.response.ReportResponse;
 import com.rentacar.agentbackend.dto.response.RequestAdResponse;
+import com.rentacar.agentbackend.dto.response.StatisticResponse;
 import com.rentacar.agentbackend.service.IReportService;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,13 @@ public class ReportController {
         return _reportService.createReport(reportRequest, id);
     }
 
-    @GetMapping("/{id}/agent")
+    @GetMapping("/possible/{id}/agent")
     public List<RequestAdResponse> getAllRequestAdsWhichNeedReport(@PathVariable UUID id) throws Exception {
         return _reportService.getAllRequestAdsWhichNeedReport(id);
+    }
+
+    @GetMapping("/statistic/{id}/agent")
+    public StatisticResponse getStatisticByAgent(@PathVariable UUID id) throws Exception {
+        return _reportService.getStatisticByAgent(id);
     }
 }
