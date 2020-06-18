@@ -14,4 +14,5 @@ public interface IMessageService {
     ResponseEntity<String> sendMessage(SendMessageRequest request);
     List<MessageResponse> getAllSentMessagesFromUser(UUID user);
     void seen(SeenRequest request, UUID id);
+    List<MessageResponse> getMessagesBetweenUsers(UUID receiver, UUID sender);
 }
