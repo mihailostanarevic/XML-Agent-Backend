@@ -37,4 +37,6 @@ public interface IAdService {
     PhotoResponse getPhoto(UUID adId);
 
     List<AdResponse> getAgentAds(UUID id);
+
+    List<PhotoResponse> getAllPhotos(UUID adID);
 }

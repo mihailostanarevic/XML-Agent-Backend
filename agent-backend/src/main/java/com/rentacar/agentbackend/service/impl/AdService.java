@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -50,6 +51,18 @@ public class AdService implements IAdService {
         Photo photo = ad.getAdPhotos().iterator().next();   // bilo koja slika
         Photo img = new Photo(photo.getName(), photo.getType(), decompressBytes(photo.getPicByte()), false, ad);
         return mapToPhotoResponse(img);
+    }
+
+    @Override
+    public List<PhotoResponse> getAllPhotos(UUID adID){
+        List<PhotoResponse> retVal = new ArrayList<>();
+        Ad ad = _adRepository.findOneById(adID);
+        Set<Photo> photos = ad.getAdPhotos();
+        for(Photo photo : photos){
+            Photo img = new Photo(photo.getName(), photo.getType(), decompressBytes(photo.getPicByte()), false, ad);
+            retVal.add(mapToPhotoResponse(img));
+        }
+        return retVal;
     }
 
     @Override
