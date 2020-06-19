@@ -24,12 +24,12 @@ public class CommentController {
         return _commentService.commentAd(request);
     }
 
-    @PutMapping("approve-comment")
+    @PutMapping("/approve-comment")
     void approveComment(@RequestBody ApproveOrDenyCommentRequest request) throws Exception {
         _commentService.approveComment(request);
     }
 
-    @PutMapping("deny-comment")
+    @PutMapping("/deny-comment")
     void denyComment(@RequestBody ApproveOrDenyCommentRequest request) throws Exception {
         _commentService.denyComment(request);
     }

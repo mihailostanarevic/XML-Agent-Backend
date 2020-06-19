@@ -22,9 +22,13 @@ public class MessageController {
         _messageService = messageService;
     }
 
+//    @PostMapping
+//    public ResponseEntity<String> sendMessage(@RequestBody SendMessageRequest request){
+//        return _messageService.sendMessage(request);
+//    }
     @PostMapping
-    public ResponseEntity<String> sendMessage(@RequestBody SendMessageRequest request){
-        return _messageService.sendMessage(request);
+    public void sendMessage(@RequestBody SendMessageRequest request){
+        _messageService.sendMessage(request);
     }
 
     @GetMapping
