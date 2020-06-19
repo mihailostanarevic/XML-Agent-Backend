@@ -35,6 +35,11 @@ public class UserController {
         return _userService.getAllUsers();
     }
 
+    @GetMapping("/customer")
+    public List<UserResponse> getCustomers() {
+        return _userService.getCustomers();
+    }
+
     @GetMapping("/{id}/requests")
     public List<UsersAdsResponse> usersAdsFromStatus(@PathVariable("id") UUID userId, @RequestParam("status") String string){
         String stringStatus = string.toUpperCase();
@@ -94,4 +99,5 @@ public class UserController {
     public List<AdResponse> getAd(@PathVariable UUID id) throws Exception{
         return _adService.getAgentAds(id);
     }
+
 }

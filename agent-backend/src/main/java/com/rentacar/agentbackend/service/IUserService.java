@@ -24,4 +24,6 @@ public interface IUserService {
     List<UsersAdsResponse> getUsersRequestFromStatus(UUID id, RequestStatus status);
 
     Collection<SimpleUserRequests> dropRequest(UUID id, UUID requestID);
+
+    List<UserResponse> getCustomers();
 }

@@ -15,6 +15,8 @@ public class RequestDTO {
 
     private UUID customerID;
 
+    private String customerUsername;
+
     private String pickUpDate;      // format -> "2016-06-12"
 
     private String pickUpTime;      // format -> "06:30"
