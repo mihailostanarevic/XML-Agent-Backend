@@ -13,5 +13,4 @@ public interface IAddressRepository extends JpaRepository<Address, UUID> {
     Address findOneById(UUID id);
 
     Set<Address> findAllByCountry(String country);
-
 }

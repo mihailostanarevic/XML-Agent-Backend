@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -24,9 +25,9 @@ public class Address extends BaseEntity {
     private String country;
 
     @OneToMany(mappedBy = "pickUpAddress", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Request> request;
+    private Set<Request> request = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Agent> agent;
+    private Set<Agent> agent = new HashSet<>();
 
 }

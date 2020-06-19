@@ -59,7 +59,7 @@ public class MessageService implements IMessageService {
     }
 
     @Override
-    public ResponseEntity<String> sendMessage(SendMessageRequest request) {
+    public void sendMessage(SendMessageRequest request) {
 
         Message newMessage = new Message();
         newMessage.setText(request.getText());
@@ -91,7 +91,7 @@ public class MessageService implements IMessageService {
             mca.setCar_accessory(carAccess);
             _messageCarAccessoriesRepository.save(mca);
         }
-        return new ResponseEntity<>("Message sent", HttpStatus.CREATED);
+//        return new ResponseEntity<String>("Message sent", HttpStatus.CREATED);
     }
 
     @Override
