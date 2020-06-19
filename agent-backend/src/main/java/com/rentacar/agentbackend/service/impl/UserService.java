@@ -8,6 +8,7 @@ import com.rentacar.agentbackend.repository.IUserRepository;
 import com.rentacar.agentbackend.service.IAgentService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
+import com.rentacar.agentbackend.util.enums.UserRole;
 import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.stereotype.Service;
 
@@ -99,6 +100,15 @@ public class UserService implements IUserService {
             _requestRepository.save(request);
         }
         return getAllUserRequests(userId, retStatus);
+    }
+
+    @Override
+    public List<UserResponse> getCustomers() {
+        List<User> users = _userRepository.findAllByDeleted(false);
+        return users.stream()
+                .filter(user -> user.getUserRole().equals(UserRole.SIMPLE_USER))
+                .map(user -> mapUserToUserResponse(user))
+                .collect(Collectors.toList());
     }
 
     private List<SimpleUserRequests> mapToSimpleUserRequest(List<Request> requestList) {

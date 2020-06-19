@@ -102,7 +102,13 @@ public class RequestService implements IRequestService {
         Request request = new Request();
         Set<Ad> adSet = new HashSet<>();
         adSet.add(_adRepository.findOneById(requestDTO.getAdID()));
-        SimpleUser simpleUser = _simpleUserRepository.findOneById(requestDTO.getCustomerID());
+        SimpleUser simpleUser;
+        if(requestDTO.getCustomerID() != null) {
+            simpleUser = _simpleUserRepository.findOneById(requestDTO.getCustomerID());
+        } else {
+            User user = _userRepository.findOneByUsername(requestDTO.getCustomerUsername());
+            simpleUser = _simpleUserRepository.findOneByUser(user);
+        }
         request.setCustomer(simpleUser);
         request.setStatus(RequestStatus.PENDING);
         request.setPickUpAddress(_addressRepository.findOneById(requestDTO.getPickUpAddress()));
