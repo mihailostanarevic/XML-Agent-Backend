@@ -28,6 +28,10 @@ public class Ad extends BaseEntity {
     @JoinColumn(name = "agent_id", referencedColumnName = "id")
     private Agent agent;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "simple_user_id", referencedColumnName = "id")
+    private SimpleUser simpleUser; //max 3
+
     private boolean available; //is rented or available
 
     private boolean limitedDistance; //is distance which user can travel limited
