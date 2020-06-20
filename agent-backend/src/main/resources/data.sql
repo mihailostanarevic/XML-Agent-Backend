@@ -19,11 +19,12 @@ insert into authorities_permissions (authority_id, permission_id) values
     (8, 22);
 
 insert into user_entity (id, username, password, deleted, has_signed_in, last_password_reset_date, user_role) values
-    ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 'admin@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07', 2),
-    ('105496cd-30f2-4b62-8082-cc14d282e845', 'agent@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07', 1),
-    ('d0535564-08ec-464c-a2db-d930d2c4fcde', 'agent1@gmail.com', '$2a$04$SwzgBrIJZhfnzOw7KFcdzOTiY6EFVwIpG7fkF/D1w26G1.fWsi.aK', false, false, '2019-10-01 21:58:58.508-07', 1),
-    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 'customer@gmail.com', '$2y$12$Wr3ak.8cQEj9.cALsNHQyejJ2gaRS4nWMjc5dIl7PUuesV632B1p6', false, false, '2019-10-01 21:58:58.508-07', 0),
-    ('b9362264-17db-411e-8ed0-db8310cba9f1', 'customer2@gmail.com', '$2y$10$.YHs6oWKNn3ZqfLwxWYrouWDw54jjJ62Q9kUT.D0NPSsTYE/v8nMK', false, false, '2020-10-01 21:58:58.508-07', 0);
+    ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 'admin@gmail.com', '$2y$12$/o3G/4hCDEvJVDdxKp1Hv.2mxL7Avm.No35NB69OiOlFGYLBlONBW', false, false, '2019-10-01 21:58:58.508-07', 2),
+    ('105496cd-30f2-4b62-8082-cc14d282e845', 'agent@gmail.com', '$2y$12$Om9NEfovLasPXAJ0YwZuGOTEyAZgaaTmPmci7cN8yPekYfamph0qO', false, false, '2019-10-01 21:58:58.508-07', 1),
+    ('d0535564-08ec-464c-a2db-d930d2c4fcde', 'agent1@gmail.com', '$$2y$12$Ig5LuShMxa98xcCOXhSSM.hIZsTiGglqhh4DOyNA62vK9M/FxJynK', false, false, '2019-10-01 21:58:58.508-07', 1),
+    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 'customer@gmail.com', '$2y$12$AYB7pep3AGDrIKI9VYkjQuXN1X16fUfu2AJsbBVNMynoJBXeyKIou', false, false, '2019-10-01 21:58:58.508-07', 0),
+    ('b9362264-17db-411e-8ed0-db8310cba9f1', 'customer2@gmail.com', '$2y$12$CQgSOU.PP8ROwyIz764jvuAyFEsZIsGm3ySsNcxYSGe0OSzXKSQcy', false, false, '2020-10-01 21:58:58.508-07', 0);
+--password for all users is Sifra123!!!
 
 insert into user_authority (user_id, authority_id) values
     ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 1),

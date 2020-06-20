@@ -72,7 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/message/**").permitAll()
 //                .antMatchers("/message-car-accessories/**").permitAll()
 //                .antMatchers("/requests/**").permitAll()
-                .antMatchers("/users").permitAll()
+//                .antMatchers("/users").permitAll()
                 .antMatchers("/**").permitAll() // brisati ovo
                 .anyRequest().authenticated().and()
 
