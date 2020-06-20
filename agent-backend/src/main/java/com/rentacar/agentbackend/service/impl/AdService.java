@@ -100,13 +100,18 @@ public class AdService implements IAdService {
         Car savedCar = _carRepository.save(car);
         Ad ad = new Ad();
         if(_agentRepository.findOneById(request.getAgentId()) != null){
-            ad.setAgent(_agentRepository.findOneById(request.getAgentId()));
+            Agent agent = _agentRepository.findOneById(request.getAgentId());
+            ad.setAgent(agent);
+            agent.getAd().add(ad);
+            _agentRepository.save(agent);
         }else if(_simpleUserRepository.findOneById(request.getAgentId()) != null){
             SimpleUser userAgent = _simpleUserRepository.findOneById(request.getAgentId());
             if(userAgent.getAd().size() > 2){
                 throw new IOException("You have reached your renting limit.");
             }
+            userAgent.getAd().add(ad);
             ad.setSimpleUser(userAgent);
+            _simpleUserRepository.save(userAgent);
         }
 
         ad.setCar(savedCar);
