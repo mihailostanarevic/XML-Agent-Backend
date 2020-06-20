@@ -33,8 +33,9 @@ public class AdService implements IAdService {
     private final IAgentRepository _agentRepository;
     private final IPhotoRepository _photoRepository;
     private final IRequestAdRepository _requestAdRepository;
+    private final ISimpleUserRepository _simpleUserRepository;
 
-    public AdService(IAdRepository adRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarRepository carRepository, IAgentRepository agentRepository, IPhotoRepository photoRepository, IRequestAdRepository requestAdRepository) {
+    public AdService(IAdRepository adRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarRepository carRepository, IAgentRepository agentRepository, IPhotoRepository photoRepository, IRequestAdRepository requestAdRepository, ISimpleUserRepository simpleUserRepository) {
         _adRepository = adRepository;
         _carModelRepository = carModelRepository;
         _gearshiftTypeRepository = gearshiftTypeRepository;
@@ -43,6 +44,7 @@ public class AdService implements IAdService {
         _agentRepository = agentRepository;
         _photoRepository = photoRepository;
         _requestAdRepository = requestAdRepository;
+        _simpleUserRepository = simpleUserRepository;
     }
 
     @Override
@@ -97,7 +99,21 @@ public class AdService implements IAdService {
         car.setKilometersTraveled(request.getKilometersTraveled());
         Car savedCar = _carRepository.save(car);
         Ad ad = new Ad();
-        ad.setAgent(_agentRepository.findOneById(request.getAgentId()));
+        if(_agentRepository.findOneById(request.getAgentId()) != null){
+            Agent agent = _agentRepository.findOneById(request.getAgentId());
+            ad.setAgent(agent);
+            agent.getAd().add(ad);
+            _agentRepository.save(agent);
+        }else if(_simpleUserRepository.findOneById(request.getAgentId()) != null){
+            SimpleUser userAgent = _simpleUserRepository.findOneById(request.getAgentId());
+            if(userAgent.getAd().size() > 2){
+                throw new IOException("You have reached your renting limit.");
+            }
+            userAgent.getAd().add(ad);
+            ad.setSimpleUser(userAgent);
+            _simpleUserRepository.save(userAgent);
+        }
+
         ad.setCar(savedCar);
         ad.setLimitedDistance(request.isLimitedDistance());
         ad.setAvailableKilometersPerRent(request.getAvailableKilometersPerRent());
@@ -201,7 +217,11 @@ public class AdService implements IAdService {
     private AdResponse mapAdToAdResponse(Ad ad) {
         AdResponse adResponse = new AdResponse();
         adResponse.setId(ad.getId());
-        adResponse.setAgentID(ad.getAgent().getId());
+        if(ad.getAgent() != null){
+            adResponse.setAgentID(ad.getAgent().getId());
+        }else if(ad.getSimpleUser() != null){
+            adResponse.setAgentID(ad.getSimpleUser().getId());
+        }
         adResponse.setAvailableKilometersPerRent(ad.getAvailableKilometersPerRent());
         adResponse.setCdw(ad.isCdw());
         adResponse.setLimitedDistance(ad.isLimitedDistance());

@@ -18,7 +18,7 @@ public class AddAdRequest {
 
 //    private List<String> photoUrls;
 
-    private UUID agentId;
+    private UUID agentId; //or simpleUserId
 
     private boolean limitedDistance;
 
