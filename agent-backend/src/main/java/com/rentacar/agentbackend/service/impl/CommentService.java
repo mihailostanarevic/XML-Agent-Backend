@@ -98,7 +98,7 @@ public class CommentService implements ICommentService {
             comment.setComment(request.getComment());
             comment.setAgent(agent);
             comment.setAd(ad);
-            comment.setStatus(RequestStatus.APPROVED);
+            comment.setStatus(RequestStatus.PENDING);
             Comment savedComment = _commentRepository.save(comment);
             ad.getComments().add(savedComment);
             _adRepository.save(ad);

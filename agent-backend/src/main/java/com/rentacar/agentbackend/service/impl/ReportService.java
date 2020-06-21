@@ -113,7 +113,7 @@ public class ReportService implements IReportService {
             }
 
             if(Float.valueOf(ads.get(i).getComments().size()) > Float.valueOf(mostCommentedAd.getComments().size())){
-                mostCommentedAd = ads.get(i);
+                mostCommentedAd = ads.get(i); //all comments, not only approved
             }
             if(Float.valueOf(ads.get(i).getComments().size()) < Float.valueOf(leastCommentedAd.getComments().size())){
                 leastCommentedAd = ads.get(i);
