@@ -35,9 +35,12 @@ public class GearshiftTypeService implements IGearshiftTypeService {
         gearshiftType.setDeleted(false);
         gearshiftType.setNumberOfGears(request.getNumberOfGears());
         gearshiftType.setType(request.getType());
-        CreateGearshiftTypeRequestDTO dto = new CreateGearshiftTypeRequestDTO(request.getType(), request.getNumberOfGears());
-        JAXBElement<Long> retVal = _carClient.createGearshiftType(dto);
-        if(retVal.getValue() == 1L){
+        CreateGearshiftTypeRequestDTO dto = new CreateGearshiftTypeRequestDTO(request.getType(),request.getNumberOfGears());
+//        dto.setNumberOfGears();
+//        dto.setType();
+        System.out.println("dosao sam");
+        Long retVal = _carClient.createGearshiftType(dto);
+        if(retVal.equals(1L)){
             GearshiftType savedGearshiftType = _gearshiftTypeRepository.save(gearshiftType);
             return mapGearshiftTypeToGearshiftTypeResponse(savedGearshiftType);
         }else {

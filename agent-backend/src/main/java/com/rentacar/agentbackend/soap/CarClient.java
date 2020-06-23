@@ -8,12 +8,14 @@ import javax.xml.namespace.QName;
 
 public class CarClient extends WebServiceGatewaySupport {
 
-    public JAXBElement<Long> createGearshiftType(CreateGearshiftTypeRequestDTO value) {
+    public Long createGearshiftType(CreateGearshiftTypeRequestDTO value) {
         JAXBElement<CreateGearshiftTypeRequestDTO> jaxbElement =
                 new JAXBElement(new QName("http://www.car.com/car","createGearshiftTypeRequest"),
                         CreateGearshiftTypeRequestDTO.class, value);
-        JAXBElement<Long> response = (JAXBElement<Long>) getWebServiceTemplate().marshalSendAndReceive(jaxbElement);
-        return response;
+        System.out.println("pre responsa");
+        getWebServiceTemplate().marshalSendAndReceive(jaxbElement);
+        System.out.println("posle responsa");
+        return 1L;
     }
 
 }

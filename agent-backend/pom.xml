@@ -155,7 +155,7 @@
 				<configuration>
 					<schemaLanguage>WSDL</schemaLanguage>
 					<generateDirectory>${project.basedir}/src/main/java/com/rentacar/agentbackend</generateDirectory>
-					<generatePackage>soap.gen</generatePackage>
+					<generatePackage>soap.wsdl</generatePackage>
 					<schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
 					<schemaIncludes>
 						<include>car.wsdl</include>
