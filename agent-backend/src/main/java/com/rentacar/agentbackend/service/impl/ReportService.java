@@ -138,8 +138,8 @@ public class ReportService implements IReportService {
         response.setLeastKilometersTraveled(leastKilometersTraveledAd.getCar().getKilometersTraveled());
         response.setMostCommentedAd(String.valueOf(mostCommentedAd.getComments().size()));
         response.setLeastCommentedAd(String.valueOf(leastCommentedAd.getComments().size()));
-        response.setMostRateddAd(String.valueOf(mostRatedAd.getComments().size()));
-        response.setLeastRatedAd(String.valueOf(leastRatedAd.getComments().size()));
+        response.setMostRateddAd(String.valueOf(mostRatedAd.getRatings().size()));
+        response.setLeastRatedAd(String.valueOf(leastRatedAd.getRatings().size()));
 
         response.setAdIdLeastCommented(leastCommentedAd.getId());
         response.setAdIdLeastKilometersTraveled(leastKilometersTraveledAd.getId());
