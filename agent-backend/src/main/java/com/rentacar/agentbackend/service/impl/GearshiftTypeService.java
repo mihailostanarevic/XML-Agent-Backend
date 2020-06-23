@@ -5,10 +5,14 @@ import com.rentacar.agentbackend.dto.request.GetGearshiftTypesWithFilterRequest;
 import com.rentacar.agentbackend.dto.request.UpdateGearshiftTypeRequest;
 import com.rentacar.agentbackend.dto.response.GearshiftTypeResponse;
 import com.rentacar.agentbackend.entity.GearshiftType;
+import com.rentacar.agentbackend.model.CreateGearshiftTypeRequestDTO;
 import com.rentacar.agentbackend.repository.IGearshiftTypeRepository;
 import com.rentacar.agentbackend.service.IGearshiftTypeService;
+import com.rentacar.agentbackend.soap.CarClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.bind.JAXBElement;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,6 +21,9 @@ import java.util.stream.Collectors;
 public class GearshiftTypeService implements IGearshiftTypeService {
 
     private final IGearshiftTypeRepository _gearshiftTypeRepository;
+
+    @Autowired
+    private CarClient _carClient;
 
     public GearshiftTypeService(IGearshiftTypeRepository gearshiftTypeRepository) {
         _gearshiftTypeRepository = gearshiftTypeRepository;
@@ -28,8 +35,18 @@ public class GearshiftTypeService implements IGearshiftTypeService {
         gearshiftType.setDeleted(false);
         gearshiftType.setNumberOfGears(request.getNumberOfGears());
         gearshiftType.setType(request.getType());
-        GearshiftType savedGearshiftType = _gearshiftTypeRepository.save(gearshiftType);
-        return mapGearshiftTypeToGearshiftTypeResponse(savedGearshiftType);
+        CreateGearshiftTypeRequestDTO dto = new CreateGearshiftTypeRequestDTO(request.getType(),request.getNumberOfGears());
+//        dto.setNumberOfGears();
+//        dto.setType();
+        System.out.println("dosao sam");
+        Long retVal = _carClient.createGearshiftType(dto);
+        if(retVal.equals(1L)){
+            GearshiftType savedGearshiftType = _gearshiftTypeRepository.save(gearshiftType);
+            return mapGearshiftTypeToGearshiftTypeResponse(savedGearshiftType);
+        }else {
+            System.out.println("Nisam uspeo");
+            return null;
+        }
     }
 
     @Override

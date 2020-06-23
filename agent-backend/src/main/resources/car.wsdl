@@ -1,0 +1,21 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://www.car.com/car" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.car.com/car" targetNamespace="http://www.car.com/car">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.car.com/car" version="1.0">
+            <xs:complexType name="createGearshiftTypeRequestDTO">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="type" type="xs:string"/>
+                    <xs:element minOccurs="0" name="numberOfGears" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:portType name="Cars"> </wsdl:portType>
+    <wsdl:binding name="CarsSoap11" type="tns:Cars">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    </wsdl:binding>
+    <wsdl:service name="CarsService">
+        <wsdl:port binding="tns:CarsSoap11" name="CarsSoap11">
+            <soap:address location="http://localhost:8082/ws"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
