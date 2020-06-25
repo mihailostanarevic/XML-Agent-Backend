@@ -15,7 +15,8 @@ target/
 
 ### IntelliJ IDEA ###
 .idea
-logs
+!*/config/logs
+*/logs
 *.iws
 *.iml
 *.ipr
