@@ -4,6 +4,7 @@ import com.rentacar.agentbackend.dto.request.*;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.service.impl.GeneralException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ public interface IAuthService {
 
     UserResponse createSimpleUser(CreateSimpleUserRequest request) throws Exception;
 
-    UserResponse login(LoginRequest request) throws Exception;
+    UserResponse login(LoginRequest request, HttpServletRequest httpServletRequest) throws Exception;
 
     UserResponse setNewPassword(UUID id, NewPassordRequest request) throws Exception;
 
