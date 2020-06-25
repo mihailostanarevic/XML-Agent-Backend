@@ -2,6 +2,7 @@ package com.rentacar.agentbackend.service.impl;
 
 import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
 import com.rentacar.agentbackend.dto.request.*;
+import com.rentacar.agentbackend.dto.response.RequestResponse;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
@@ -22,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,10 +55,12 @@ public class AuthService implements IAuthService {
 
     private final IEmailService _emailService;
 
+    private final ILoginAttemptsRepository _loginAttemptsRepository;
+
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService) {
+    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
@@ -65,6 +69,7 @@ public class AuthService implements IAuthService {
         _authenticationManager = authenticationManager;
         _tokenUtils = tokenUtils;
         _emailService = emailService;
+        _loginAttemptsRepository = loginAttemptsRepository;
     }
 
     /**
@@ -99,6 +104,20 @@ public class AuthService implements IAuthService {
     }
 
     @Override
+    public RequestResponse limitRedirect(HttpServletRequest request) {
+        LocalDateTime now = LocalDateTime.now();
+        RequestResponse response = new RequestResponse();
+        LoginAttempts loginAttempts = _loginAttemptsRepository.findOneByIpAddress(request.getRemoteAddr());
+        if(loginAttempts != null){
+            if(loginAttempts.getAttempts().equals("3") && loginAttempts.getFirstMistakeDateTime().plusHours(12L).isAfter(now)){
+                response.setMessage("LIMIT");
+                return response;
+            }
+        }
+        return response;
+    }
+
+    @Override
     public UserResponse createAgent(CreateAgentRequest request) throws Exception {
         if(!request.getPassword().equals(request.getRePassword())){
             logger.info(request.getUsername() + " didn't match his/hers passwords");
@@ -128,6 +147,8 @@ public class AuthService implements IAuthService {
         savedAgent.setUser(user);
         user.setAgent(savedAgent);
         User savedUser = _userRepository.save(user);
+
+        _emailService.agentRegistrationMail(agent);
 
         logger.info(user.getUsername() + " account has been successfully created as an agent");
         return mapUserToUserResponse(savedUser);
@@ -167,11 +188,36 @@ public class AuthService implements IAuthService {
         return mapUserToUserResponse(savedUser);
     }
 
+    @Transactional(dontRollbackOn = GeneralException.class)
     @Override
-    public UserResponse login(LoginRequest request) throws GeneralException {
+    public UserResponse login(LoginRequest request, HttpServletRequest httpServletRequest) throws GeneralException {
+        LoginAttempts la = _loginAttemptsRepository.findOneByIpAddress(httpServletRequest.getRemoteAddr());
+        if(la != null && Integer.parseInt(la.getAttempts()) >= 3 && la.getFirstMistakeDateTime().plusHours(12L).isAfter(LocalDateTime.now())){
+            throw new GeneralException("You have reached your logging limit, please try again later.", HttpStatus.CONFLICT);
+        }
         User user = _userRepository.findOneByUsername(request.getUsername());
         if(user == null) {
-            throw new GeneralException("Unknown user", HttpStatus.BAD_REQUEST);
+            if(la == null){
+                LoginAttempts loginAttempts = new LoginAttempts();
+                loginAttempts.setIpAddress(httpServletRequest.getRemoteAddr());
+                loginAttempts.setAttempts("1");
+                loginAttempts.setFirstMistakeDateTime(LocalDateTime.now());
+                LoginAttempts saved = _loginAttemptsRepository.save(loginAttempts);
+                System.out.println(saved.getId());
+                throw new GeneralException("Bad credentials.", HttpStatus.BAD_REQUEST);
+            }
+            if(la.getFirstMistakeDateTime().plusHours(12L).isBefore(LocalDateTime.now())){
+                la.setFirstMistakeDateTime(LocalDateTime.now());
+                la.setAttempts("0");
+            }
+            int attempts = Integer.parseInt(la.getAttempts());
+            attempts++;
+            la.setAttempts(String.valueOf(attempts));
+            _loginAttemptsRepository.save(la);
+//            UserResponse userResponse = new UserResponse();
+//            return userResponse;
+            throw new GeneralException("Bad credentials.", HttpStatus.BAD_REQUEST);
+//            throw new GeneralException("Unknown user", HttpStatus.BAD_REQUEST);
         }
         if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
             throw new GeneralException("Your registration hasn't been approved yet.", HttpStatus.BAD_REQUEST);
