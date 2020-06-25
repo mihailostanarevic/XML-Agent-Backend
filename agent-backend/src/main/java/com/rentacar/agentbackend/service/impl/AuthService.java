@@ -285,8 +285,8 @@ public class AuthService implements IAuthService {
         logger.trace("Total time to login user " + userResponse.getUsername() +  " was " + time + " ms");
 //        System.out.println(jwt);
         logger.info(user.getUsername() + " has logged in");
-        logger.warn("Test warning 1");
-        logger.warn("Test warning 2");
+        logger.warn("Test warning");
+        logger.error("Test error to show that this mail is actually sent");
         return userResponse;
     }
 
