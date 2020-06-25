@@ -145,6 +145,8 @@ public class AuthService implements IAuthService {
         user.setAgent(savedAgent);
         User savedUser = _userRepository.save(user);
 
+        _emailService.agentRegistrationMail(agent);
+
         logger.info(user.getUsername() + " account has been successfully created as an agent");
         return mapUserToUserResponse(savedUser);
     }
