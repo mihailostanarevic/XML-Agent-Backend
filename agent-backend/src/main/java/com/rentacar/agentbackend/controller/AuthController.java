@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.*;
+import com.rentacar.agentbackend.dto.response.RequestResponse;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.service.IAuthService;
 import org.springframework.http.HttpStatus;
@@ -69,5 +70,10 @@ public class AuthController extends ValidationControler {
 //    @PreAuthorize("hasAuthority('LOGIN')")
     public List<UserResponse> getAllRegistrationRequests() throws Exception{
         return _authService.getAllRegistrationRequests();
+    }
+
+    @GetMapping("/logging-limit")
+    public RequestResponse loggingLimit(HttpServletRequest request){
+        return _authService.limitRedirect(request);
     }
 }

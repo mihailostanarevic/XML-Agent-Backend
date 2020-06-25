@@ -1,6 +1,7 @@
 package com.rentacar.agentbackend.service;
 
 import com.rentacar.agentbackend.dto.request.*;
+import com.rentacar.agentbackend.dto.response.RequestResponse;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.service.impl.GeneralException;
 
@@ -27,4 +28,6 @@ public interface IAuthService {
     List<UserResponse> getAllRegistrationRequests() throws Exception;
 
     void checkSQLInjection(CreateAgentRequest request)throws GeneralException;
+
+    RequestResponse limitRedirect(HttpServletRequest request);
 }

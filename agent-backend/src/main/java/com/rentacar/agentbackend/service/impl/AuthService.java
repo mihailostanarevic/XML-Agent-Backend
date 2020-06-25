@@ -2,6 +2,7 @@ package com.rentacar.agentbackend.service.impl;
 
 import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
 import com.rentacar.agentbackend.dto.request.*;
+import com.rentacar.agentbackend.dto.response.RequestResponse;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
@@ -100,6 +101,20 @@ public class AuthService implements IAuthService {
     }
 
     @Override
+    public RequestResponse limitRedirect(HttpServletRequest request) {
+        LocalDateTime now = LocalDateTime.now();
+        RequestResponse response = new RequestResponse();
+        LoginAttempts loginAttempts = _loginAttemptsRepository.findOneByIpAddress(request.getRemoteAddr());
+        if(loginAttempts != null){
+            if(loginAttempts.getAttempts().equals("3") && loginAttempts.getFirstMistakeDateTime().plusHours(12L).isAfter(now)){
+                response.setMessage("LIMIT");
+                return response;
+            }
+        }
+        return response;
+    }
+
+    @Override
     public UserResponse createAgent(CreateAgentRequest request) throws Exception {
         if(!request.getPassword().equals(request.getRePassword())){
             logger.info(request.getUsername() + " didn't match his/hers passwords");
@@ -183,7 +198,7 @@ public class AuthService implements IAuthService {
                 loginAttempts.setAttempts("1");
                 loginAttempts.setFirstMistakeDateTime(LocalDateTime.now());
                 LoginAttempts saved = _loginAttemptsRepository.save(loginAttempts);
-                System.out.println(_loginAttemptsRepository.findOneById(saved.getId()).getId());
+                System.out.println(saved.getId());
                 throw new GeneralException("Bad credentials.", HttpStatus.BAD_REQUEST);
             }
             if(la.getFirstMistakeDateTime().plusHours(12L).isBefore(LocalDateTime.now())){
