@@ -3,9 +3,10 @@ package com.rentacar.agentbackend.service.impl;
 import com.rentacar.agentbackend.dto.request.RequestDTO;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
-import com.rentacar.agentbackend.service.IAgentService;
 import com.rentacar.agentbackend.service.IRequestService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class RequestService implements IRequestService {
     private final IAuthorityRepository _authorityRepository;
     private final IAddressRepository _addressRepository;
     private final IRequestAdRepository _requestAdRepository;
+    private final Logger logger = LoggerFactory.getLogger(RequestService.class);
 
     public RequestService(IRequestRepository requestRepository, IAgentRepository agentRepository, IAdRepository adRepository, ISimpleUserRepository simpleUserRepository, IUserRepository userRepository, IAuthorityRepository authorityRepository, IAddressRepository addressRepository, IRequestAdRepository requestAdRepository) {
         _requestRepository = requestRepository;
@@ -127,6 +129,7 @@ public class RequestService implements IRequestService {
                 System.out.println("Request performed on: " + LocalTime.now() + ", " +
                         "Request id: " + Thread.currentThread().getName());
                 if(request.getStatus().equals(RequestStatus.PENDING)) {
+                    logger.info("Status of request with id: " + request.getId() + " changed from " + request.getStatus() + " to " + RequestStatus.CANCELED);
                     request.setStatus(RequestStatus.CANCELED);
                     _requestRepository.save(request);
                 }
@@ -136,6 +139,7 @@ public class RequestService implements IRequestService {
         long delay = (24 * 60 * 60 * 1000);
         System.out.println("Request received at: " + LocalTime.now());
         timer.schedule(taskPending, delay);
+        logger.info("Request created with status pending");
 
         return request;
     }
@@ -159,6 +163,7 @@ public class RequestService implements IRequestService {
                 System.out.println("Bundle request performed on: " + LocalTime.now() + ", " +
                         "Request id: " + Thread.currentThread().getName());
                 if(request.getStatus().equals(RequestStatus.PENDING)) {
+                    logger.info("Status of request with id: " + request.getId() + " changed from " + request.getStatus() + " to " + RequestStatus.CANCELED);
                     request.setStatus(RequestStatus.CANCELED);
                     _requestRepository.save(request);
                 }
@@ -168,6 +173,7 @@ public class RequestService implements IRequestService {
         long delay = (24 * 60 * 60 * 1000);
         System.out.println("Bundle received at: " + LocalTime.now());
         timer.schedule(taskPending, delay);
+        logger.info("Bundle request created with status pending");
         return request;
     }
 

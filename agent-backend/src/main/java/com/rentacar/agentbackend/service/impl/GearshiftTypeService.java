@@ -9,10 +9,8 @@ import com.rentacar.agentbackend.model.CreateGearshiftTypeRequestDTO;
 import com.rentacar.agentbackend.repository.IGearshiftTypeRepository;
 import com.rentacar.agentbackend.service.IGearshiftTypeService;
 import com.rentacar.agentbackend.soap.CarClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.JAXBElement;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -22,11 +20,11 @@ public class GearshiftTypeService implements IGearshiftTypeService {
 
     private final IGearshiftTypeRepository _gearshiftTypeRepository;
 
-    @Autowired
-    private CarClient _carClient;
+    private final CarClient _carClient;
 
-    public GearshiftTypeService(IGearshiftTypeRepository gearshiftTypeRepository) {
+    public GearshiftTypeService(IGearshiftTypeRepository gearshiftTypeRepository, CarClient carClient) {
         _gearshiftTypeRepository = gearshiftTypeRepository;
+        _carClient = carClient;
     }
 
     @Override

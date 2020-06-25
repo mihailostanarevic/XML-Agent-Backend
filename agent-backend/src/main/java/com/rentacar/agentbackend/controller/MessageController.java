@@ -4,9 +4,6 @@ import com.rentacar.agentbackend.dto.request.SeenRequest;
 import com.rentacar.agentbackend.dto.request.SendMessageRequest;
 import com.rentacar.agentbackend.dto.response.MessageResponse;
 import com.rentacar.agentbackend.service.IMessageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

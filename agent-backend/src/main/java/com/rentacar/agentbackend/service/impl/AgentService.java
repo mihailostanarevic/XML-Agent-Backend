@@ -7,6 +7,8 @@ import com.rentacar.agentbackend.repository.IRequestAdRepository;
 import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.service.IAgentService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -18,6 +20,7 @@ public class AgentService implements IAgentService {
 
     private final IRequestAdRepository _requestAdRepository;
     private final IRequestRepository _requestRepository;
+    private final Logger logger = LoggerFactory.getLogger(AgentService.class);
 
     public AgentService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository) {
         _requestAdRepository = requestAdRepository;
@@ -41,6 +44,7 @@ public class AgentService implements IAgentService {
     public Collection<AgentRequests> approveRequest(UUID agentId, UUID requestID) {
         Request request = _requestRepository.findOneById(requestID);
         request.setStatus(RequestStatus.RESERVED);
+        logger.info("Status of request with id: " + request.getId() + " changed from " + request.getStatus() + " to " + RequestStatus.RESERVED);
         _requestRepository.save(request);
 
         changeStatusOfRequests(request, RequestStatus.PENDING, RequestStatus.CHECKED);
@@ -50,6 +54,7 @@ public class AgentService implements IAgentService {
                 System.out.println("Approved request performed on: " + LocalTime.now() + ", " +
                         "Request id: " + Thread.currentThread().getName());
                 if(!request.getStatus().equals(RequestStatus.PAID)) {
+                    logger.info("Status of request with id: " + request.getId() + " changed from " + request.getStatus() + " to " + RequestStatus.CANCELED);
                     request.setStatus(RequestStatus.CANCELED);
                     _requestRepository.save(request);
 

@@ -9,7 +9,8 @@ import com.rentacar.agentbackend.service.IAgentService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import com.rentacar.agentbackend.util.enums.UserRole;
-import org.bouncycastle.cert.ocsp.Req;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class UserService implements IUserService {
     private final IRequestRepository _requestRepository;
     private final IUserRepository _userRepository;
     private final IAgentService _agentService;
+
+    private final Logger logger = LoggerFactory.getLogger(RequestService.class);
 
     public UserService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository, IUserRepository userRepository, IAgentService agentService) {
         _requestAdRepository = requestAdRepository;
@@ -88,6 +91,7 @@ public class UserService implements IUserService {
         }
 
         _agentService.changeStatusOfRequests(request, RequestStatus.CHECKED, RequestStatus.CANCELED);
+        logger.info("Request with id " + request.getId() + " has been payed by user with id: " + userId);
         return getAllUserRequests(userId, RequestStatus.RESERVED);
     }
 
@@ -99,6 +103,7 @@ public class UserService implements IUserService {
             request.setStatus(RequestStatus.DROPPED);
             _requestRepository.save(request);
         }
+        logger.info("Request with id " + request.getId() + " has been dropped");
         return getAllUserRequests(userId, retStatus);
     }
 

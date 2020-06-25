@@ -2,7 +2,6 @@ package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.RequestDTO;
 import com.rentacar.agentbackend.dto.response.RequestResponseDTO;
-import com.rentacar.agentbackend.entity.Request;
 import com.rentacar.agentbackend.service.IRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
