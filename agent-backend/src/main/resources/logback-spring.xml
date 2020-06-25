@@ -12,26 +12,36 @@
         </layout>
     </appender>
 
-    <appender name="ErrorEmail" class="ch.qos.logback.classic.net.SMTPAppender">
-        <smtpHost>smtp.gmail.com</smtpHost>
-        <smtpPort>587</smtpPort>
-        <STARTTLS>true</STARTTLS>
-        <to>somidoktor68@gmail.com</to>
-        <from>agentApplication@gmail.com</from>
-        <subject>Error occurred</subject>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%date %-5level %logger{35} - %message%n</pattern>
-        </layout>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
+    <appender name="InfoRollingFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/info-logger.log</file>
+        <encoder
+                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
         </filter>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily and when the file reaches 10 MegaBytes -->
+            <fileNamePattern>infoLogger-%d{yyyy-MM-dd}.%i.log.zip
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
     </appender>
 
-    <appender name="SevereRollingFile"
+    <appender name="WarningRollingFile"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./logs/severe-logger.log</file>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
+        <file>./logs/warning-logger.log</file>
+        <filter class="com.rentacar.agentbackend.config.logs.WarningLogsConfig">
         </filter>
         <encoder
                 class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -41,7 +51,46 @@
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily and when the file reaches 10 MegaBytes -->
-            <fileNamePattern>logger-%d{yyyy-MM-dd}.%i.log
+            <fileNamePattern>warningLogger-%d{yyyy-MM-dd}.%i.log.zip
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ErrorMailing" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>smtp.gmail.com</smtpHost>
+        <smtpPort>587</smtpPort>
+        <STARTTLS>true</STARTTLS>
+        <to>stanarevic.mihailo10@gmail.com</to>
+        <from>busep.rentacar@gmail.com</from>
+        <username>busep.rentacar@gmail.com</username>
+        <password>buseprentacar2020!</password>
+        <subject>Your app encountered an error: %logger{20} - %msg</subject>
+        <asynchronousSending>true</asynchronousSending>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </layout>
+        <filter class="com.rentacar.agentbackend.config.logs.ErrorMailLogsConfig">
+        </filter>
+    </appender>
+
+    <appender name="ErrorRollingFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/error-logger.log</file>
+        <filter class="com.rentacar.agentbackend.config.logs.ErrorMailLogsConfig">
+        </filter>
+        <encoder
+                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+        </encoder>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily and when the file reaches 10 MegaBytes -->
+            <fileNamePattern>errorLogger-%d{yyyy-MM-dd}.%i.log.zip
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -56,8 +105,11 @@
     </root>
 
     <logger name="com.rentacar" level="trace" additivity="false">
-        <!-- LOG everything at INFO level <appender-ref ref="SevereRollingFile" />-->
-        <appender-ref ref="ErrorEmail"/>
+        <!-- LOG everything at INFO level -->
+        <appender-ref ref="InfoRollingFile" />
+        <appender-ref ref="WarningRollingFile" />
+        <appender-ref ref="ErrorRollingFile" />
+        <appender-ref ref="ErrorMailing" />
     </logger>
 
 </configuration>
