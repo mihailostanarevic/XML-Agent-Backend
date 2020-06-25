@@ -12,6 +12,29 @@
         </layout>
     </appender>
 
+
+    <appender name="TraceAndDebugRollingFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/trace-debug-logger.log</file>
+        <encoder
+                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+        </encoder>
+
+        <filter class="com.rentacar.agentbackend.config.logs.TraceDebugLogsConfig">
+        </filter>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>traceDebugLogger-%d{yyyy-MM-dd}.%i.log.zip
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>5KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
     <appender name="InfoRollingFile"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>./logs/info-logger.log</file>
@@ -28,7 +51,6 @@
 
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily and when the file reaches 10 MegaBytes -->
             <fileNamePattern>infoLogger-%d{yyyy-MM-dd}.%i.log.zip
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
@@ -50,7 +72,6 @@
 
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily and when the file reaches 10 MegaBytes -->
             <fileNamePattern>warningLogger-%d{yyyy-MM-dd}.%i.log.zip
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
@@ -68,7 +89,7 @@
         <from>busep.rentacar@gmail.com</from>
         <username>busep.rentacar@gmail.com</username>
         <password>buseprentacar2020!</password>
-        <subject>Your app encountered an error: %logger{20} - %msg</subject>
+        <subject>Your app encountered an error: %logger{20} - %msg - please address this immediately</subject>
         <asynchronousSending>true</asynchronousSending>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{35} - %msg%n</pattern>
@@ -89,7 +110,6 @@
 
         <rollingPolicy
                 class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- rollover daily and when the file reaches 10 MegaBytes -->
             <fileNamePattern>errorLogger-%d{yyyy-MM-dd}.%i.log.zip
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
@@ -99,17 +119,16 @@
         </rollingPolicy>
     </appender>
 
-    <!-- LOG everything at INFO level -->
     <root level="info">
         <appender-ref ref="Console" />
     </root>
 
     <logger name="com.rentacar" level="trace" additivity="false">
-        <!-- LOG everything at INFO level -->
         <appender-ref ref="InfoRollingFile" />
         <appender-ref ref="WarningRollingFile" />
         <appender-ref ref="ErrorRollingFile" />
         <appender-ref ref="ErrorMailing" />
+        <appender-ref ref="TraceAndDebugRollingFile" />
     </logger>
 
 </configuration>

@@ -11,9 +11,9 @@ import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IMessageService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.UserRole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,6 +44,8 @@ public class MessageService implements IMessageService {
 
     @Autowired
     private IAgentRepository _agentRepository;
+
+    private final Logger logger = LoggerFactory.getLogger(MessageService.class);
 
     @Override
     public List<MessageResponse> getAllReceivedMessagesForUser(UUID id) {
@@ -84,6 +86,7 @@ public class MessageService implements IMessageService {
         }
 
         Message msg = _messageRepository.save(newMessage);
+        logger.info("Message interchange from user " + msg.getUserSender() + " to user " + msg.getUserReceiver());
         for(UUID id : request.getAccessories()){
             MessageCarAccessories mca = new MessageCarAccessories();
             mca.setMessage(msg);
@@ -91,7 +94,6 @@ public class MessageService implements IMessageService {
             mca.setCar_accessory(carAccess);
             _messageCarAccessoriesRepository.save(mca);
         }
-//        return new ResponseEntity<String>("Message sent", HttpStatus.CREATED);
     }
 
     @Override

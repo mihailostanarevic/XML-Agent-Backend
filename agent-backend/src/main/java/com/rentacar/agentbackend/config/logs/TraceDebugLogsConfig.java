@@ -7,7 +7,7 @@ import ch.qos.logback.core.spi.FilterReply;
 import java.util.Arrays;
 import java.util.List;
 
-public class ErrorMailLogsConfig extends ch.qos.logback.core.filter.AbstractMatcherFilter{
+public class TraceDebugLogsConfig extends ch.qos.logback.core.filter.AbstractMatcherFilter{
 
     @Override
     public FilterReply decide(Object event)
@@ -18,7 +18,7 @@ public class ErrorMailLogsConfig extends ch.qos.logback.core.filter.AbstractMatc
         }
 
         LoggingEvent loggingEvent = (LoggingEvent) event;
-        List<Level> eventsToKeep = Arrays.asList(Level.ERROR);
+        List<Level> eventsToKeep = Arrays.asList(Level.TRACE, Level.DEBUG);
         if (eventsToKeep.contains(loggingEvent.getLevel()))
         {
             return FilterReply.NEUTRAL;

@@ -1,7 +1,10 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.response.*;
-import com.rentacar.agentbackend.entity.*;
+import com.rentacar.agentbackend.entity.Ad;
+import com.rentacar.agentbackend.entity.Address;
+import com.rentacar.agentbackend.entity.Request;
+import com.rentacar.agentbackend.entity.RequestAd;
 import com.rentacar.agentbackend.repository.IAdRepository;
 import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.service.IAdService;

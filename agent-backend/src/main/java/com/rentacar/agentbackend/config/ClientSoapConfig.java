@@ -11,7 +11,7 @@ public class ClientSoapConfig {
     @Bean
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("com.rentacar.agentbackend.soap");
+        marshaller.setContextPath("com.rentacar.agentbackend.soap.wsdl");
         return marshaller;
     }
 

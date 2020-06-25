@@ -1,8 +1,6 @@
 package com.rentacar.agentbackend.repository;
 
-import com.rentacar.agentbackend.entity.Ad;
 import com.rentacar.agentbackend.entity.Request;
-import com.rentacar.agentbackend.entity.SimpleUser;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -4,7 +4,6 @@ import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
 import com.rentacar.agentbackend.dto.response.PhotoResponse;
-import com.rentacar.agentbackend.entity.Photo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
