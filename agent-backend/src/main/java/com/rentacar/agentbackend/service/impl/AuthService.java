@@ -213,7 +213,7 @@ public class AuthService implements IAuthService {
             throw new GeneralException("You have reached your logging limit, please try again later.", HttpStatus.CONFLICT);
         }
         User user = _userRepository.findOneByUsername(request.getUsername());
-        if(user == null || !user.getPassword().equals(request.getPassword())) {
+        if(user == null || !_passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             if(la == null){
                 LoginAttempts loginAttempts = new LoginAttempts();
                 loginAttempts.setIpAddress(httpServletRequest.getRemoteAddr());
