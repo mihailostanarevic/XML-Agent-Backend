@@ -122,6 +122,7 @@ public class AdService implements IAdService {
         long endTime = System.nanoTime();
         double time = (double) ((endTime - startTime) / 1000000);
         logger.trace("Total time to create an ad by user: " + agent.getId() + " was " + time + " ms");
+        logger.info("A new ad has been created with id: " + ad.getId() + " by user: " + ad.getAgent().getId());
         return retVal;
     }
 
