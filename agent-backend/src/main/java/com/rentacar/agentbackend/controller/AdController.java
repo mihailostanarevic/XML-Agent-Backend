@@ -35,22 +35,25 @@ public class AdController {
     }
 
     @PostMapping("/image")
+    @PreAuthorize("hasAuthority('VIEW_IMAGE')")
     public ResponseEntity<?> image(@RequestParam("imageFile") List<MultipartFile> file) throws Exception{
         return new ResponseEntity<>("ok", HttpStatus.CREATED);
     }
 
     @PostMapping(consumes = { "multipart/form-data" })
+    @PreAuthorize("hasAuthority('CREATE_AD')")
     public ResponseEntity<?> addAd(@RequestPart("imageFile") List<MultipartFile> fileList, @RequestPart("request") @Valid AddAdRequest request) throws Exception{
         return new ResponseEntity<>(_adService.createAd(fileList, request), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}/image" )
+    @PreAuthorize("hasAuthority('VIEW_IMAGE')")
     public ResponseEntity<PhotoResponse> getImage(@PathVariable("id") UUID adId) {
         return new ResponseEntity<>(_adService.getPhoto(adId), HttpStatus.OK);
     }
 
     @PostMapping("/availability")
-    @PreAuthorize("hasAuthority('UPDATE_AD')")
+    @PreAuthorize("hasAuthority('CREATE_REQUEST')")
     public ResponseEntity<?> changeCarAvailability(@RequestBody RequestDTO request) throws Exception{
         _requestService.changeAdAvailability(request);
         return new ResponseEntity<>(new RequestResponse("succesfully changed"), HttpStatus.OK);

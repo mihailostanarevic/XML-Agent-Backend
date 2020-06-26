@@ -12,6 +12,7 @@ import com.rentacar.agentbackend.repository.IRequestAdRepository;
 import com.rentacar.agentbackend.service.IRatingService;
 import com.rentacar.agentbackend.service.IReportService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -43,10 +44,10 @@ public class ReportService implements IReportService {
     }
 
     @Override
-    public ReportResponse createReport(CreateReportRequest request, UUID requestAdId) throws Exception {
+    public ReportResponse createReport(CreateReportRequest request, UUID requestAdId) throws GeneralException {
         RequestAd requestAd = _requestAdRepository.findOneById(requestAdId);
         if(requestAd.getReport() != null){
-            throw new Exception("You have already written report for this rent."); //unnecessary
+            throw new GeneralException("You have already written report for this rent.", HttpStatus.BAD_REQUEST);   //unnecessary
         }
 
         Report report = new Report();
@@ -138,8 +139,8 @@ public class ReportService implements IReportService {
         response.setLeastKilometersTraveled(leastKilometersTraveledAd.getCar().getKilometersTraveled());
         response.setMostCommentedAd(String.valueOf(mostCommentedAd.getComments().size()));
         response.setLeastCommentedAd(String.valueOf(leastCommentedAd.getComments().size()));
-        response.setMostRateddAd(String.valueOf(mostRatedAd.getComments().size()));
-        response.setLeastRatedAd(String.valueOf(leastRatedAd.getComments().size()));
+        response.setMostRateddAd(String.valueOf(mostRatedAd.getRatings().size()));
+        response.setLeastRatedAd(String.valueOf(leastRatedAd.getRatings().size()));
 
         response.setAdIdLeastCommented(leastCommentedAd.getId());
         response.setAdIdLeastKilometersTraveled(leastKilometersTraveledAd.getId());

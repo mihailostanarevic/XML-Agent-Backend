@@ -119,6 +119,12 @@ public class RequestService implements IRequestService {
         createRequestAd(request, requestDTOList);
         User user = _userRepository.findOneById(simpleUser.getUser().getId());
         Authority authority = _authorityRepository.findByName("ROLE_REQUEST");
+        Authority authority2 = _authorityRepository.findByName("ROLE_COMMENT_USER");
+        Authority authority3 = _authorityRepository.findByName("ROLE_MESSAGE_USER");
+        Authority authority4 = _authorityRepository.findByName("ROLE_REVIEWER_USER");
+        user.getRoles().add(authority4);
+        user.getRoles().add(authority3);
+        user.getRoles().add(authority2);
         user.getRoles().add(authority);
         _userRepository.save(user);
 
@@ -154,6 +160,23 @@ public class RequestService implements IRequestService {
         request.setDeleted(false);
         _requestRepository.save(request);
         createRequestAd(request, requestList);
+        SimpleUser simpleUser;
+        if(requestList.get(0).getCustomerID() != null) {
+            simpleUser = _simpleUserRepository.findOneById(requestList.get(0).getCustomerID());
+        } else {
+            User user = _userRepository.findOneByUsername(requestList.get(0).getCustomerUsername());
+            simpleUser = _simpleUserRepository.findOneByUser(user);
+        }
+        User user = _userRepository.findOneById(simpleUser.getUser().getId());
+        Authority authority = _authorityRepository.findByName("ROLE_REQUEST");
+        Authority authority2 = _authorityRepository.findByName("ROLE_COMMENT_USER");
+        Authority authority3 = _authorityRepository.findByName("ROLE_MESSAGE_USER");
+        Authority authority4 = _authorityRepository.findByName("ROLE_REVIEWER_USER");
+        user.getRoles().add(authority4);
+        user.getRoles().add(authority3);
+        user.getRoles().add(authority2);
+        user.getRoles().add(authority);
+        _userRepository.save(user);
         TimerTask taskPending = new TimerTask() {
             public void run() {
                 System.out.println("Bundle request performed on: " + LocalTime.now() + ", " +

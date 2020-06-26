@@ -3,6 +3,7 @@ package com.rentacar.agentbackend.controller;
 import com.rentacar.agentbackend.dto.response.CarAccessoryResponse;
 import com.rentacar.agentbackend.service.ICarAccessoriesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ public class CarAccessoriesController {
     private ICarAccessoriesService _carAccessoriesService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('VIEW_AD')")
     public List<CarAccessoryResponse> getAll(){
         return _carAccessoriesService.getAll();
     }
