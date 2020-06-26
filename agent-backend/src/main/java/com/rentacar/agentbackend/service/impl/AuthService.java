@@ -339,7 +339,7 @@ public class AuthService implements IAuthService {
     @Override
     public void approveRegistrationRequest(GetIdRequest request) throws Exception {
         SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getId());
-        if(simpleUser.getConfirmationTime().plusHours(12L).isBefore(LocalDateTime.now())){
+        if(simpleUser.getConfirmationTime() != null && simpleUser.getConfirmationTime().plusHours(12L).isBefore(LocalDateTime.now())){
             simpleUser.setRequestStatus(RequestStatus.DENIED);
             _simpleUserRepository.save(simpleUser);
             logger.debug("The activational link has expired");
