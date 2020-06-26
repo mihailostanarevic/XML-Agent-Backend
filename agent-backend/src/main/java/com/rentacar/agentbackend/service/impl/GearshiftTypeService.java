@@ -33,18 +33,19 @@ public class GearshiftTypeService implements IGearshiftTypeService {
         gearshiftType.setDeleted(false);
         gearshiftType.setNumberOfGears(request.getNumberOfGears());
         gearshiftType.setType(request.getType());
-        CreateGearshiftTypeRequestDTO dto = new CreateGearshiftTypeRequestDTO(request.getType(),request.getNumberOfGears());
-//        dto.setNumberOfGears();
-//        dto.setType();
-        System.out.println("dosao sam");
-        Long retVal = _carClient.createGearshiftType(dto);
-        if(retVal.equals(1L)){
-            GearshiftType savedGearshiftType = _gearshiftTypeRepository.save(gearshiftType);
-            return mapGearshiftTypeToGearshiftTypeResponse(savedGearshiftType);
-        }else {
-            System.out.println("Nisam uspeo");
-            return null;
-        }
+//        CreateGearshiftTypeRequestDTO dto = new CreateGearshiftTypeRequestDTO(request.getType(),request.getNumberOfGears());
+//        System.out.println("dosao sam");
+//        Long retVal = _carClient.createGearshiftType(dto);
+//        if(retVal.equals(1L)){
+//            GearshiftType savedGearshiftType = _gearshiftTypeRepository.save(gearshiftType);
+//            return mapGearshiftTypeToGearshiftTypeResponse(savedGearshiftType);
+//        }else {
+//            System.out.println("Nisam uspeo");
+//            return null;
+//        }
+        //kada se kod iznad otkomentarise, obrisati ove dve linije ispod
+        GearshiftType savedGearshiftType = _gearshiftTypeRepository.save(gearshiftType);
+        return mapGearshiftTypeToGearshiftTypeResponse(savedGearshiftType);
     }
 
     @Override
