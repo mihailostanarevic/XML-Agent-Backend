@@ -142,6 +142,26 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
+
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>5.3.2</version>
+				<configuration>
+					<failBuildOnCVSS>8</failBuildOnCVSS>
+					<excludes>
+						false-positives.xml
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+       </plugin>
+			 <plugin>
+      
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
 				<version>0.14.0</version>
@@ -161,6 +181,7 @@
 						<include>car.wsdl</include>
 					</schemaIncludes>
 				</configuration>
+
 			</plugin>
 		</plugins>
 	</build>

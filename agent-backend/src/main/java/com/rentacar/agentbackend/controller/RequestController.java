@@ -5,6 +5,7 @@ import com.rentacar.agentbackend.dto.response.RequestResponseDTO;
 import com.rentacar.agentbackend.service.IRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class RequestController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasAuthority('CREATE_REQUEST')")
     public ResponseEntity<RequestResponseDTO> createRequest(@RequestBody List<RequestDTO> requestList){
         _requestService.processRequests(requestList);
         RequestResponseDTO responseDTO = new RequestResponseDTO();

@@ -2,6 +2,7 @@ package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.CreateAddressRequest;
 import com.rentacar.agentbackend.service.IAddressService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ public class AddressController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('CREATE_AGENT')")
     public void createAddress(@RequestBody CreateAddressRequest request) throws Exception {
         _addressService.createAddress(request);
     }

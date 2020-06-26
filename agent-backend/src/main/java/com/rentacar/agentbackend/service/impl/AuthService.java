@@ -143,6 +143,7 @@ public class AuthService implements IAuthService {
         authorities.add(_authorityRepository.findByName("ROLE_AD_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_MESSAGE_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_AGENT"));
+        authorities.add(_authorityRepository.findByName("ROLE_COMMENT_USER"));
         user.setAuthorities(new HashSet<>(authorities));
         user.setUserRole(UserRole.AGENT);
         agent.setName(request.getName());

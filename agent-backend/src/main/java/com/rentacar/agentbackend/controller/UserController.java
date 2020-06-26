@@ -36,11 +36,13 @@ public class UserController {
     }
 
     @GetMapping("/customer")
+    @PreAuthorize("hasAuthority('VIEW_AD')")
     public List<UserResponse> getCustomers() {
         return _userService.getCustomers();
     }
 
     @GetMapping("/{id}/requests")
+    @PreAuthorize("hasAuthority('VIEW_AD')")
     public List<UsersAdsResponse> usersAdsFromStatus(@PathVariable("id") UUID userId, @RequestParam("status") String string){
         String stringStatus = string.toUpperCase();
         RequestStatus status;
