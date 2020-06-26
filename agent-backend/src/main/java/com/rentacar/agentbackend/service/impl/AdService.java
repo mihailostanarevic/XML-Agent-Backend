@@ -8,6 +8,8 @@ import com.rentacar.agentbackend.dto.response.PhotoResponse;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IAdService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +35,7 @@ public class AdService implements IAdService {
     private final IAgentRepository _agentRepository;
     private final IPhotoRepository _photoRepository;
     private final IRequestAdRepository _requestAdRepository;
+    private final Logger logger = LoggerFactory.getLogger(AdService.class);
 
     public AdService(IAdRepository adRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarRepository carRepository, IAgentRepository agentRepository, IPhotoRepository photoRepository, IRequestAdRepository requestAdRepository) {
         _adRepository = adRepository;
@@ -87,6 +90,7 @@ public class AdService implements IAdService {
 
     @Override
     public AdResponse createAd(List<MultipartFile> fileList, AddAdRequest request) throws GeneralException, IOException {
+        long startTime = System.nanoTime();
         CarModel carModel = findCarModel(request.getCarModel());
         GearshiftType gearshiftType = findGearshiftType(request.getGearshifType());
         FuelType fuelType = findFuelType(request.getFuelType());
@@ -97,7 +101,8 @@ public class AdService implements IAdService {
         car.setKilometersTraveled(request.getKilometersTraveled());
         Car savedCar = _carRepository.save(car);
         Ad ad = new Ad();
-        ad.setAgent(_agentRepository.findOneById(request.getAgentId()));
+        Agent agent = _agentRepository.findOneById(request.getAgentId());
+        ad.setAgent(agent);
         ad.setCar(savedCar);
         ad.setLimitedDistance(request.isLimitedDistance());
         ad.setAvailableKilometersPerRent(request.getAvailableKilometersPerRent());
@@ -113,7 +118,12 @@ public class AdService implements IAdService {
             _photoRepository.save(photo);
         }
 
-        return mapAdToAdResponse(ad);
+        AdResponse retVal = mapAdToAdResponse(ad);
+        long endTime = System.nanoTime();
+        double time = (double) ((endTime - startTime) / 1000000);
+        logger.trace("Total time to create an ad by user: " + agent.getId() + " was " + time + " ms");
+        logger.info("A new ad has been created with id: " + ad.getId() + " by user: " + ad.getAgent().getId());
+        return retVal;
     }
 
     public static byte[] compressBytes(byte[] data) {

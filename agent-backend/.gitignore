@@ -15,10 +15,14 @@ target/
 
 ### IntelliJ IDEA ###
 .idea
-logs
 *.iws
 *.iml
 *.ipr
+*.zip
+*.tmp
+*.log
+!*/config/logs
+*/logs
 
 ### NetBeans ###
 /nbproject/private/

@@ -9,11 +9,14 @@ import com.rentacar.agentbackend.dto.response.CarResponse;
 import com.rentacar.agentbackend.entity.Car;
 import com.rentacar.agentbackend.entity.CarAccessories;
 import com.rentacar.agentbackend.repository.*;
-import com.rentacar.agentbackend.service.ICarAccessoriesService;
 import com.rentacar.agentbackend.service.ICarService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +33,8 @@ public class CarService implements ICarService {
     private final ICarAccessoriesRepository _carAccessoriesRepository;
 
     private final CarAccessoriesService _carAccessoriesService;
+
+    private final Logger logger = LoggerFactory.getLogger(CarService.class);
 
     public CarService(ICarRepository carRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarAccessoriesRepository carAccessoriesRepository, CarAccessoriesService carAccessoriesService) {
         _carRepository = carRepository;
@@ -49,6 +54,8 @@ public class CarService implements ICarService {
         car.setGearshiftType(_gearshiftTypeRepository.findOneById(request.getGearshiftTypeId()));
         car.setFuelType(_fuelTypeRepository.findOneById(request.getFuelTypeId()));
         Car savedCar = _carRepository.save(car);
+
+        logger.info("New car created with id: " + savedCar.getId());
         return mapCarToCarResponse(savedCar);
     }
 
@@ -59,6 +66,7 @@ public class CarService implements ICarService {
         car.getFuelType().setGas(request.isGas());
         _fuelTypeRepository.save(car.getFuelType());
         Car savedCar = _carRepository.save(car);
+        logger.info("Car with id: " + savedCar.getId() + " has been updated");
         return mapCarToCarResponse(savedCar);
     }
 
@@ -67,6 +75,7 @@ public class CarService implements ICarService {
         Car car = _carRepository.findOneById(id);
         car.setDeleted(true);
         _carRepository.save(car);
+        logger.info("Car with id: " + car.getId() + " has been deleted");
     }
 
     @Override

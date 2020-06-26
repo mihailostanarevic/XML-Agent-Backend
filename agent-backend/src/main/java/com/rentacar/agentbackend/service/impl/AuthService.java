@@ -2,6 +2,7 @@ package com.rentacar.agentbackend.service.impl;
 
 import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
 import com.rentacar.agentbackend.dto.request.*;
+import com.rentacar.agentbackend.dto.response.RequestResponse;
 import com.rentacar.agentbackend.dto.response.UserResponse;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
@@ -22,10 +23,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -51,10 +55,12 @@ public class AuthService implements IAuthService {
 
     private final IEmailService _emailService;
 
+    private final ILoginAttemptsRepository _loginAttemptsRepository;
+
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService) {
+    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
@@ -63,6 +69,7 @@ public class AuthService implements IAuthService {
         _authenticationManager = authenticationManager;
         _tokenUtils = tokenUtils;
         _emailService = emailService;
+        _loginAttemptsRepository = loginAttemptsRepository;
     }
 
     /**
@@ -71,35 +78,56 @@ public class AuthService implements IAuthService {
     @Override
     public void checkSQLInjection(CreateAgentRequest request)throws GeneralException {
         if(!SqlSafeUtil.isSqlInjectionSafe(request.getUsername())) {
+            logger.debug("Username field was not SQL Injection safe, status:400 Bad Request");
             logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
         }
         if(!SqlSafeUtil.isSqlInjectionSafe(request.getPassword())){
+            logger.debug("Password field was not SQL Injection safe, status:400 Bad Request");
             logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
         }
         if(!SqlSafeUtil.isSqlInjectionSafe(request.getRePassword())){
+            logger.debug("Repeated password was not SQL Injection safe, status:400 Bad Request");
             logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
         }
         if(!SqlSafeUtil.isSqlInjectionSafe(request.getName())){
+            logger.debug("Name field was not SQL Injection safe, status:400 Bad Request");
             logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
         }
         if(!SqlSafeUtil.isSqlInjectionSafe(request.getTin())){
+            logger.debug("Tin field was not SQL Injection safe, status:400 Bad Request");
             logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
         }
         if(!SqlSafeUtil.isSqlInjectionSafe(request.getBankAccountNumber())){
+            logger.debug("Bank account number was not SQL Injection safe, status:400 Bad Request");
             logger.warn("SQL Injection attempt!");
             throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
+    public RequestResponse limitRedirect(HttpServletRequest request) {
+        LocalDateTime now = LocalDateTime.now();
+        RequestResponse response = new RequestResponse();
+        LoginAttempts loginAttempts = _loginAttemptsRepository.findOneByIpAddress(request.getRemoteAddr());
+        if(loginAttempts != null){
+            if(loginAttempts.getAttempts().equals("3") && loginAttempts.getFirstMistakeDateTime().plusHours(12L).isAfter(now)){
+                response.setMessage("LIMIT");
+                return response;
+            }
+        }
+        return response;
+    }
+
+    @Override
     public UserResponse createAgent(CreateAgentRequest request) throws Exception {
+        long startTime = System.nanoTime();
         if(!request.getPassword().equals(request.getRePassword())){
-            logger.info(request.getUsername() + " didn't match his/hers passwords");
+            logger.debug(request.getUsername() + " didn't match his/hers passwords");
             throw new Exception("Passwords don't match.");
         }
         checkSQLInjection(request);
@@ -128,14 +156,20 @@ public class AuthService implements IAuthService {
         user.setAgent(savedAgent);
         User savedUser = _userRepository.save(user);
 
+        _emailService.agentRegistrationMail(agent);
+
+        long endTime = System.nanoTime();
+        double time = (double) ((endTime - startTime) / 1000000);
+        logger.trace("Total time to register agent with username: " + savedUser.getUsername() +  " was " + time + " ms");
         logger.info(user.getUsername() + " account has been successfully created as an agent");
         return mapUserToUserResponse(savedUser);
     }
 
     @Override
     public UserResponse createSimpleUser(CreateSimpleUserRequest request) throws Exception {
+        long startTime = System.nanoTime();
         if(!request.getPassword().equals(request.getRePassword())){
-            logger.info(request.getUsername() + " didn't match his passwords");
+            logger.debug(request.getUsername() + " didn't match his passwords");
             throw new Exception("Passwords don't match.");
         }
         User user = new User();
@@ -163,27 +197,61 @@ public class AuthService implements IAuthService {
         User savedUser = _userRepository.save(user);
 
         logger.info(user.getUsername() + " account has been successfully created as a simple user");
+        long endTime = System.nanoTime();
+        double time = (double) ((endTime - startTime) / 1000000);
+        logger.trace("Total time to register simple user with username: " + savedUser.getUsername() +  " was " + time + " ms");
         return mapUserToUserResponse(savedUser);
     }
 
+    @Transactional(dontRollbackOn = GeneralException.class)
     @Override
-    public UserResponse login(LoginRequest request) throws GeneralException {
+    public UserResponse login(LoginRequest request, HttpServletRequest httpServletRequest) throws GeneralException {
+        long startTime = System.nanoTime();
+        LoginAttempts la = _loginAttemptsRepository.findOneByIpAddress(httpServletRequest.getRemoteAddr());
+        if(la != null && Integer.parseInt(la.getAttempts()) >= 3 && la.getFirstMistakeDateTime().plusHours(12L).isAfter(LocalDateTime.now())){
+            logger.debug("User from IP address " + la.getIpAddress() + " has exceeded his limit of failed logins");
+            logger.warn("User from IP address " + la.getIpAddress() + " has exceeded his limit of failed logins, please look into this issue as soon as possible");
+            throw new GeneralException("You have reached your logging limit, please try again later.", HttpStatus.CONFLICT);
+        }
         User user = _userRepository.findOneByUsername(request.getUsername());
-        if(user == null) {
-            throw new GeneralException("Unknown user", HttpStatus.BAD_REQUEST);
+        if(user == null || !_passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            if(la == null){
+                LoginAttempts loginAttempts = new LoginAttempts();
+                loginAttempts.setIpAddress(httpServletRequest.getRemoteAddr());
+                loginAttempts.setAttempts("1");
+                loginAttempts.setFirstMistakeDateTime(LocalDateTime.now());
+                LoginAttempts saved = _loginAttemptsRepository.save(loginAttempts);
+                System.out.println(saved.getId());
+                logger.debug("User has entered bad login credentials");
+                throw new GeneralException("Bad credentials.", HttpStatus.BAD_REQUEST);
+            }
+            if(la.getFirstMistakeDateTime().plusHours(12L).isBefore(LocalDateTime.now())){
+                la.setFirstMistakeDateTime(LocalDateTime.now());
+                la.setAttempts("0");
+            }
+            int attempts = Integer.parseInt(la.getAttempts());
+            attempts++;
+            la.setAttempts(String.valueOf(attempts));
+            _loginAttemptsRepository.save(la);
+//            UserResponse userResponse = new UserResponse();
+//            return userResponse;
+            throw new GeneralException("Bad credentials.", HttpStatus.BAD_REQUEST);
+//            throw new GeneralException("Unknown user", HttpStatus.BAD_REQUEST);
         }
         if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.PENDING)){
+            logger.debug("User with id: " + user.getId() + " still has a pending status on his account");
             throw new GeneralException("Your registration hasn't been approved yet.", HttpStatus.BAD_REQUEST);
         }
 
         if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.DENIED)){
+            logger.debug("The registration of user with id: " + user.getId() + " has been denied");
             throw new GeneralException("Your registration has been denied.", HttpStatus.BAD_REQUEST);
         }
 
         if(user.getSimpleUser() != null && user.getSimpleUser().getRequestStatus().equals(RequestStatus.CONFIRMED)){
+            logger.debug("The registration of user with id: " + user.getId() + " has been approved");
             throw new GeneralException("Your registration has been approved by admin. Please activate your account.", HttpStatus.BAD_REQUEST);
         }
-        logger.error("Example of an error which will be displayed because its higher priority than INFO");
         String mail = request.getUsername();
         String password = request.getPassword();
         Authentication authentication = null;
@@ -191,9 +259,10 @@ public class AuthService implements IAuthService {
             authentication = _authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(mail, password));
         }catch (BadCredentialsException e){
-            logger.info("entered incorrect credentials!");
+            logger.debug("User has entered bad login credentials");
             throw new GeneralException("Bad credentials.", HttpStatus.BAD_REQUEST);
         }catch (DisabledException e){
+            logger.debug("User with username: " + request.getUsername() + " has not been approved yet");
             throw new GeneralException("Your registration request hasn't been approved yet.", HttpStatus.BAD_REQUEST);
         }catch (Exception e) {
             logger.warn("An unknown exception happened upon login attempt");
@@ -212,15 +281,20 @@ public class AuthService implements IAuthService {
         userResponse.setToken(jwt);
         userResponse.setTokenExpiresIn(expiresIn);
 
+        long endTime = System.nanoTime();
+        double time = (double) ((endTime - startTime) / 1000000);
+        logger.trace("Total time to login user " + userResponse.getUsername() +  " was " + time + " ms");
 //        System.out.println(jwt);
         logger.info(user.getUsername() + " has logged in");
+        logger.warn("Test warning");
+        logger.error("Test error to show that this mail is actually sent");
         return userResponse;
     }
 
     @Override
     public UserResponse setNewPassword(UUID id, NewPassordRequest request) throws Exception {
         if (!request.getPassword().equals(request.getRePassword())) {
-            logger.info("User didn't match his passwords when trying to change password");
+            logger.debug("User didn't match his passwords when trying to change password");
             throw new Exception("Passwords don't match");
         }
 
@@ -269,6 +343,7 @@ public class AuthService implements IAuthService {
         if(simpleUser.getConfirmationTime().plusHours(12L).isBefore(LocalDateTime.now())){
             simpleUser.setRequestStatus(RequestStatus.DENIED);
             _simpleUserRepository.save(simpleUser);
+            logger.debug("The activational link has expired");
             throw new Exception("Your activation link has expired.");
         }
         simpleUser.setRequestStatus(RequestStatus.APPROVED);

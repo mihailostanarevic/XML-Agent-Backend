@@ -10,8 +10,6 @@ import com.rentacar.agentbackend.service.IMessageCarAccessoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class MessageCarAccessoryService implements IMessageCarAccessoryService {
 

@@ -10,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static org.springframework.http.HttpMethod.*;
-import static org.springframework.http.HttpMethod.OPTIONS;
 
 @Configuration
 @EnableWebMvc
