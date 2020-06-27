@@ -207,7 +207,7 @@ public class AuthService implements IAuthService {
     public UserResponse login(LoginRequest request, HttpServletRequest httpServletRequest) throws GeneralException {
         long startTime = System.nanoTime();
         LoginAttempts la = _loginAttemptsRepository.findOneByIpAddress(httpServletRequest.getRemoteAddr());
-        if(la != null && Integer.parseInt(la.getAttempts()) >= 3 && la.getFirstMistakeDateTime().plusHours(12L).isAfter(LocalDateTime.now())){
+        if(la != null && Integer.parseInt(la.getAttempts()) >= 6 && la.getFirstMistakeDateTime().plusHours(12L).isAfter(LocalDateTime.now())){
             logger.debug("User from IP address " + la.getIpAddress() + " has exceeded his limit of failed logins");
             logger.warn("User from IP address " + la.getIpAddress() + " has exceeded his limit of failed logins, please look into this issue as soon as possible");
             throw new GeneralException("You have reached your logging limit, please try again later.", HttpStatus.CONFLICT);
