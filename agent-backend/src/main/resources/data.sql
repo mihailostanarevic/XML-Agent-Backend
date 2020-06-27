@@ -59,7 +59,6 @@ insert into simple_user (id, address, city, country, first_name, last_name, requ
     ('1cfe4238-9b0c-4611-abea-ddd20b4cc415', 'Pionirska 26', 'Novi Sad', 'Serbia', 'Somi', 'Misoni', 'APPROVED', '1547854896523', '4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54'),
     ('9220c03b-b0b5-46af-a821-249e2a97dcaa', 'Njegoseva 55', 'Novi Sad', 'Serbia', 'Didi', 'Mimica-Kostovic', 'APPROVED', '1547858576523', 'b9362264-17db-411e-8ed0-db8310cba9f1');
 
-
 create extension if not exists "uuid-ossp";
 insert into address (id, street, number, city, country) values
     ('04fe195c-5409-4657-a009-3732eedf1f6c', 'Pionirska', 21, 'Novi Sad', 'Serbia'),
@@ -218,3 +217,7 @@ insert into request_ad (id, request_id, ad_id, pick_up_date, return_date, pick_u
     ('0c330648-9b1a-45e7-9599-fc2adeeaf426', 'b425bbe1-2955-4f81-8a30-7c172a980d0f', '6a22b2eb-705e-4311-ab90-bc438bc226fe', '2020-05-25', '2020-05-27', '10:00', '21:00'),
     ('f7495b1b-c76d-429e-8ab0-49d595379dab', '8e37d0ee-e1cd-4ec2-830b-8d573290a611', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', '2020-05-25', '2020-05-27', '10:30', '11:00'),
     ('3e571fd5-7d33-4f4a-9f9b-f61997472fda', '675eeddd-3ba6-4068-bec9-83703081bd70', '6a22b2eb-705e-4311-ab90-bc438bc226fe', '2020-05-25', '2020-05-27', '11:30', '15:30');
+
+insert into security_questions(id, favorite_sports_club, the_best_childhood_friends_name, simple_user_id) values
+('2a233781-f0bb-434a-b716-a8d7dd845d0f', '$2y$12$xa2Daydk6h37mJ89TJi/f.euxaGqoza22sl6WpxVfgfMQ80MStVhe', '$2y$12$vFWvcuQHmqTosmtd8l2.2eKNqcXDwj6BzODrycja.f8WCERhj3XFG', '1cfe4238-9b0c-4611-abea-ddd20b4cc415'),
+('deb91374-3ea8-4db7-a0ca-c3d02b9a3acd', '$2y$12$tMvZMbfhvpi0FQNNVrE1jeEK4275RlSQXA0QewTZk05sNX/wJqebW', '$2y$12$9XdSlbQK/RXnAxRAIUYd7egn2Ip9tI7KJcsvYQ.9fzw97/yBlpGr6', '9220c03b-b0b5-46af-a821-249e2a97dcaa');

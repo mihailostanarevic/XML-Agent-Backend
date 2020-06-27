@@ -30,4 +30,6 @@ public interface IAuthService {
     void checkSQLInjection(CreateAgentRequest request)throws GeneralException;
 
     RequestResponse limitRedirect(HttpServletRequest request);
+
+    void forgottenPassword(ForgottenPasswordRequest request) throws Exception;
 }

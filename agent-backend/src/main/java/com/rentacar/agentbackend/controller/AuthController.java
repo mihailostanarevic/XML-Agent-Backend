@@ -61,7 +61,6 @@ public class AuthController extends ValidationControler {
     }
 
     @PutMapping("/approve-registration-request")
-    @PreAuthorize("hasAuthority('APPROVE_AGENT')")
     public void approveRegistrationRequest(@RequestBody GetIdRequest request) throws Exception{
         _authService.approveRegistrationRequest(request);
     }
@@ -73,7 +72,7 @@ public class AuthController extends ValidationControler {
     }
 
     @GetMapping("/registration-requests")
-    @PreAuthorize("hasAuthority('LOGIN')")
+    @PreAuthorize("hasAuthority('CREATE_AGENT')")
     public List<UserResponse> getAllRegistrationRequests() throws Exception{
         return _authService.getAllRegistrationRequests();
     }
@@ -81,5 +80,10 @@ public class AuthController extends ValidationControler {
     @GetMapping("/logging-limit")
     public RequestResponse loggingLimit(HttpServletRequest request){
         return _authService.limitRedirect(request);
+    }
+
+    @PutMapping("/forgotten-password")
+    public void forgottenPassword(@RequestBody ForgottenPasswordRequest request) throws Exception{
+        _authService.forgottenPassword(request);
     }
 }

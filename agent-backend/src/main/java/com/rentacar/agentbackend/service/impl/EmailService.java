@@ -6,6 +6,7 @@ import com.rentacar.agentbackend.entity.SimpleUser;
 import com.rentacar.agentbackend.service.IEmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
@@ -39,5 +40,16 @@ public class EmailService implements IEmailService {
         context.setVariable("name", String.format("%s", agent.getName()));
         _emailContext.send(to, subject, "agentRegistration", context);
         logger.info("Email sent to " + to + " about his registration being approved");
+    }
+
+    @Override
+    public void newPasswordAnnouncementMail(SimpleUser simpleUser, String pass) {
+        String to = simpleUser.getUser().getUsername();
+        String subject = "Registration announcement";
+        Context context = new Context();
+        context.setVariable("name", String.format("%s %s", simpleUser.getFirstName(), simpleUser.getLastName()));
+        context.setVariable("password", String.format("%s", pass));
+        _emailContext.send(to, subject, "newPassword", context);
+        logger.info("Email sent to " + to + " about forgotten password");
     }
 }

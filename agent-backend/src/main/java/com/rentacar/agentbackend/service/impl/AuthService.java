@@ -11,6 +11,7 @@ import com.rentacar.agentbackend.service.IAuthService;
 import com.rentacar.agentbackend.service.IEmailService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 import com.rentacar.agentbackend.util.enums.UserRole;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,10 +58,12 @@ public class AuthService implements IAuthService {
 
     private final ILoginAttemptsRepository _loginAttemptsRepository;
 
+    private final ISecurityQuestionsRepository _securityQuestionsRepository;
+
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository) {
+    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository, ISecurityQuestionsRepository securityQuestionsRepository) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
@@ -70,6 +73,7 @@ public class AuthService implements IAuthService {
         _tokenUtils = tokenUtils;
         _emailService = emailService;
         _loginAttemptsRepository = loginAttemptsRepository;
+        _securityQuestionsRepository = securityQuestionsRepository;
     }
 
     /**
@@ -121,6 +125,21 @@ public class AuthService implements IAuthService {
             }
         }
         return response;
+    }
+
+    @Override
+    public void forgottenPassword(ForgottenPasswordRequest request) throws Exception {
+        SimpleUser simpleUser = _simpleUserRepository.findOneByUser_Username(request.getUsername());
+        SecurityQuestions securityQuestions = simpleUser.getSecurityQuestions();
+        if(simpleUser == null || !_passwordEncoder.matches(request.getFavoriteSportsClub(), securityQuestions.getFavoriteSportsClub()) || !_passwordEncoder.matches(request.getTheBestChildhoodFriendsName(), securityQuestions.getTheBestChildhoodFriendsName())){
+            throw new Exception("Bad credentials.");
+        }
+        String generatedString = RandomStringUtils.random(9, true, true) + "$";
+        simpleUser.getUser().setPassword(_passwordEncoder.encode(generatedString));
+        _userRepository.save(simpleUser.getUser());
+        _simpleUserRepository.save(simpleUser);
+
+        _emailService.newPasswordAnnouncementMail(simpleUser, generatedString);
     }
 
     @Override
@@ -191,6 +210,14 @@ public class AuthService implements IAuthService {
         simpleUser.setLastName(request.getLastName());
         simpleUser.setSsn(request.getSsn());
         simpleUser.setRequestStatus(RequestStatus.PENDING);
+
+        SecurityQuestions securityQuestions = new SecurityQuestions();
+        securityQuestions.setFavoriteSportsClub(_passwordEncoder.encode(request.getFavoriteSportsClub()));
+        securityQuestions.setTheBestChildhoodFriendsName(_passwordEncoder.encode(request.getTheBestChildhoodFriendsName()));
+        SecurityQuestions savedSecurityQuestions = _securityQuestionsRepository.save(securityQuestions);
+        savedSecurityQuestions.setSimpleUser(simpleUser);
+        simpleUser.setSecurityQuestions(savedSecurityQuestions);
+
         SimpleUser savedSimpleUser = _simpleUserRepository.save(simpleUser);
         savedSimpleUser.setUser(user);
         user.setSimpleUser(savedSimpleUser);
