@@ -3,11 +3,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://example.com/root.json",
   "type": "object",
-  "title": "CreateAgent",
+  "title": "Login",
   "required": [
     "username",
-    "password",
-    "rePassword"
+    "password"
   ],
   "properties": {
     "username": {
@@ -36,31 +35,6 @@
       ],
       "pattern" : "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&].{9,}"
 
-    },
-    "rePassword" : {
-      "$id": "#/properties/rePassword",
-      "type": "string",
-      "title": "rePassword",
-      "description": "rePassword",
-      "default": "",
-      "minLength": 5,
-      "maxLength": 30,
-      "examples": [
-        "Tajlor123!!"
-      ],
-      "pattern" : "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&].{9,}"
-    },
-    "name" : {
-      "$id": "#/properties/name",
-      "type": "string",
-      "title": "Name",
-      "description": "Name",
-      "default": "",
-      "minLength": 5,
-      "maxLength": 30,
-      "examples": [
-        "Tajlor"
-      ]
     }
 
   }

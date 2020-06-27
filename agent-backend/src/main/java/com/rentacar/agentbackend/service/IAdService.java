@@ -4,6 +4,7 @@ import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
 import com.rentacar.agentbackend.dto.response.PhotoResponse;
+import com.rentacar.agentbackend.service.impl.GeneralException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -38,4 +39,6 @@ public interface IAdService {
     List<AdResponse> getAgentAds(UUID id);
 
     List<PhotoResponse> getAllPhotos(UUID adID);
+
+    void checkSQLInjectionAd(AddAdRequest request)throws GeneralException;
 }

@@ -1,5 +1,6 @@
 package com.rentacar.agentbackend.service.impl;
 
+import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
 import com.rentacar.agentbackend.dto.request.AddAdRequest;
 import com.rentacar.agentbackend.dto.request.UpdateAdRequest;
 import com.rentacar.agentbackend.dto.response.AdResponse;
@@ -10,6 +11,7 @@ import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IAdService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,6 +49,37 @@ public class AdService implements IAdService {
         _photoRepository = photoRepository;
         _requestAdRepository = requestAdRepository;
     }
+
+
+    @Override
+    public void checkSQLInjectionAd(AddAdRequest request) throws GeneralException {
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getCarModel())) {
+            logger.debug("Car model was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getGearshifType())) {
+            logger.debug("Gearshif type was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getFuelType())) {
+            logger.debug("Fuel type was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getAvailableKilometersPerRent())) {
+            logger.debug("Available kilometers per rent was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getKilometersTraveled())) {
+            logger.debug("Kilometers traveld was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @Override
     public PhotoResponse getPhoto(UUID adId) {

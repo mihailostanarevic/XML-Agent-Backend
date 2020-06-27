@@ -3,11 +3,13 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://example.com/root.json",
   "type": "object",
-  "title": "CreateAgent",
+  "title": "CreateSimpleUser",
   "required": [
     "username",
     "password",
-    "rePassword"
+    "rePassword",
+    "firstName",
+    "lastName"
   ],
   "properties": {
     "username": {
@@ -50,11 +52,23 @@
       ],
       "pattern" : "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\\d$@$!%*?&].{9,}"
     },
-    "name" : {
-      "$id": "#/properties/name",
+    "firstName" : {
+      "$id": "#/properties/firstName",
       "type": "string",
-      "title": "Name",
-      "description": "Name",
+      "title": "FirstName",
+      "description": "FirstName",
+      "default": "",
+      "minLength": 5,
+      "maxLength": 30,
+      "examples": [
+        "Tajlor"
+      ]
+    },
+    "lastName" : {
+      "$id": "#/properties/lastName",
+      "type": "string",
+      "title": "LastName",
+      "description": "LastName",
       "default": "",
       "minLength": 5,
       "maxLength": 30,
