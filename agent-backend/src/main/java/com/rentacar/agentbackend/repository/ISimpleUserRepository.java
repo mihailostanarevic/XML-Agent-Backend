@@ -21,4 +21,5 @@ public interface ISimpleUserRepository extends JpaRepository<SimpleUser, UUID> {
 
     SimpleUser findOneByUser(User user);
 
+    SimpleUser findOneByUser_Username(String username);
 }

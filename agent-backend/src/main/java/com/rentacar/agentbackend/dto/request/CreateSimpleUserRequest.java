@@ -22,4 +22,8 @@ public class CreateSimpleUserRequest {
     private String city;
 
     private String country;
+
+    private String favoriteSportsClub;
+
+    private String theBestChildhoodFriendsName;
 }

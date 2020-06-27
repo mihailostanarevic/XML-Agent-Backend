@@ -8,4 +8,6 @@ public interface IEmailService {
     void approveRegistrationMail(SimpleUser simpleUser);
 
     void agentRegistrationMail(Agent agent);
+
+    void newPasswordAnnouncementMail(SimpleUser simpleUser, String pass);
 }

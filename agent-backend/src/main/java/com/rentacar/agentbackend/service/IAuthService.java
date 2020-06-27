@@ -34,4 +34,6 @@ public interface IAuthService {
     void checkSQLInjectionLogin(LoginRequest request)throws GeneralException;
 
     RequestResponse limitRedirect(HttpServletRequest request);
+
+    void forgottenPassword(ForgottenPasswordRequest request) throws Exception;
 }
