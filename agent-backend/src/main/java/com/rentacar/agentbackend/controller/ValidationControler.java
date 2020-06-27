@@ -2,6 +2,9 @@ package com.rentacar.agentbackend.controller;
 
 import com.github.rkpunjal.sqlsafe.SQLInjectionSafe;
 import com.rentacar.agentbackend.dto.request.CreateAgentRequest;
+import com.rentacar.agentbackend.dto.request.CreateSimpleUserRequest;
+import com.rentacar.agentbackend.dto.request.LoginRequest;
+import com.rentacar.agentbackend.dto.request.NewPassordRequest;
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -39,6 +42,24 @@ public class ValidationControler {
 
     void validateAgentJSON(CreateAgentRequest jsonString) throws IOException, ValidationException, JSONException {
         InputStream inputStream = new ClassPathResource(SCHEMA_PATH_PREFIX + "createAgent.json").getInputStream();
+        Schema schema = SchemaLoader.load(new JSONObject(new JSONTokener(inputStream)));
+        schema.validate(new JSONObject(jsonString));
+    }
+
+    void validateSimpleUserJSON(CreateSimpleUserRequest jsonString) throws IOException, ValidationException, JSONException {
+        InputStream inputStream = new ClassPathResource(SCHEMA_PATH_PREFIX + "createSimpleUser.json").getInputStream();
+        Schema schema = SchemaLoader.load(new JSONObject(new JSONTokener(inputStream)));
+        schema.validate(new JSONObject(jsonString));
+    }
+
+    void validateLoginRequestJSON(LoginRequest jsonString) throws IOException, ValidationException, JSONException {
+        InputStream inputStream = new ClassPathResource(SCHEMA_PATH_PREFIX + "loginRequest.json").getInputStream();
+        Schema schema = SchemaLoader.load(new JSONObject(new JSONTokener(inputStream)));
+        schema.validate(new JSONObject(jsonString));
+    }
+
+    void validateNewPasswordRequestJSON(NewPassordRequest jsonString) throws IOException, ValidationException, JSONException {
+        InputStream inputStream = new ClassPathResource(SCHEMA_PATH_PREFIX + "newPassordRequest.json").getInputStream();
         Schema schema = SchemaLoader.load(new JSONObject(new JSONTokener(inputStream)));
         schema.validate(new JSONObject(jsonString));
     }

@@ -29,5 +29,9 @@ public interface IAuthService {
 
     void checkSQLInjection(CreateAgentRequest request)throws GeneralException;
 
+    void checkSQLInjectionSimpleUser(CreateSimpleUserRequest request)throws GeneralException;
+
+    void checkSQLInjectionLogin(LoginRequest request)throws GeneralException;
+
     RequestResponse limitRedirect(HttpServletRequest request);
 }

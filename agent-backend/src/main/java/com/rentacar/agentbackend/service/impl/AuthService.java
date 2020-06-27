@@ -110,6 +110,56 @@ public class AuthService implements IAuthService {
     }
 
     @Override
+    public void checkSQLInjectionSimpleUser(CreateSimpleUserRequest request) throws GeneralException {
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getUsername())) {
+            logger.debug("Username field was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getPassword())){
+            logger.debug("Password field was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getRePassword())){
+            logger.debug("Repeated password was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getFirstName())){
+            logger.debug("First name field was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getLastName())){
+            logger.debug("Last name field was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getAddress())){
+            logger.debug("Address field was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public void checkSQLInjectionLogin(LoginRequest request)throws GeneralException{
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getUsername())){
+            logger.debug("Login username field was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getPassword())){
+            logger.debug("Login password field was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+    @Override
     public RequestResponse limitRedirect(HttpServletRequest request) {
         LocalDateTime now = LocalDateTime.now();
         RequestResponse response = new RequestResponse();
@@ -171,6 +221,7 @@ public class AuthService implements IAuthService {
             logger.debug(request.getUsername() + " didn't match his passwords");
             throw new Exception("Passwords don't match.");
         }
+        checkSQLInjectionSimpleUser(request);
         User user = new User();
         SimpleUser simpleUser = new SimpleUser();
         user.setDeleted(false);
@@ -205,6 +256,7 @@ public class AuthService implements IAuthService {
     @Transactional(dontRollbackOn = GeneralException.class)
     @Override
     public UserResponse login(LoginRequest request, HttpServletRequest httpServletRequest) throws GeneralException {
+        checkSQLInjectionLogin(request);
         long startTime = System.nanoTime();
         LoginAttempts la = _loginAttemptsRepository.findOneByIpAddress(httpServletRequest.getRemoteAddr());
         if(la != null && Integer.parseInt(la.getAttempts()) >= 3 && la.getFirstMistakeDateTime().plusHours(12L).isAfter(LocalDateTime.now())){
@@ -310,6 +362,7 @@ public class AuthService implements IAuthService {
         }else if(simpleUser != null) {
             user = simpleUser.getUser();
         }
+
 
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
         logger.info(user.getUsername() + " has changed his password");

@@ -1,5 +1,6 @@
 package com.rentacar.agentbackend.service.impl;
 
+import com.github.rkpunjal.sqlsafe.SqlSafeUtil;
 import com.rentacar.agentbackend.dto.request.ApproveOrDenyCommentRequest;
 import com.rentacar.agentbackend.dto.request.CommentAdRequest;
 import com.rentacar.agentbackend.dto.response.CommentResponse;
@@ -7,6 +8,9 @@ import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.ICommentService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,6 +33,8 @@ public class CommentService implements ICommentService {
 
     private final IAgentRepository _agentRepository;
 
+    private final Logger logger = LoggerFactory.getLogger(CommentService.class);
+
     public CommentService(ICommentRepository commentRepository, IRequestRepository requestRepository, IRequestAdRepository requestAdRepository, ISimpleUserRepository simpleUserRepository, IAdRepository adRepository, IAgentRepository agentRepository) {
         _commentRepository = commentRepository;
         _requestRepository = requestRepository;
@@ -38,8 +44,25 @@ public class CommentService implements ICommentService {
         _agentRepository = agentRepository;
     }
 
+
+    /**
+     * checkSQLInjection prevent sql injection
+     */
+
+    @Override
+    public void checkSQLInjectionComment(CommentAdRequest request) throws GeneralException {
+        if(!SqlSafeUtil.isSqlInjectionSafe(request.getComment())) {
+            logger.debug("Comment field was not SQL Injection safe, status:400 Bad Request");
+            logger.warn("SQL Injection attempt!");
+            throw new GeneralException("Nice try!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
     @Override
     public CommentResponse commentAd(CommentAdRequest request) throws Exception {
+        checkSQLInjectionComment(request);
         SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getUserId());
         Ad ad = _adRepository.findOneById(request.getAdId());
 

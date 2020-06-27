@@ -31,22 +31,25 @@ public class AuthController extends ValidationControler {
     @PostMapping("/create-agent")
 //    @PreAuthorize("hasAuthority('CREATE_AGENT')")
     public UserResponse createAgent(@RequestBody CreateAgentRequest request) throws Exception{
-//        validateAgentJSON(request);
+        validateAgentJSON(request);
         return _authService.createAgent(request);
     }
 
     @PostMapping("/create-simple-user")
     public UserResponse createSimpleUser(@RequestBody CreateSimpleUserRequest request) throws Exception{
+        validateSimpleUserJSON(request);
         return _authService.createSimpleUser(request);
     }
 
     @PutMapping("/login")
     public UserResponse login(@RequestBody LoginRequest request, HttpServletRequest httpServletRequest) throws Exception{
+        validateLoginRequestJSON(request);
         return _authService.login(request, httpServletRequest);
     }
 
     @PutMapping("/{id}/new-password")
     public UserResponse newPassword(@PathVariable UUID id , @RequestBody NewPassordRequest request) throws Exception{
+        validateNewPasswordRequestJSON(request);
         return _authService.setNewPassword(id,request);
     }
 
