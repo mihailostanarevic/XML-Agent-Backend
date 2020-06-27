@@ -21,13 +21,13 @@ public class CommentController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('APPROVE_COMMENT')")
+    @PreAuthorize("hasAuthority('POST_COMMENT')")
     CommentResponse commentAd(@RequestBody CommentAdRequest request) throws Exception {
         return _commentService.commentAd(request);
     }
 
     @PutMapping("/approve-comment")
-    @PreAuthorize("hasAuthority('POST_COMMENT')")
+    @PreAuthorize("hasAuthority('APPROVE_COMMENT')")
     void approveComment(@RequestBody ApproveOrDenyCommentRequest request) throws Exception {
         _commentService.approveComment(request);
     }

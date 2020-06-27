@@ -22,8 +22,8 @@ public class TokenUtils {
     @Value("somesecret")
     public String SECRET;
 
-    @Value("3600000")
-    private int EXPIRES_IN;             // koliko mi dugo vazi token
+    @Value("1800000")
+    private int EXPIRES_IN;             // token expires in 30 mins
 
     @Value("Auth-Token")
     private String AUTH_HEADER;
