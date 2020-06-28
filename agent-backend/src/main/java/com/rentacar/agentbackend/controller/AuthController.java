@@ -51,7 +51,7 @@ public class AuthController extends ValidationControler {
     }
 
     @PutMapping("/{id}/new-password")
-    @PreAuthorize("hasAuthority('LOGIN')")
+//    @PreAuthorize("hasAuthority('LOGIN')")
     public UserResponse newPassword(@PathVariable UUID id , @RequestBody NewPassordRequest request) throws Exception{
         validateNewPasswordRequestJSON(request);
         return _authService.setNewPassword(id,request);
