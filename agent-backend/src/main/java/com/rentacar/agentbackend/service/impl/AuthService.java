@@ -27,10 +27,9 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -182,9 +181,16 @@ public class AuthService implements IAuthService {
         SimpleUser simpleUser = _simpleUserRepository.findOneByUser_Username(request.getUsername());
         SecurityQuestions securityQuestions = simpleUser.getSecurityQuestions();
         if(simpleUser == null || !_passwordEncoder.matches(request.getFavoriteSportsClub(), securityQuestions.getFavoriteSportsClub()) || !_passwordEncoder.matches(request.getTheBestChildhoodFriendsName(), securityQuestions.getTheBestChildhoodFriendsName())){
+            logger.debug("User has logged with bad credentials.");
             throw new Exception("Bad credentials.");
         }
-        String generatedString = RandomStringUtils.random(9, true, true) + "$";
+        String specChar = "!@#$%^&*()[]{}.;,:";
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder(2);
+        for (int i = 0; i < 2; i++) {
+            sb.append(specChar.charAt(rnd.nextInt(specChar.length())));
+        }
+        String generatedString = RandomStringUtils.random(8, true, true) + sb;
         simpleUser.getUser().setPassword(_passwordEncoder.encode(generatedString));
         _userRepository.save(simpleUser.getUser());
         _simpleUserRepository.save(simpleUser);
@@ -246,6 +252,25 @@ public class AuthService implements IAuthService {
         SimpleUser simpleUser = new SimpleUser();
         user.setDeleted(false);
         user.setHasSignedIn(false);
+
+//        Pattern letter1 = Pattern.compile("[a-z]");
+//        Pattern letter2 = Pattern.compile("[A-Z]");
+//        Pattern digit = Pattern.compile("[0-9]");
+//        Pattern special = Pattern.compile ("[!@#$%&*()_+=|<>?{}\\[\\]~-]");
+//        Pattern ten = Pattern.compile (".{10}");
+//
+//
+//        Matcher hasLetter1 = letter1.matcher(request.getPassword());
+//        Matcher hasLetter2 = letter2.matcher(request.getPassword());
+//        Matcher hasDigit = digit.matcher(request.getPassword());
+//        Matcher hasSpecial = special.matcher(request.getPassword());
+//
+//        if(!hasLetter1.find() || !hasLetter2.find() || !hasDigit.find() || !hasSpecial.find()){
+//            throw new Exception("Weak password");
+//        }
+//        Pattern p = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
+
+
         user.setUsername(request.getUsername());
         user.setPassword(_passwordEncoder.encode(request.getPassword()));
 //        user.setUserRole(UserRole.SIMPLE_USER);
