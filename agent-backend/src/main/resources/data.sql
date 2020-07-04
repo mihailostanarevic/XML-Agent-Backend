@@ -23,11 +23,11 @@ insert into authorities_permissions (authority_id, permission_id) values
 
 --password for all users is Sifra123!!!
 insert into user_entity (id, username, password, deleted, has_signed_in, last_password_reset_date, user_role) values
-    ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 'admin@gmail.com', '$2y$12$/o3G/4hCDEvJVDdxKp1Hv.2mxL7Avm.No35NB69OiOlFGYLBlONBW', false, false, '2019-10-01 21:58:58.508-07', 2),
-    ('105496cd-30f2-4b62-8082-cc14d282e845', 'agent@gmail.com', '$2y$12$Om9NEfovLasPXAJ0YwZuGOTEyAZgaaTmPmci7cN8yPekYfamph0qO', false, false, '2019-10-01 21:58:58.508-07', 1),
-    ('d0535564-08ec-464c-a2db-d930d2c4fcde', 'agent1@gmail.com', '$$2y$12$Ig5LuShMxa98xcCOXhSSM.hIZsTiGglqhh4DOyNA62vK9M/FxJynK', false, false, '2019-10-01 21:58:58.508-07', 1),
-    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 'customer@gmail.com', '$2y$12$AYB7pep3AGDrIKI9VYkjQuXN1X16fUfu2AJsbBVNMynoJBXeyKIou', false, false, '2019-10-01 21:58:58.508-07', 0),
-    ('b9362264-17db-411e-8ed0-db8310cba9f1', 'customer2@gmail.com', '$2y$12$CQgSOU.PP8ROwyIz764jvuAyFEsZIsGm3ySsNcxYSGe0OSzXKSQcy', false, false, '2020-10-01 21:58:58.508-07', 0);
+    ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 'admin@gmail.com', '$2y$12$/o3G/4hCDEvJVDdxKp1Hv.2mxL7Avm.No35NB69OiOlFGYLBlONBW', 'false', 'false', '2019-10-01 21:58:58.508-07', 2),
+    ('105496cd-30f2-4b62-8082-cc14d282e845', 'agent@gmail.com', '$2y$12$Om9NEfovLasPXAJ0YwZuGOTEyAZgaaTmPmci7cN8yPekYfamph0qO', 'false', 'false', '2019-10-01 21:58:58.508-07', 1),
+    ('d0535564-08ec-464c-a2db-d930d2c4fcde', 'agent1@gmail.com', '$$2y$12$Ig5LuShMxa98xcCOXhSSM.hIZsTiGglqhh4DOyNA62vK9M/FxJynK', 'false', 'false', '2019-10-01 21:58:58.508-07', 1),
+    ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 'customer@gmail.com', '$2y$12$AYB7pep3AGDrIKI9VYkjQuXN1X16fUfu2AJsbBVNMynoJBXeyKIou', 'false', 'false', '2019-10-01 21:58:58.508-07', 0),
+    ('b9362264-17db-411e-8ed0-db8310cba9f1', 'customer2@gmail.com', '$2y$12$CQgSOU.PP8ROwyIz764jvuAyFEsZIsGm3ySsNcxYSGe0OSzXKSQcy', 'false', 'false', '2020-10-01 21:58:58.508-07', 0);
 
 insert into user_authority (user_id, authority_id) values
     ('9bbbd6c1-34b4-4ea6-8889-be247cfebc34', 1),
@@ -145,35 +145,35 @@ insert into fuel_type(id, type, tank_capacity, gas, deleted) values
     ('5343655c-07cf-45cf-b911-68fdc33dbf7d', 'Benzine', '90L', 'true', 'false');
 
 insert into car (id, deleted, kilometers_traveled, car_model_id, fuel_type_id, gear_shift_id) values
-    ('47463d55-7dd0-4612-b59c-a9e5686c2762', false, '145000', 'd19159ac-9ec3-4d27-9de1-83cbc78f1ea3', '7e3d3e0c-03d6-4acf-a620-f09fe00af45d', '26499388-9c1d-4836-972c-ba114a8753d5'),
-    ('8d58e543-cfb4-4eda-920c-9ace4d9e0413', false, '120000', '2e592145-a698-4c3e-9091-2fc298cfaf08', '8efd6379-3f8c-4c9b-b39f-03e2efee6a14', '21a367e0-fefb-457a-8bcc-bf3479f107a4'),
-    ('ef5cc250-a3d2-40fd-a85c-ade447e93125', false, '50000', '5276b54e-c459-4b19-989e-83e1351679db', '574930be-7738-48a3-8dc2-9b503b0fe7e3', '49d60643-6db1-4fb3-be69-9f1a3ba66ef5'),
-    ('93a1c7b0-2dda-441c-96e9-128698422851', false, '7000', '807812c2-88d3-4fc5-83bf-f1f706951f2a', 'c2cce5ed-723c-4cdc-8da3-2b56917d935e', 'd547d724-68ca-4a00-89a1-a9b6241c5fa7'),
-    ('c26d34ae-0cb7-4869-8a97-9063c355c94a', false, '250000', '2e592145-a698-4c3e-9091-2fc298cfaf08', '5343655c-07cf-45cf-b911-68fdc33dbf7d', '26499388-9c1d-4836-972c-ba114a8753d5');
+    ('47463d55-7dd0-4612-b59c-a9e5686c2762', 'false', '145000', 'd19159ac-9ec3-4d27-9de1-83cbc78f1ea3', '7e3d3e0c-03d6-4acf-a620-f09fe00af45d', '26499388-9c1d-4836-972c-ba114a8753d5'),
+    ('8d58e543-cfb4-4eda-920c-9ace4d9e0413', 'false', '120000', '2e592145-a698-4c3e-9091-2fc298cfaf08', '8efd6379-3f8c-4c9b-b39f-03e2efee6a14', '21a367e0-fefb-457a-8bcc-bf3479f107a4'),
+    ('ef5cc250-a3d2-40fd-a85c-ade447e93125', 'false', '50000', '5276b54e-c459-4b19-989e-83e1351679db', '574930be-7738-48a3-8dc2-9b503b0fe7e3', '49d60643-6db1-4fb3-be69-9f1a3ba66ef5'),
+    ('93a1c7b0-2dda-441c-96e9-128698422851', 'false', '7000', '807812c2-88d3-4fc5-83bf-f1f706951f2a', 'c2cce5ed-723c-4cdc-8da3-2b56917d935e', 'd547d724-68ca-4a00-89a1-a9b6241c5fa7'),
+    ('c26d34ae-0cb7-4869-8a97-9063c355c94a', 'false', '250000', '2e592145-a698-4c3e-9091-2fc298cfaf08', '5343655c-07cf-45cf-b911-68fdc33dbf7d', '26499388-9c1d-4836-972c-ba114a8753d5');
 
 insert into agent_address (address_id, agent_id) values
     ('04fe195c-5409-4657-a009-3732eedf1f6c', 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0'),
     ('7df3aad6-03bd-4724-9047-bb96403bdc16', 'c72721c4-437f-4a06-b3cc-00b9a86056bc'),
     ('b65ac4e5-a5a8-46d4-897e-a7d080ff147e', 'c72721c4-437f-4a06-b3cc-00b9a86056bc');
 
-insert into ad (id, available, available_kilometers_per_rent, cdw, creation_date, deleted, limited_distance, seats, agent_id, car_id) values
-    ('991938f8-4834-421c-b48e-c2e28e06aae9', true, 'UNLIMITED', true, '2020-02-08', false, false, 2, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', '47463d55-7dd0-4612-b59c-a9e5686c2762'),
-    ('6a22b2eb-705e-4311-ab90-bc438bc226fe', true, '10', true, '2020-01-25', false, true, 3, 'c72721c4-437f-4a06-b3cc-00b9a86056bc', '93a1c7b0-2dda-441c-96e9-128698422851'),
-    ('1124e496-a070-4b6e-b9c2-1b5e9aa00b60', true, 'UNLIMITED', true, '2020-03-04', false, false, 1, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', 'c26d34ae-0cb7-4869-8a97-9063c355c94a'),
-    ('92cc7fc1-5823-40cb-8b36-6162f1cdb5a0', true, '20', true, '2019-12-24', false, false, 1, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', '8d58e543-cfb4-4eda-920c-9ace4d9e0413'),
-    ('87ea3abc-1bef-4c17-9ce6-4938e947a917', true, 'UNLIMITED', true, '2019-12-21', false, false, 2, 'c72721c4-437f-4a06-b3cc-00b9a86056bc', 'ef5cc250-a3d2-40fd-a85c-ade447e93125');
+insert into ad (id, available, available_kilometers_per_rent, cdw, creation_date, deleted, limited_distance, seats, agent_id, car_id, coefficient) values
+    ('991938f8-4834-421c-b48e-c2e28e06aae9', 'true', 'UNLIMITED', 'true', '2020-02-08', 'false', 'false', 2, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', '47463d55-7dd0-4612-b59c-a9e5686c2762', '1'),
+    ('6a22b2eb-705e-4311-ab90-bc438bc226fe', 'true', '10', 'true', '2020-01-25', 'false', 'true', 3, 'c72721c4-437f-4a06-b3cc-00b9a86056bc', '93a1c7b0-2dda-441c-96e9-128698422851', '2'),
+    ('1124e496-a070-4b6e-b9c2-1b5e9aa00b60', 'true', 'UNLIMITED', 'true', '2020-03-04', 'false', 'false', 1, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', 'c26d34ae-0cb7-4869-8a97-9063c355c94a', '3'),
+    ('92cc7fc1-5823-40cb-8b36-6162f1cdb5a0', 'true', '20', 'true', '2019-12-24', 'false', 'false', 1, 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0', '8d58e543-cfb4-4eda-920c-9ace4d9e0413', '4'),
+    ('87ea3abc-1bef-4c17-9ce6-4938e947a917', 'true', 'UNLIMITED', 'true', '2019-12-21', 'false', 'false', 2, 'c72721c4-437f-4a06-b3cc-00b9a86056bc', 'ef5cc250-a3d2-40fd-a85c-ade447e93125', '5');
 
 insert into car_accessories (id, description, deleted) values
-    ('4d3a07c8-c2c5-418c-b96c-8bf86417a6c1', 'Spear tyre', false),
-    ('57d5ebbf-51a1-4aea-879b-663103c7f0a3', 'Medical kit', false),
-    ('5349191d-962d-4eeb-a2b5-06bdfe2e711f', 'Fire extinguisher', false),
-    ('b26855c2-6b55-410e-952b-5a15faeb443e', 'Triangle for accidents', false),
-    ('a8ac2d3a-a4eb-40a2-ad90-771267903c2b', 'Something else', false);
+    ('4d3a07c8-c2c5-418c-b96c-8bf86417a6c1', 'Spear tyre', 'false'),
+    ('57d5ebbf-51a1-4aea-879b-663103c7f0a3', 'Medical kit', 'false'),
+    ('5349191d-962d-4eeb-a2b5-06bdfe2e711f', 'Fire extinguisher', 'false'),
+    ('b26855c2-6b55-410e-952b-5a15faeb443e', 'Triangle for accidents', 'false'),
+    ('a8ac2d3a-a4eb-40a2-ad90-771267903c2b', 'Something else', 'false');
 
 insert into message (id, date_sent, seen, text, time_sent, ad_id, user_receiver_id, user_sender_id) values
-    ('f786d538-7e0d-412d-b1a4-c4db725c1c67', '2020-06-16', false, 'Message text', '16:50', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', '105496cd-30f2-4b62-8082-cc14d282e845','b9362264-17db-411e-8ed0-db8310cba9f1'),
-    ('04f5cfc3-b4b3-4f99-be7b-f59c558ba4cc', '2020-06-16', false, 'Message reply', '16:51', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', 'b9362264-17db-411e-8ed0-db8310cba9f1','105496cd-30f2-4b62-8082-cc14d282e845'),
-    ('1cfd2251-3969-4204-b463-744dff0e21c4', '2020-06-16', false, 'Message text 2', '16:52', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', '105496cd-30f2-4b62-8082-cc14d282e845','b9362264-17db-411e-8ed0-db8310cba9f1');
+    ('f786d538-7e0d-412d-b1a4-c4db725c1c67', '2020-06-16', 'false', 'Message text', '16:50', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', '105496cd-30f2-4b62-8082-cc14d282e845','b9362264-17db-411e-8ed0-db8310cba9f1'),
+    ('04f5cfc3-b4b3-4f99-be7b-f59c558ba4cc', '2020-06-16', 'false', 'Message reply', '16:51', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', 'b9362264-17db-411e-8ed0-db8310cba9f1','105496cd-30f2-4b62-8082-cc14d282e845'),
+    ('1cfd2251-3969-4204-b463-744dff0e21c4', '2020-06-16', 'false', 'Message text 2', '16:52', '1124e496-a070-4b6e-b9c2-1b5e9aa00b60', '105496cd-30f2-4b62-8082-cc14d282e845','b9362264-17db-411e-8ed0-db8310cba9f1');
 
 insert into car_accessories_car (car_id, car_accessories_id) values
     ('c26d34ae-0cb7-4869-8a97-9063c355c94a', '4d3a07c8-c2c5-418c-b96c-8bf86417a6c1'),
@@ -181,8 +181,8 @@ insert into car_accessories_car (car_id, car_accessories_id) values
     ('c26d34ae-0cb7-4869-8a97-9063c355c94a', 'b26855c2-6b55-410e-952b-5a15faeb443e');
 
 insert into message_car_accessories (id, approved, reviewed, car_accessories_id, message_id) values
-    ('73e4a31a-de45-4ffd-9030-513094bb6bfd', false, false, '4d3a07c8-c2c5-418c-b96c-8bf86417a6c1', '1cfd2251-3969-4204-b463-744dff0e21c4'),
-    ('44b160bd-bfc2-44a9-889e-81d6a5aee362', false, false, '57d5ebbf-51a1-4aea-879b-663103c7f0a3', '1cfd2251-3969-4204-b463-744dff0e21c4');
+    ('73e4a31a-de45-4ffd-9030-513094bb6bfd', 'false', 'false', '4d3a07c8-c2c5-418c-b96c-8bf86417a6c1', '1cfd2251-3969-4204-b463-744dff0e21c4'),
+    ('44b160bd-bfc2-44a9-889e-81d6a5aee362', 'false', 'false', '57d5ebbf-51a1-4aea-879b-663103c7f0a3', '1cfd2251-3969-4204-b463-744dff0e21c4');
 
 insert into request (id, simple_user_id, status, reception_date, deleted, address_id) values
     ('100abd9a-aa4c-437d-ac4d-dc0d117616ba', '1cfe4238-9b0c-4611-abea-ddd20b4cc415', 'PAID', '2020-06-11', 'false', '04fe195c-5409-4657-a009-3732eedf1f6c'),
@@ -221,3 +221,7 @@ insert into request_ad (id, request_id, ad_id, pick_up_date, return_date, pick_u
 insert into security_questions(id, favorite_sports_club, the_best_childhood_friends_name, simple_user_id) values
 ('2a233781-f0bb-434a-b716-a8d7dd845d0f', '$2y$12$xa2Daydk6h37mJ89TJi/f.euxaGqoza22sl6WpxVfgfMQ80MStVhe', '$2y$12$vFWvcuQHmqTosmtd8l2.2eKNqcXDwj6BzODrycja.f8WCERhj3XFG', '1cfe4238-9b0c-4611-abea-ddd20b4cc415'),
 ('deb91374-3ea8-4db7-a0ca-c3d02b9a3acd', '$2y$12$tMvZMbfhvpi0FQNNVrE1jeEK4275RlSQXA0QewTZk05sNX/wJqebW', '$2y$12$9XdSlbQK/RXnAxRAIUYd7egn2Ip9tI7KJcsvYQ.9fzw97/yBlpGr6', '9220c03b-b0b5-46af-a821-249e2a97dcaa');
+
+insert into price_list(id, price1day, price7days, price15days, price30days, deleted, agent_id) values
+('4e0f5382-7c28-467a-b3a7-eb889df89b88', '100', '500', '900', '1600', 'false', 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0'),
+('f65e8c67-6f31-49d8-9835-1deaad559808', '50', '250', '400', '700', 'false', 'c72721c4-437f-4a06-b3cc-00b9a86056bc');

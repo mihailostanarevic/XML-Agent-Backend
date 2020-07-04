@@ -28,8 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -59,10 +57,12 @@ public class AuthService implements IAuthService {
 
     private final ISecurityQuestionsRepository _securityQuestionsRepository;
 
+    private final IPriceListRepository _priceListRepository;
+
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository, ISecurityQuestionsRepository securityQuestionsRepository) {
+    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository, ISecurityQuestionsRepository securityQuestionsRepository, IPriceListRepository priceListRepository) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
@@ -73,6 +73,7 @@ public class AuthService implements IAuthService {
         _emailService = emailService;
         _loginAttemptsRepository = loginAttemptsRepository;
         _securityQuestionsRepository = securityQuestionsRepository;
+        _priceListRepository = priceListRepository;
     }
 
     /**
@@ -384,6 +385,12 @@ public class AuthService implements IAuthService {
         UserResponse userResponse = mapUserToUserResponse(user);
         userResponse.setToken(jwt);
         userResponse.setTokenExpiresIn(expiresIn);
+
+        if(user.getAgent() != null && _priceListRepository.findOneByAgentId(user.getAgent().getId()) == null){
+            userResponse.setAgentHasPriceList(false);
+        } else {
+            userResponse.setAgentHasPriceList(true);
+        }
 
         long endTime = System.nanoTime();
         double time = (double) ((endTime - startTime) / 1000000);

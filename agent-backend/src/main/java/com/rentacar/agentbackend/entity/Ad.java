@@ -44,6 +44,8 @@ public class Ad extends BaseEntity {
 
     private boolean deleted;
 
+    private String coefficient;
+
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
     private List<Rating> ratings;
 
