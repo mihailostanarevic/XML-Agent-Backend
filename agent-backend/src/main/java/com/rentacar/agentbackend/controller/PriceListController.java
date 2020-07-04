@@ -2,6 +2,7 @@ package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.CreatePriceListRequest;
 import com.rentacar.agentbackend.dto.request.UpdatePriceListRequest;
+import com.rentacar.agentbackend.dto.response.EarningsResponse;
 import com.rentacar.agentbackend.dto.response.PriceListResponse;
 import com.rentacar.agentbackend.service.IPriceListService;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +53,15 @@ public class PriceListController {
     @DeleteMapping("/{id}/agent")
     public void deletePriceListByAgent(@PathVariable UUID id) throws Exception {
         _priceListService.deletePriceListByAgent(id);
+    }
+
+    @GetMapping("/total-earnings/{id}/agent")
+    public EarningsResponse getTotalEarningsByAgent(@PathVariable UUID id) throws Exception {
+        return _priceListService.getTotalEarningsByAgent(id);
+    }
+
+    @GetMapping("/total-earnings/{id}/ad")
+    public EarningsResponse getTotalEarningsByAd(@PathVariable UUID id) throws Exception {
+        return _priceListService.getTotalEarningsByAd(id);
     }
 }
