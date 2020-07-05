@@ -24,14 +24,16 @@ public class UserService implements IUserService {
     private final IRequestRepository _requestRepository;
     private final IUserRepository _userRepository;
     private final IAgentService _agentService;
+    private final IAuthorityRepository _authorityRepository;
 
     private final Logger logger = LoggerFactory.getLogger(RequestService.class);
 
-    public UserService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository, IUserRepository userRepository, IAgentService agentService) {
+    public UserService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository, IUserRepository userRepository, IAgentService agentService, IAuthorityRepository authorityRepository) {
         _requestAdRepository = requestAdRepository;
         _requestRepository = requestRepository;
         _userRepository = userRepository;
         _agentService = agentService;
+        _authorityRepository = authorityRepository;
     }
 
     public User findOneByUsername(String mail) {
@@ -135,6 +137,65 @@ public class UserService implements IUserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<RoleResponse> getPermissions(UUID userId) {
+        User user = _userRepository.findOneById(userId);
+        List<RoleResponse> roleListOfUser = new ArrayList<>();
+        for (Authority authority : user.getRoles()) {
+            RoleResponse roleResponse = mapAuthorityToPermissionResponse(authority);
+            roleListOfUser.add(roleResponse);
+        }
+        return roleListOfUser;
+    }
+
+    @Override
+    public List<UserDetailsResponse> getUsers() {
+        List<User> userList = _userRepository.findAllByDeleted(false);
+        List<UserDetailsResponse> userDetailsResponseList = new ArrayList<>();
+        for (User user : userList) {
+            if(!user.getUserRole().equals(UserRole.ADMIN)) {
+                userDetailsResponseList.add(mapUserToUserDetailsResponse(user));
+            }
+        }
+
+        return userDetailsResponseList;
+    }
+
+    @Override
+    public List<UserDetailsResponse> deleteRole(Long roleId, UUID userId) {
+        User user = _userRepository.findOneById(userId);
+        Authority authority = _authorityRepository.findOneById(roleId);
+        user.getRoles().remove(authority);
+        _userRepository.save(user);
+        return getUsers();
+    }
+
+    private UserDetailsResponse mapUserToUserDetailsResponse(User user) {
+        UserDetailsResponse userDetailsResponse = new UserDetailsResponse();
+        userDetailsResponse.setId(user.getId());
+        userDetailsResponse.setUsername(user.getUsername());
+        userDetailsResponse.setUserRole(user.getUserRole().toString());
+        setFirstAndLastName(userDetailsResponse, user);
+        userDetailsResponse.setRoleList(getPermissions(user.getId()));
+        return userDetailsResponse;
+    }
+
+    private void setFirstAndLastName(UserDetailsResponse userDetailsResponse, User user) {
+        if(user.getAgent() != null) {
+            userDetailsResponse.setName(user.getAgent().getName());
+        } else {
+            userDetailsResponse.setName(user.getSimpleUser().getFirstName() + " " + user.getSimpleUser().getLastName());
+        }
+    }
+
+    private RoleResponse mapAuthorityToPermissionResponse(Authority authority) {
+        List<String> permissionListOfRole = new ArrayList<>();
+        for (Permission permission : authority.getPermissions()) {
+            permissionListOfRole.add(permission.getName());
+        }
+        return new RoleResponse(authority.getId(), authority.getName(), permissionListOfRole);
+    }
+
     private List<SimpleUserRequests> mapToSimpleUserRequest(List<Request> requestList) {
         List<SimpleUserRequests> simpleUserRequestList = new ArrayList<>();
         for (Request request : requestList) {
@@ -196,7 +257,7 @@ public class UserService implements IUserService {
             }
             i++;
         }
-        AgentSearchResponse agentDTO = new AgentSearchResponse(ad.getAgent().getId(), ad.getAgent().getName(), ad.getAgent().getDateFounded().toString(), allLocations, fullLocations);
+        AgentSearchResponse agentDTO = new AgentSearchResponse(ad.getAgent().getId(), ad.getAgent().getSimpleUserId(), ad.getAgent().getName(), ad.getAgent().getDateFounded().toString(), allLocations, fullLocations);
         retVal.setAd(adDTO);
         retVal.setAgent(agentDTO);
         retVal.setCar(carDTO);
