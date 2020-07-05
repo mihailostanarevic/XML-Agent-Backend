@@ -1,10 +1,7 @@
 package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.RequestBodyID;
-import com.rentacar.agentbackend.dto.response.AdResponse;
-import com.rentacar.agentbackend.dto.response.SimpleUserRequests;
-import com.rentacar.agentbackend.dto.response.UserResponse;
-import com.rentacar.agentbackend.dto.response.UsersAdsResponse;
+import com.rentacar.agentbackend.dto.response.*;
 import com.rentacar.agentbackend.service.IAdService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
@@ -100,6 +97,25 @@ public class UserController {
     @PreAuthorize("hasAuthority('VIEW_AD')")
     public List<AdResponse> getAd(@PathVariable UUID id) throws Exception{
         return _adService.getAgentAds(id);
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasAuthority('CHANGE_PERMISSION')")
+    public ResponseEntity<List<UserDetailsResponse>> getUsers() {
+        return new ResponseEntity<>(_userService.getUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/permissions")
+    @PreAuthorize("hasAuthority('CHANGE_PERMISSION')")
+    public ResponseEntity<List<RoleResponse>> getPermissions(@PathVariable("id") UUID userId) {
+        return new ResponseEntity<>(_userService.getPermissions(userId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{userId}/roles/{roleId}")
+    @PreAuthorize("hasAuthority('CHANGE_PERMISSION')")
+    public ResponseEntity<List<UserDetailsResponse>> deleteRole(@PathVariable("userId") UUID userId,
+                                                                @PathVariable("roleId") Long roleId) {
+        return new ResponseEntity<>(_userService.deleteRole(roleId, userId), HttpStatus.OK);
     }
 
 }

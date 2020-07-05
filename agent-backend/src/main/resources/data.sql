@@ -5,14 +5,14 @@ insert into permission (name) values
     ('RENT_A_CAR'), ('SEARCH'), ('SEND_MESSAGE'), ('UPLOAD_PHOTO'), ('DELETE_RATE'),
     ('CREATE_AGENT'), ('READ_REQUEST'), ('APPROVE_REQUEST'), ('VIEW_IMAGE'), ('CRUD_CAR_BRAND'),
     ('CRUD_CAR_MODEL'), ('CRUD_CAR_CLASS'), ('CRUD_FUEL_TYPE'), ('CRUD_GEARSHIFT_TYPE'), ('APPROVE_AGENT'),
-    ('DENY_AGENT');
+    ('DENY_AGENT'), ('CHANGE_PERMISSION');
 
 insert into authority (name) values ('ROLE_ADMIN'), ('ROLE_AGENT'), ('ROLE_SIMPLE_USER'),
     ('ROLE_REVIEWER_USER'), ('ROLE_MESSAGE_USER'), ('ROLE_RENT_USER'), ('ROLE_COMMENT_USER'), ('ROLE_REQUEST');
 
 insert into authorities_permissions (authority_id, permission_id) values
     (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (1, 12), (1, 13), (1, 14),
-    (1, 15), (1, 16), (1, 17), (1, 18), (1, 19), (1, 21), (1, 22), (1, 23), (1, 25), (1, 26), (1, 27), (1, 28), (1, 29), (1, 30), (1, 31),
+    (1, 15), (1, 16), (1, 17), (1, 18), (1, 19), (1, 21), (1, 22), (1, 23), (1, 25), (1, 26), (1, 27), (1, 28), (1, 29), (1, 30), (1, 31), (1, 32),
     (2, 1), (2, 2), (2, 3), (2, 4), (2, 19), (2, 22), (2, 23), (2, 24), (2, 12),
     (3, 13), (3, 15), (3, 17), (3, 2), (3, 6), (3, 10), (3, 24),
     (4, 9), (4, 10), (4, 11), (4, 20), (4, 24),

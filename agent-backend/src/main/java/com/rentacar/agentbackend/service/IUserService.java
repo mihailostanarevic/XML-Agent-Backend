@@ -1,8 +1,6 @@
 package com.rentacar.agentbackend.service;
 
-import com.rentacar.agentbackend.dto.response.SimpleUserRequests;
-import com.rentacar.agentbackend.dto.response.UserResponse;
-import com.rentacar.agentbackend.dto.response.UsersAdsResponse;
+import com.rentacar.agentbackend.dto.response.*;
 import com.rentacar.agentbackend.entity.User;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
 
@@ -25,4 +23,10 @@ public interface IUserService {
     Collection<SimpleUserRequests> dropRequest(UUID id, UUID requestID);
 
     List<UserResponse> getCustomers();
+
+    List<RoleResponse> getPermissions(UUID userId);
+
+    List<UserDetailsResponse> getUsers();
+
+    List<UserDetailsResponse> deleteRole(Long roleId, UUID userId);
 }
