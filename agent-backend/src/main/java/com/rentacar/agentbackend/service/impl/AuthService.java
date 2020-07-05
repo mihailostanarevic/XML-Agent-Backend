@@ -52,7 +52,7 @@ public class AuthService implements IAuthService {
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository, ISecurityQuestionsRepository securityQuestionsRepository, IPriceListRepository priceListRepository) {
+    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository, ISecurityQuestionsRepository securityQuestionsRepository, IPriceListRepository priceListRepository, IAddressRepository addressRepository) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
