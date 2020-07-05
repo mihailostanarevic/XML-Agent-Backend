@@ -43,9 +43,9 @@ public class PriceListService implements IPriceListService {
         priceList.setDeleted(false);
         priceList.setAgentId(request.getAgentId());
         priceList.setPrice1day(request.getPrice1day());
-        priceList.setPrice7days(request.getPrice7days());
-        priceList.setPrice15days(request.getPrice15days());
-        priceList.setPrice30days(request.getPrice30days());
+        priceList.setDiscount7days(request.getDiscount7days());
+        priceList.setDiscount15days(request.getDiscount15days());
+        priceList.setDiscount30days(request.getDiscount30days());
         PriceList savedPriceList = _priceListRepository.save(priceList);
         return mapPriceListToPriceListResponse(savedPriceList);
     }
@@ -54,9 +54,9 @@ public class PriceListService implements IPriceListService {
     public PriceListResponse updatePriceList(UpdatePriceListRequest request) throws Exception {
         PriceList priceList = _priceListRepository.findOneByAgentId(request.getAgentId());
         priceList.setPrice1day(request.getPrice1day());
-        priceList.setPrice7days(request.getPrice7days());
-        priceList.setPrice15days(request.getPrice15days());
-        priceList.setPrice30days(request.getPrice30days());
+        priceList.setDiscount7days(request.getDiscount7days());
+        priceList.setDiscount15days(request.getDiscount15days());
+        priceList.setDiscount30days(request.getDiscount30days());
         _priceListRepository.save(priceList);
         return mapPriceListToPriceListResponse(priceList);
     }
@@ -110,24 +110,15 @@ public class PriceListService implements IPriceListService {
                     }else{
                         days = (ra.getReturnDate().getYear() - ra.getPickUpDate().getYear()) *365 + ra.getReturnDate().getDayOfYear() - ra.getPickUpDate().getDayOfYear();
                     }
-                    System.out.println(ra.getPickUpDate() + " " + ra.getReturnDate() + " " + days + " " + ra.getAd().getCoefficient());
+//                    System.out.println(ra.getPickUpDate() + " " + ra.getReturnDate() + " " + days + " " + ra.getAd().getCoefficient());
                     if(days < 7){
                         totalEarnings += days * Float.valueOf(priceList.getPrice1day()) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days >= 7 && days < 14){
-                        days -= 7;
-                        totalEarnings += (Float.valueOf(priceList.getPrice7days()) + days * Float.valueOf(priceList.getPrice1day())) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days == 14){
-                        totalEarnings += 2 * Float.valueOf(priceList.getPrice7days()) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days >=15 && days < 22){
-                        days -= 15;
-                        totalEarnings += (Float.valueOf(priceList.getPrice15days()) + days * Float.valueOf(priceList.getPrice1day())) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days >= 22 && days < 29){
-                        days -= 22;
-                        totalEarnings += (Float.valueOf(priceList.getPrice15days()) + Float.valueOf(priceList.getPrice7days()) + days * Float.valueOf(priceList.getPrice1day())) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days == 29){
-                        totalEarnings += (Float.valueOf(priceList.getPrice15days()) +  Float.valueOf(priceList.getPrice7days()) * 2) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days >= 30){ //days == 30
-                        totalEarnings += Float.valueOf(priceList.getPrice30days());
+                    }else if(days >= 7 && days < 15){
+                        totalEarnings += days * Float.valueOf(priceList.getPrice1day()) * Float.valueOf(ra.getAd().getCoefficient()) * ((100 - Float.valueOf(priceList.getDiscount7days())) / 100);
+                    }else if(days >=15 && days < 30){
+                        totalEarnings += days * Float.valueOf(priceList.getPrice1day()) * Float.valueOf(ra.getAd().getCoefficient()) * ((100 - Float.valueOf(priceList.getDiscount15days())) / 100);
+                    }else if(days >= 30){
+                        totalEarnings += days * Float.valueOf(priceList.getPrice1day()) * Float.valueOf(ra.getAd().getCoefficient()) * ((100 - Float.valueOf(priceList.getDiscount30days())) / 100);
                     }
                 }
             }
@@ -155,21 +146,12 @@ public class PriceListService implements IPriceListService {
                     }
                     if(days < 7){
                         totalEarnings += days * Float.valueOf(priceList.getPrice1day()) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days >= 7 && days < 14){
-                        days -= 7;
-                        totalEarnings += (Float.valueOf(priceList.getPrice7days()) + days * Float.valueOf(priceList.getPrice1day())) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days == 14){
-                        totalEarnings += 2 * Float.valueOf(priceList.getPrice7days()) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days >=15 && days < 22){
-                        days -= 15;
-                        totalEarnings += (Float.valueOf(priceList.getPrice15days()) + days * Float.valueOf(priceList.getPrice1day())) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days >= 22 && days < 29){
-                        days -= 22;
-                        totalEarnings += (Float.valueOf(priceList.getPrice15days()) + Float.valueOf(priceList.getPrice7days()) + days * Float.valueOf(priceList.getPrice1day())) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days == 29){
-                        totalEarnings += (Float.valueOf(priceList.getPrice15days()) +  Float.valueOf(priceList.getPrice7days()) * 2) * Float.valueOf(ra.getAd().getCoefficient());
-                    }else if(days >= 30){ //days == 30
-                        totalEarnings += Float.valueOf(priceList.getPrice30days());
+                    }else if(days >= 7 && days < 15){
+                        totalEarnings += days * Float.valueOf(priceList.getPrice1day()) * Float.valueOf(ra.getAd().getCoefficient()) * ((100 - Float.valueOf(priceList.getDiscount7days()) / 100));
+                    }else if(days >=15 && days < 30){
+                        totalEarnings += days * Float.valueOf(priceList.getPrice1day()) * Float.valueOf(ra.getAd().getCoefficient()) * ((100 - Float.valueOf(priceList.getDiscount15days()) / 100));
+                    }else if(days >= 30){
+                        totalEarnings += days * Float.valueOf(priceList.getPrice1day()) * Float.valueOf(ra.getAd().getCoefficient()) * ((100 - Float.valueOf(priceList.getDiscount30days())) / 100);
                     }
                 }
             }
@@ -184,9 +166,9 @@ public class PriceListService implements IPriceListService {
         response.setAgentName(_agentRepository.findOneById(priceList.getAgentId()).getName());
         response.setId(priceList.getId());
         response.setPrice1day(priceList.getPrice1day());
-        response.setPrice7days(priceList.getPrice7days());
-        response.setPrice15days(priceList.getPrice15days());
-        response.setPrice30days(priceList.getPrice30days());
+        response.setDiscount7days(priceList.getDiscount7days());
+        response.setDiscount15days(priceList.getDiscount15days());
+        response.setDiscount30days(priceList.getDiscount30days());
         return response;
     }
 }

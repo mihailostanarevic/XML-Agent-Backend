@@ -222,6 +222,6 @@ insert into security_questions(id, favorite_sports_club, the_best_childhood_frie
 ('2a233781-f0bb-434a-b716-a8d7dd845d0f', '$2y$12$xa2Daydk6h37mJ89TJi/f.euxaGqoza22sl6WpxVfgfMQ80MStVhe', '$2y$12$vFWvcuQHmqTosmtd8l2.2eKNqcXDwj6BzODrycja.f8WCERhj3XFG', '1cfe4238-9b0c-4611-abea-ddd20b4cc415'),
 ('deb91374-3ea8-4db7-a0ca-c3d02b9a3acd', '$2y$12$tMvZMbfhvpi0FQNNVrE1jeEK4275RlSQXA0QewTZk05sNX/wJqebW', '$2y$12$9XdSlbQK/RXnAxRAIUYd7egn2Ip9tI7KJcsvYQ.9fzw97/yBlpGr6', '9220c03b-b0b5-46af-a821-249e2a97dcaa');
 
-insert into price_list(id, price1day, price7days, price15days, price30days, deleted, agent_id) values
-('4e0f5382-7c28-467a-b3a7-eb889df89b88', '100', '500', '900', '1600', 'false', 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0'),
-('f65e8c67-6f31-49d8-9835-1deaad559808', '50', '250', '400', '700', 'false', 'c72721c4-437f-4a06-b3cc-00b9a86056bc');
+insert into price_list(id, price1day, discount7days, discount15days, discount30days, deleted, agent_id) values
+('4e0f5382-7c28-467a-b3a7-eb889df89b88', '100', '10', '20', '40', 'false', 'b38a64e2-299b-4a05-bc30-5a45dd2ebdc0'),
+('f65e8c67-6f31-49d8-9835-1deaad559808', '50', '5', '10', '30', 'false', 'c72721c4-437f-4a06-b3cc-00b9a86056bc');

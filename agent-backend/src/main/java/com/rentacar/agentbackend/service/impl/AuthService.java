@@ -319,6 +319,7 @@ public class AuthService implements IAuthService {
             throw new GeneralException("You have reached your logging limit, please try again later.", HttpStatus.CONFLICT);
         }
         User user = _userRepository.findOneByUsername(request.getUsername());
+
         if(user == null || !_passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             if(la == null){
                 LoginAttempts loginAttempts = new LoginAttempts();
@@ -357,6 +358,11 @@ public class AuthService implements IAuthService {
             logger.debug("The registration of user with id: " + user.getId() + " has been approved");
             throw new GeneralException("Your registration has been approved by admin. Please activate your account.", HttpStatus.BAD_REQUEST);
         }
+
+        if(user.isDeleted()){
+            throw new GeneralException("Your account has been deleted by admin.", HttpStatus.BAD_REQUEST);
+        }
+
         String mail = request.getUsername();
         String password = request.getPassword();
         Authentication authentication = null;

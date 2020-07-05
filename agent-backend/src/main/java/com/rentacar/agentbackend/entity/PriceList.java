@@ -18,11 +18,11 @@ public class PriceList extends BaseEntity {
 
     private String price1day;
 
-    private String price7days;
+    private String discount7days;
 
-    private String price15days;
+    private String discount15days;
 
-    private String price30days;
+    private String discount30days;
 
     @Column(unique = true, nullable = false)
     private UUID agentId;

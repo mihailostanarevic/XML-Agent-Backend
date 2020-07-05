@@ -15,11 +15,11 @@ public class PriceListResponse {
 
     private String price1day;
 
-    private String price7days;
+    private String discount7days;
 
-    private String price15days;
+    private String discount15days;
 
-    private String price30days;
+    private String discount30days;
 
     private UUID id;
 }
