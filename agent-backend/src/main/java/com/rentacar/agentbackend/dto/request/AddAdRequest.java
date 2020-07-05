@@ -27,4 +27,6 @@ public class AddAdRequest {
 
     private boolean cdw;
 
+    private boolean simpleUser;
+
 }

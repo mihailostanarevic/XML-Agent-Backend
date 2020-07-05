@@ -149,7 +149,7 @@ public class SearchService implements ISearchService {
             }
             i++;
         }
-        AgentSearchResponse agentDTO = new AgentSearchResponse(ad.getAgent().getId(), ad.getAgent().getName(), ad.getAgent().getDateFounded().toString(), allLocations, fullLocations);
+        AgentSearchResponse agentDTO = new AgentSearchResponse(ad.getAgent().getId(), ad.getAgent().getSimpleUserId(), ad.getAgent().getName(), ad.getAgent().getDateFounded().toString(), allLocations, fullLocations);
         retVal.setAd(adDTO);
         retVal.setAgent(agentDTO);
         retVal.setCar(carDTO);
