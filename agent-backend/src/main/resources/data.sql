@@ -8,7 +8,8 @@ insert into permission (name) values
     ('DENY_AGENT'), ('CHANGE_PERMISSION');
 
 insert into authority (name) values ('ROLE_ADMIN'), ('ROLE_AGENT'), ('ROLE_SIMPLE_USER'),
-    ('ROLE_REVIEWER_USER'), ('ROLE_MESSAGE_USER'), ('ROLE_RENT_USER'), ('ROLE_COMMENT_USER'), ('ROLE_REQUEST');
+    ('ROLE_REVIEWER_USER'), ('ROLE_MESSAGE_USER'), ('ROLE_RENT_USER'), ('ROLE_COMMENT_USER'),
+    ('ROLE_REQUEST'), ('ROLE_AD_USER');
 
 insert into authorities_permissions (authority_id, permission_id) values
     (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 11), (1, 12), (1, 13), (1, 14),
@@ -19,7 +20,8 @@ insert into authorities_permissions (authority_id, permission_id) values
     (5, 14), (5, 18), (5, 24),
     (6, 16), (6, 12), (6, 24),
     (7, 5), (7, 6), (7, 7), (7, 8), (7, 24),
-    (8, 22), (8, 24);
+    (8, 22), (8, 24),
+    (9, 1);
 
 --password for all users is Sifra123!!!
 insert into user_entity (id, username, password, deleted, has_signed_in, last_password_reset_date, user_role) values

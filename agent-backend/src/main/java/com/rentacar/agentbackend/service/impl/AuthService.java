@@ -28,8 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -38,31 +36,22 @@ import java.util.stream.Collectors;
 public class AuthService implements IAuthService {
 
     private final AuthenticationManager _authenticationManager;
-
     private final TokenUtils _tokenUtils;
-
     private final PasswordEncoder _passwordEncoder;
-
     private final IUserRepository _userRepository;
-
     private final IAgentRepository _agentRepository;
-
+    private final IAddressRepository _addressRepository;
     private final ISimpleUserRepository _simpleUserRepository;
-
     private final IAdminRepository _adminRepository;
-
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
-
     private final IEmailService _emailService;
-
     private final ILoginAttemptsRepository _loginAttemptsRepository;
-
     private final ISecurityQuestionsRepository _securityQuestionsRepository;
 
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository, ISecurityQuestionsRepository securityQuestionsRepository) {
+    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IAddressRepository addressRepository, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository, ISecurityQuestionsRepository securityQuestionsRepository) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
@@ -70,6 +59,7 @@ public class AuthService implements IAuthService {
         _adminRepository = adminRepository;
         _authenticationManager = authenticationManager;
         _tokenUtils = tokenUtils;
+        _addressRepository = addressRepository;
         _emailService = emailService;
         _loginAttemptsRepository = loginAttemptsRepository;
         _securityQuestionsRepository = securityQuestionsRepository;
@@ -277,6 +267,8 @@ public class AuthService implements IAuthService {
         List<Authority> authorities = new ArrayList<>();
         authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_RENT_USER"));
+        authorities.add(_authorityRepository.findByName("ROLE_REQUEST"));
+        authorities.add(_authorityRepository.findByName("ROLE_AD_USER"));       // samo zbog toga sto moze da postavlja oglas
         user.setAuthorities(new HashSet<>(authorities));
         user.setUserRole(UserRole.SIMPLE_USER);
         simpleUser.setAddress(request.getAddress());
@@ -298,6 +290,24 @@ public class AuthService implements IAuthService {
         savedSimpleUser.setUser(user);
         user.setSimpleUser(savedSimpleUser);
         User savedUser = _userRepository.save(user);
+
+        // brisati ovo za agenta
+        Agent agent = new Agent();
+        agent.setUser(simpleUser.getUser());
+        Set<Address> addresses = new HashSet<>();
+        Address address = new Address();
+        address.setCity(simpleUser.getCity());
+        address.setCountry(simpleUser.getCountry());
+        address.setStreet(simpleUser.getAddress());
+//        address.setNumber(Integer.parseInt(streetAndNumber[1].trim()));
+        _addressRepository.save(address);
+        addresses.add(address);
+        agent.setAddress(addresses);
+        agent.setBankAccountNumber("none");
+        agent.setName(simpleUser.getFirstName() + " " + simpleUser.getLastName());
+        agent.setSimpleUserId(simpleUser.getId());
+        agent.setTin(simpleUser.getSsn());
+        _agentRepository.save(agent);
 
         logger.info(user.getUsername() + " account has been successfully created as a simple user");
         long endTime = System.nanoTime();
@@ -434,7 +444,7 @@ public class AuthService implements IAuthService {
     @Override
     public void confirmRegistrationRequest(GetIdRequest request) throws Exception {
         SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getId());
-        simpleUser.setRequestStatus(RequestStatus.CONFIRMED);
+        simpleUser.setRequestStatus(RequestStatus.APPROVED);
         LocalDateTime currentTime = LocalDateTime.now();
         simpleUser.setConfirmationTime(currentTime);
         _simpleUserRepository.save(simpleUser);

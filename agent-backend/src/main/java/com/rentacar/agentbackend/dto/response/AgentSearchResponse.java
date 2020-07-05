@@ -14,6 +14,8 @@ public class AgentSearchResponse {
 
     private UUID agentID;
 
+    private UUID simpleUserID;
+
     private String agentName;
 
     private String dateFounded;
