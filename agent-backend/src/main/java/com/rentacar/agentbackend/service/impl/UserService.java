@@ -2,10 +2,7 @@ package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.response.*;
 import com.rentacar.agentbackend.entity.*;
-import com.rentacar.agentbackend.repository.IAuthorityRepository;
-import com.rentacar.agentbackend.repository.IRequestAdRepository;
-import com.rentacar.agentbackend.repository.IRequestRepository;
-import com.rentacar.agentbackend.repository.IUserRepository;
+import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IAgentService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
@@ -49,6 +46,27 @@ public class UserService implements IUserService {
         return users.stream()
                 .map(user -> mapUserToUserResponse(user))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserResponse> getAllCustomersAndAgents() {
+        List<User> users = _userRepository.findAllByDeleted(false);
+        List<User> customersAndAgents = new ArrayList<>();
+        for(User user: users){
+           if(user.getAdmin() == null){
+               customersAndAgents.add(user);
+           }
+        }
+        return customersAndAgents.stream()
+                .map(u -> mapUserToUserResponse(u))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteUser(UUID id) {
+        User user = _userRepository.findOneById(id);
+        user.setDeleted(true);
+        _userRepository.save(user);
     }
 
     @Override

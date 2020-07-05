@@ -99,6 +99,18 @@ public class UserController {
         return _adService.getAgentAds(id);
     }
 
+    @GetMapping("/customers-and-agents")
+    @PreAuthorize("hasAuthority('APPROVE_COMMENT')")
+    public List<UserResponse> getAllCustomersAndAgents() throws Exception{
+        return _userService.getAllCustomersAndAgents();
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('APPROVE_COMMENT')")
+    public void deleteUser(@PathVariable UUID id) throws Exception{
+        _userService.deleteUser(id);
+    }
+
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('CHANGE_PERMISSION')")
     public ResponseEntity<List<UserDetailsResponse>> getUsers() {
@@ -117,5 +129,4 @@ public class UserController {
                                                                 @PathVariable("roleId") Long roleId) {
         return new ResponseEntity<>(_userService.deleteRole(roleId, userId), HttpStatus.OK);
     }
-
 }

@@ -146,6 +146,7 @@ public class AdService implements IAdService {
         ad.setAvailableKilometersPerRent(request.getAvailableKilometersPerRent());
         ad.setSeats(request.getSeats());
         ad.setCdw(request.isCdw());
+        ad.setCoefficient(request.getCoefficient());
         _adRepository.save(ad);
         for (MultipartFile file : fileList) {
             Photo photo = new Photo();

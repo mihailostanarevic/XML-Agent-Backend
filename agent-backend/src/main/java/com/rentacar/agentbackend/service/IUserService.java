@@ -12,6 +12,10 @@ public interface IUserService {
 
     List<UserResponse> getAllUsers();
 
+    List<UserResponse> getAllCustomersAndAgents();
+
+    void deleteUser(UUID id);
+
     User getUser(UUID id);
 
     List<SimpleUserRequests> getAllUserRequests(UUID id, RequestStatus reserved);

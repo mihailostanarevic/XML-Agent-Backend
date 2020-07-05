@@ -27,6 +27,7 @@ public class AddAdRequest {
 
     private boolean cdw;
 
-    private boolean simpleUser;
+    private String coefficient;
 
+    private boolean simpleUser;
 }
