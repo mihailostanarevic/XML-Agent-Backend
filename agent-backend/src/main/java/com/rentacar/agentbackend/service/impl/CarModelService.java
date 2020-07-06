@@ -94,6 +94,17 @@ public class CarModelService implements ICarModelService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<CarModelResponse> getCarModelsByBrand(UUID id) {
+        List<CarModel> allCarModels = _carModelRepository.findAllByDeleted(false);
+
+        return allCarModels
+                .stream()
+                .filter(carModel -> carModel.getCarBrand().getId().equals(id))
+                .map(cm -> mapCarModelToCarModelResponse(cm))
+                .collect(Collectors.toList());
+    }
+
     private CarModelResponse mapCarModelToCarModelResponse(CarModel carModel) {
         CarModelResponse response = new CarModelResponse();
         response.setId(carModel.getId());

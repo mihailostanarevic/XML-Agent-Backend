@@ -21,4 +21,6 @@ public interface ICarModelService {
     List<CarModelResponse> getAllCarModels() throws Exception;
 
     List<CarModelResponse> getAllCarModelsWithFilter(GetCarModelsFilterRequest request) throws Exception;
+
+    List<CarModelResponse> getCarModelsByBrand(UUID id);
 }
