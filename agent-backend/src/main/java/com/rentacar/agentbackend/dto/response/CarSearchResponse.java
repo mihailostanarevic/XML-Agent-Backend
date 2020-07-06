@@ -31,4 +31,5 @@ public class CarSearchResponse {
 
     private String getGearshiftTypeNumberOfGears;       //
 
+    private String kilometersTraveled;
 }

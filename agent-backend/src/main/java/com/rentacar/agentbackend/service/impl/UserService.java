@@ -25,15 +25,19 @@ public class UserService implements IUserService {
     private final IUserRepository _userRepository;
     private final IAgentService _agentService;
     private final IAuthorityRepository _authorityRepository;
+    private final IPriceListRepository _priceListRepository;
+    private final IRatingRepository _ratingRepository;
 
     private final Logger logger = LoggerFactory.getLogger(RequestService.class);
 
-    public UserService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository, IUserRepository userRepository, IAgentService agentService, IAuthorityRepository authorityRepository) {
+    public UserService(IRequestAdRepository requestAdRepository, IRequestRepository requestRepository, IUserRepository userRepository, IAgentService agentService, IAuthorityRepository authorityRepository, IPriceListRepository priceListRepository, IRatingRepository ratingRepository) {
         _requestAdRepository = requestAdRepository;
         _requestRepository = requestRepository;
         _userRepository = userRepository;
         _agentService = agentService;
         _authorityRepository = authorityRepository;
+        _priceListRepository = priceListRepository;
+        _ratingRepository = ratingRepository;
     }
 
     public User findOneByUsername(String mail) {
@@ -227,7 +231,18 @@ public class UserService implements IUserService {
         Ad ad = requestAd.getAd();
         UsersAdsResponse retVal = new UsersAdsResponse();
         List<PhotoResponse> photos = new ArrayList<PhotoResponse>();
-        AdSearchResponse adDTO = new AdSearchResponse(ad.getId(), ad.isLimitedDistance(), ad.getSeats(), ad.isCdw(), ad.getCreationDate(), photos);
+        List<Rating> ratings = _ratingRepository.findAllByAd_Id(ad.getId());
+        int sum = 0;
+        for(Rating rating : ratings){
+            sum += Integer.parseInt(rating.getGrade());
+        }
+        double avgRating = 0;
+        if(ratings.size() != 0){
+            avgRating = ((double)sum) / ratings.size();
+        }
+        PriceList priceList = _priceListRepository.findOneByAgentId(ad.getAgent().getId());
+        int price = Integer.parseInt(priceList.getPrice1day())*Integer.parseInt(ad.getCoefficient());
+        AdSearchResponse adDTO = new AdSearchResponse(ad.getId(), ad.isLimitedDistance(), ad.getSeats(), ad.isCdw(), ad.getCreationDate(), photos, price, avgRating);
         CarSearchResponse carDTO = new CarSearchResponse();
         carDTO.setCarID(ad.getCar().getId());
         carDTO.setCarModelName(ad.getCar().getCarModel().getName());
@@ -239,6 +254,7 @@ public class UserService implements IUserService {
         carDTO.setFuelTypeGas(ad.getCar().getFuelType().isGas());
         carDTO.setGearshiftTypeType(ad.getCar().getGearshiftType().getType());
         carDTO.setGetGearshiftTypeNumberOfGears(ad.getCar().getGearshiftType().getNumberOfGears());
+        carDTO.setKilometersTraveled(ad.getCar().getKilometersTraveled());
         String allLocations = "";
         int i = 0;
         List<AddressDTO> fullLocations = new ArrayList<>();
