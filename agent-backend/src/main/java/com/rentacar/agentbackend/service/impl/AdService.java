@@ -134,13 +134,19 @@ public class AdService implements IAdService {
         car.setKilometersTraveled(request.getKilometersTraveled());
         Car savedCar = _carRepository.save(car);
         Ad ad = new Ad();
-        Agent agent = _agentRepository.findOneById(request.getAgentId());
+        Agent agent;
+        if(request.isSimpleUser()) {
+            agent = _agentRepository.findOneBySimpleUserId(request.getAgentId());
+        } else {
+            agent = _agentRepository.findOneById(request.getAgentId());
+        }
         ad.setAgent(agent);
         ad.setCar(savedCar);
         ad.setLimitedDistance(request.isLimitedDistance());
         ad.setAvailableKilometersPerRent(request.getAvailableKilometersPerRent());
         ad.setSeats(request.getSeats());
         ad.setCdw(request.isCdw());
+        ad.setCoefficient(request.getCoefficient());
         _adRepository.save(ad);
         for (MultipartFile file : fileList) {
             Photo photo = new Photo();

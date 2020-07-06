@@ -1,10 +1,7 @@
 package com.rentacar.agentbackend.controller;
 
 import com.rentacar.agentbackend.dto.request.RequestBodyID;
-import com.rentacar.agentbackend.dto.response.AdResponse;
-import com.rentacar.agentbackend.dto.response.SimpleUserRequests;
-import com.rentacar.agentbackend.dto.response.UserResponse;
-import com.rentacar.agentbackend.dto.response.UsersAdsResponse;
+import com.rentacar.agentbackend.dto.response.*;
 import com.rentacar.agentbackend.service.IAdService;
 import com.rentacar.agentbackend.service.IUserService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
@@ -102,4 +99,34 @@ public class UserController {
         return _adService.getAgentAds(id);
     }
 
+    @GetMapping("/customers-and-agents")
+    @PreAuthorize("hasAuthority('APPROVE_COMMENT')")
+    public List<UserResponse> getAllCustomersAndAgents() throws Exception{
+        return _userService.getAllCustomersAndAgents();
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('APPROVE_COMMENT')")
+    public void deleteUser(@PathVariable UUID id) throws Exception{
+        _userService.deleteUser(id);
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasAuthority('CHANGE_PERMISSION')")
+    public ResponseEntity<List<UserDetailsResponse>> getUsers() {
+        return new ResponseEntity<>(_userService.getUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/permissions")
+    @PreAuthorize("hasAuthority('CHANGE_PERMISSION')")
+    public ResponseEntity<List<RoleResponse>> getPermissions(@PathVariable("id") UUID userId) {
+        return new ResponseEntity<>(_userService.getPermissions(userId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{userId}/roles/{roleId}")
+    @PreAuthorize("hasAuthority('CHANGE_PERMISSION')")
+    public ResponseEntity<List<UserDetailsResponse>> deleteRole(@PathVariable("userId") UUID userId,
+                                                                @PathVariable("roleId") Long roleId) {
+        return new ResponseEntity<>(_userService.deleteRole(roleId, userId), HttpStatus.OK);
+    }
 }

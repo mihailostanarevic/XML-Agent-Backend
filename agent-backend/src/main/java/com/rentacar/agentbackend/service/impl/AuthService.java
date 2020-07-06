@@ -28,8 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
@@ -38,31 +36,23 @@ import java.util.stream.Collectors;
 public class AuthService implements IAuthService {
 
     private final AuthenticationManager _authenticationManager;
-
     private final TokenUtils _tokenUtils;
-
     private final PasswordEncoder _passwordEncoder;
-
     private final IUserRepository _userRepository;
-
     private final IAgentRepository _agentRepository;
-
+    private final IAddressRepository _addressRepository;
     private final ISimpleUserRepository _simpleUserRepository;
-
     private final IAdminRepository _adminRepository;
-
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
-
     private final IEmailService _emailService;
-
     private final ILoginAttemptsRepository _loginAttemptsRepository;
-
     private final ISecurityQuestionsRepository _securityQuestionsRepository;
+    private final IPriceListRepository _priceListRepository;
 
     @Autowired
     private IAuthorityRepository _authorityRepository;
 
-    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository, ISecurityQuestionsRepository securityQuestionsRepository) {
+    public AuthService(PasswordEncoder passwordEncoder, IUserRepository userRepository, IAgentRepository agentRepository, ISimpleUserRepository simpleUserRepository, IAdminRepository adminRepository, AuthenticationManager authenticationManager, TokenUtils tokenUtils, IEmailService emailService, ILoginAttemptsRepository loginAttemptsRepository, ISecurityQuestionsRepository securityQuestionsRepository, IPriceListRepository priceListRepository, IAddressRepository addressRepository) {
         _passwordEncoder = passwordEncoder;
         _userRepository = userRepository;
         _agentRepository = agentRepository;
@@ -70,9 +60,11 @@ public class AuthService implements IAuthService {
         _adminRepository = adminRepository;
         _authenticationManager = authenticationManager;
         _tokenUtils = tokenUtils;
+        _addressRepository = addressRepository;
         _emailService = emailService;
         _loginAttemptsRepository = loginAttemptsRepository;
         _securityQuestionsRepository = securityQuestionsRepository;
+        _priceListRepository = priceListRepository;
     }
 
     /**
@@ -277,6 +269,8 @@ public class AuthService implements IAuthService {
         List<Authority> authorities = new ArrayList<>();
         authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_RENT_USER"));
+        authorities.add(_authorityRepository.findByName("ROLE_REQUEST"));
+        authorities.add(_authorityRepository.findByName("ROLE_AD_USER"));       // samo zbog toga sto moze da postavlja oglas
         user.setAuthorities(new HashSet<>(authorities));
         user.setUserRole(UserRole.SIMPLE_USER);
         simpleUser.setAddress(request.getAddress());
@@ -299,6 +293,24 @@ public class AuthService implements IAuthService {
         user.setSimpleUser(savedSimpleUser);
         User savedUser = _userRepository.save(user);
 
+        // brisati ovo za agenta
+        Agent agent = new Agent();
+        agent.setUser(simpleUser.getUser());
+        Set<Address> addresses = new HashSet<>();
+        Address address = new Address();
+        address.setCity(simpleUser.getCity());
+        address.setCountry(simpleUser.getCountry());
+        address.setStreet(simpleUser.getAddress());
+//        address.setNumber(Integer.parseInt(streetAndNumber[1].trim()));
+        _addressRepository.save(address);
+        addresses.add(address);
+        agent.setAddress(addresses);
+        agent.setBankAccountNumber("none");
+        agent.setName(simpleUser.getFirstName() + " " + simpleUser.getLastName());
+        agent.setSimpleUserId(simpleUser.getId());
+        agent.setTin(simpleUser.getSsn());
+        _agentRepository.save(agent);
+
         logger.info(user.getUsername() + " account has been successfully created as a simple user");
         long endTime = System.nanoTime();
         double time = (double) ((endTime - startTime) / 1000000);
@@ -318,6 +330,7 @@ public class AuthService implements IAuthService {
             throw new GeneralException("You have reached your logging limit, please try again later.", HttpStatus.CONFLICT);
         }
         User user = _userRepository.findOneByUsername(request.getUsername());
+
         if(user == null || !_passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             if(la == null){
                 LoginAttempts loginAttempts = new LoginAttempts();
@@ -356,6 +369,11 @@ public class AuthService implements IAuthService {
             logger.debug("The registration of user with id: " + user.getId() + " has been approved");
             throw new GeneralException("Your registration has been approved by admin. Please activate your account.", HttpStatus.BAD_REQUEST);
         }
+
+        if(user.isDeleted()){
+            throw new GeneralException("Your account has been deleted by admin.", HttpStatus.BAD_REQUEST);
+        }
+
         String mail = request.getUsername();
         String password = request.getPassword();
         Authentication authentication = null;
@@ -384,6 +402,12 @@ public class AuthService implements IAuthService {
         UserResponse userResponse = mapUserToUserResponse(user);
         userResponse.setToken(jwt);
         userResponse.setTokenExpiresIn(expiresIn);
+
+        if(user.getAgent() != null && _priceListRepository.findOneByAgentId(user.getAgent().getId()) == null){
+            userResponse.setAgentHasPriceList(false);
+        } else {
+            userResponse.setAgentHasPriceList(true);
+        }
 
         long endTime = System.nanoTime();
         double time = (double) ((endTime - startTime) / 1000000);
@@ -434,7 +458,7 @@ public class AuthService implements IAuthService {
     @Override
     public void confirmRegistrationRequest(GetIdRequest request) throws Exception {
         SimpleUser simpleUser = _simpleUserRepository.findOneById(request.getId());
-        simpleUser.setRequestStatus(RequestStatus.CONFIRMED);
+        simpleUser.setRequestStatus(RequestStatus.APPROVED);
         LocalDateTime currentTime = LocalDateTime.now();
         simpleUser.setConfirmationTime(currentTime);
         _simpleUserRepository.save(simpleUser);

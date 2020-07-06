@@ -12,5 +12,7 @@ public interface IAgentRepository extends JpaRepository<Agent, UUID> {
 
     Agent findOneById(UUID id);
 
+    Agent findOneBySimpleUserId(UUID id);
+
     List<Agent> findAllByUser_Deleted(boolean deleted);
 }

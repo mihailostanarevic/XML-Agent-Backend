@@ -9,11 +9,11 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Agent extends BaseEntity {
 
@@ -29,6 +29,8 @@ public class Agent extends BaseEntity {
 
     private String bankAccountNumber;
 
+    private UUID simpleUserId;
+
     @OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Ad> ad;
 
@@ -37,4 +39,8 @@ public class Agent extends BaseEntity {
 
     @OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.LAZY) //
     private List<Comment> comments;
+
+    public Agent() {
+        this.dateFounded = new Date();
+    }
 }
