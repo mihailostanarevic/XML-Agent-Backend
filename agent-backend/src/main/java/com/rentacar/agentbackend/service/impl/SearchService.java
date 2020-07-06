@@ -1,11 +1,10 @@
 package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.response.*;
-import com.rentacar.agentbackend.entity.Ad;
-import com.rentacar.agentbackend.entity.Address;
-import com.rentacar.agentbackend.entity.Request;
-import com.rentacar.agentbackend.entity.RequestAd;
+import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.IAdRepository;
+import com.rentacar.agentbackend.repository.IPriceListRepository;
+import com.rentacar.agentbackend.repository.IRatingRepository;
 import com.rentacar.agentbackend.repository.IRequestRepository;
 import com.rentacar.agentbackend.service.IAdService;
 import com.rentacar.agentbackend.service.ISearchService;
@@ -28,10 +27,16 @@ public class SearchService implements ISearchService {
 
     private final IRequestRepository _requestRepository;
 
-    public SearchService(IAdRepository adRepository, IAdService adService, IRequestRepository requestRepository) {
+    private final IPriceListRepository _priceListRepository;
+
+    private final IRatingRepository _ratingRepository;
+
+    public SearchService(IAdRepository adRepository, IAdService adService, IRequestRepository requestRepository, IPriceListRepository priceListRepository, IRatingRepository ratingRepository) {
         _adRepository = adRepository;
         _adService = adService;
         _requestRepository = requestRepository;
+        _priceListRepository = priceListRepository;
+        _ratingRepository = ratingRepository;
     }
 
     @Override
@@ -99,9 +104,6 @@ public class SearchService implements ISearchService {
         LocalDate dateTo = LocalDate.parse(paramDateTo);
 
         List<Ad> allAds = removeIncorrectAds(city, brand, model, fuelType, gearshiftType, carClass, priceFrom, priceTo, estimatedDistance, cdw, childrenSeats);
-        for(Ad ad : allAds){
-            System.out.println(ad.getId());
-        }
 
         List<Request> allRequestsApproved = _requestRepository.findAllByStatus(RequestStatus.APPROVED);
         List<Request> allRequestsPaid = _requestRepository.findAllByStatus(RequestStatus.PAID);
@@ -262,7 +264,18 @@ public class SearchService implements ISearchService {
     private SearchResultResponse makeDTO(Ad ad) {
         SearchResultResponse retVal = new SearchResultResponse();
         List<PhotoResponse> photos = _adService.getAllPhotos(ad.getId());
-        AdSearchResponse adDTO = new AdSearchResponse(ad.getId(), ad.isLimitedDistance(), ad.getSeats(), ad.isCdw(), ad.getCreationDate(), photos);
+        PriceList priceList = _priceListRepository.findOneByAgentId(ad.getAgent().getId());
+        List<Rating> ratings = _ratingRepository.findAllByAd_Id(ad.getId());
+        int sum = 0;
+        for(Rating rating : ratings){
+            sum += Integer.parseInt(rating.getGrade());
+        }
+        double avgRating = 0;
+        if(ratings.size() != 0){
+            avgRating = ((double)sum) / ratings.size();
+        }
+        int price = Integer.parseInt(priceList.getPrice1day())*Integer.parseInt(ad.getCoefficient());
+        AdSearchResponse adDTO = new AdSearchResponse(ad.getId(), ad.isLimitedDistance(), ad.getSeats(), ad.isCdw(), ad.getCreationDate(), photos, price, avgRating);
         CarSearchResponse carDTO = new CarSearchResponse();
         carDTO.setCarID(ad.getCar().getId());
         carDTO.setCarModelName(ad.getCar().getCarModel().getName());
@@ -274,6 +287,7 @@ public class SearchService implements ISearchService {
         carDTO.setFuelTypeGas(ad.getCar().getFuelType().isGas());
         carDTO.setGearshiftTypeType(ad.getCar().getGearshiftType().getType());
         carDTO.setGetGearshiftTypeNumberOfGears(ad.getCar().getGearshiftType().getNumberOfGears());
+        carDTO.setKilometersTraveled(ad.getCar().getKilometersTraveled());
         String allLocations = "";
         List<AddressDTO> fullLocations = new ArrayList<>();
         int i = 0;

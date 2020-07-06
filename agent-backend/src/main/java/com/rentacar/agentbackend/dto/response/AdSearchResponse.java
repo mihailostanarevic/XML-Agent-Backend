@@ -24,4 +24,8 @@ public class AdSearchResponse {
     private LocalDate creationDate;
 
     private List<PhotoResponse> photos;       //
+
+    private int price1day;
+
+    private double avgRating;
 }
