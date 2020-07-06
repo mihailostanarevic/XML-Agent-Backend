@@ -4,6 +4,7 @@ import com.rentacar.agentbackend.dto.request.CreateCarModelRequest;
 import com.rentacar.agentbackend.dto.request.GetCarModelsFilterRequest;
 import com.rentacar.agentbackend.dto.request.UpdateCarModelRequest;
 import com.rentacar.agentbackend.dto.response.CarModelResponse;
+import com.rentacar.agentbackend.entity.CarModel;
 import com.rentacar.agentbackend.service.ICarModelService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +56,12 @@ public class CarModelController {
     @PreAuthorize("hasAuthority('VIEW_AD')")
     public List<CarModelResponse> getAllCarModelsWithFilter(GetCarModelsFilterRequest request) throws Exception{
         return _carModelService.getAllCarModelsWithFilter(request);
+    }
+
+
+    @GetMapping("/car-brand/{id}")
+    @PreAuthorize("hasAuthority('VIEW_AD')")
+    public List<CarModelResponse> getCarModelsByBrand(@PathVariable("id") UUID id){
+        return _carModelService.getCarModelsByBrand(id);
     }
 }

@@ -17,6 +17,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class SearchService implements ISearchService {
@@ -81,6 +82,148 @@ public class SearchService implements ISearchService {
         }
 
         return retVal;
+    }
+
+    @Override
+    public List<SearchResultResponse> advancedSearch(String city, String from, String to, String brand, String model, String fuelType, String gearshiftType, String carClass, int priceFrom, int priceTo, int estimatedDistance, boolean cdw, int childrenSeats) {
+        List<SearchResultResponse> retVal = new ArrayList<SearchResultResponse>();
+
+        String paramTimeFrom = from.split(" ")[0];
+        String paramDateFrom = from.split(" ")[1];
+        String paramTimeTo = to.split(" ")[0];
+        String paramDateTo = to.split(" ")[1];
+
+        LocalTime timeFrom = LocalTime.parse(paramTimeFrom);
+        LocalDate dateFrom = LocalDate.parse(paramDateFrom);
+        LocalTime timeTo = LocalTime.parse(paramTimeTo);
+        LocalDate dateTo = LocalDate.parse(paramDateTo);
+
+        List<Ad> allAds = removeIncorrectAds(city, brand, model, fuelType, gearshiftType, carClass, priceFrom, priceTo, estimatedDistance, cdw, childrenSeats);
+        for(Ad ad : allAds){
+            System.out.println(ad.getId());
+        }
+
+        List<Request> allRequestsApproved = _requestRepository.findAllByStatus(RequestStatus.APPROVED);
+        List<Request> allRequestsPaid = _requestRepository.findAllByStatus(RequestStatus.PAID);
+        List<Request> allRequests = new ArrayList<>();
+
+        for(Request request : allRequestsApproved){
+            allRequests.add(request);
+        }
+
+        for(Request request : allRequestsPaid){
+            allRequests.add(request);
+        }
+
+        allAds = ignoreNonRelevantAds(allAds, allRequests, dateFrom, timeFrom, dateTo, timeTo, city);
+        List<RequestAd> requestAds = passableRequests(allRequests, dateFrom, timeFrom, dateTo, timeTo, city);
+        boolean found = false;
+
+        List<UUID> ids = new ArrayList<>();
+        for(Ad ad : allAds){
+            ids.add(ad.getId());
+        }
+
+        for(Ad ad : allAds){
+            found = false;
+            for(RequestAd rqAd : requestAds){
+                if(rqAd.getAd().getId().equals(ad.getId())){
+                    found = true;
+                    if(ids.contains(rqAd.getAd().getId())) {
+                        ids.remove(rqAd.getAd().getId());
+                        SearchResultResponse dto = makeDTO(ad);
+                        retVal.add(dto);
+                    }
+                }
+            }
+
+            if(!found){
+                SearchResultResponse dto = makeDTO(ad);
+                retVal.add(dto);
+            }
+        }
+
+        return retVal;
+    }
+
+    private List<Ad> removeIncorrectAds(String city, String brand, String model, String fuelType, String gearshiftType, String carClass, int priceFrom, int priceTo, int estimatedDistance, boolean cdw, int childrenSeats) {
+        System.out.println(brand);
+        List<Ad> allAds = _adRepository.findAllByDeleted(false);
+        return allAds
+                .stream()
+                .filter(ad -> {
+                    boolean found = false;
+                    if(city != null && city != "") {
+                        for(Address address : ad.getAgent().getAddress()){
+                            if(address.getCity().toUpperCase().equals(city.toUpperCase())){
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        return found;
+                    } else {
+                        return true;
+                    }
+                })
+                .filter(ad -> {
+                    if(brand != null && brand != "") {
+                        return ad.getCar().getCarModel().getCarBrand().getName().toUpperCase().equals(brand.toUpperCase());
+                    } else {
+                        return true;
+                    }
+                })
+                .filter(ad -> {
+                    if(model != null && model != ""){
+                        return ad.getCar().getCarModel().getName().toUpperCase().equals(model.toUpperCase());
+                    }else {
+                        return true;
+                    }
+                })
+                .filter(ad -> {
+                    if(fuelType != null && fuelType != ""){
+                        return ad.getCar().getFuelType().getType().toUpperCase().equals(fuelType.toUpperCase());
+                    }else {
+                        return true;
+                    }
+                })
+                .filter(ad -> {
+                    if(gearshiftType != null && gearshiftType != ""){
+                        return ad.getCar().getGearshiftType().getType().toUpperCase().toUpperCase().equals(gearshiftType.toUpperCase());
+                    }else {
+                        return true;
+                    }
+                })
+                .filter(ad -> {
+                    if(carClass != null && carClass != ""){
+                        return ad.getCar().getCarModel().getCarClass().getName().toUpperCase().equals(carClass.toUpperCase());
+                    }else {
+                        return true;
+                    }
+                })
+//                .filter(ad -> {
+//                    if(priceFrom != null){
+//                        return ad.getCar().getCarModel().getCarClass().getId().equals(carClassID);
+//                    }else {
+//                        return true;
+//                    }
+//                })
+//                .filter(ad -> {
+//                    if(priceTo != null){
+//                        return ad.getCar().getCarModel().getCarClass().getId().equals(priceTo);
+//                    }else {
+//                        return true;
+//                    }
+//                })
+                .filter(ad -> ad.isCdw() == cdw)
+                .filter(ad -> {
+                    if(childrenSeats != -1){
+                        return ad.getSeats() == childrenSeats;
+                    }else {
+                        return true;
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     private List<Ad> ignoreNonRelevantAds(List<Ad> allAds, List<Request> allRequests, LocalDate dateFrom, LocalTime timeFrom, LocalDate dateTo, LocalTime timeTo, String city) {
