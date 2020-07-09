@@ -13,4 +13,6 @@ public interface IAdRepository extends JpaRepository<Ad, UUID> {
     Ad findOneById(UUID id);
 
     List<Ad> findAllByDeleted(boolean deleted);
+
+    Ad findOneByDeletedAndCar_Id(boolean deleted, UUID id);
 }
