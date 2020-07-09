@@ -47,6 +47,7 @@ insert into user_authority (user_id, authority_id) values
     ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 6),
     ('4fb1b61b-cc4e-45c3-86f0-cbf50de4cf54', 8),
     ('b9362264-17db-411e-8ed0-db8310cba9f1', 3),
+    ('b9362264-17db-411e-8ed0-db8310cba9f1', 5),
     ('b9362264-17db-411e-8ed0-db8310cba9f1', 6),
     ('b9362264-17db-411e-8ed0-db8310cba9f1', 8);
 
