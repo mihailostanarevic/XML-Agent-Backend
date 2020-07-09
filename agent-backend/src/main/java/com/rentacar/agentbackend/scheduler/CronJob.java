@@ -14,6 +14,7 @@ public class CronJob {
     }
 
     @Scheduled(cron="0 * * ? * *") //every minute
+//    @Scheduled(cron="0 * * * * *") //every hour
     public void cronJobTruck() throws Exception {
         _carGSPService.tracking();
     }

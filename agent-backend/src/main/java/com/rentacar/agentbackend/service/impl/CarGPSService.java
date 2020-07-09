@@ -47,9 +47,9 @@ public class CarGPSService implements ICarGSPService {
                     newCarGPS.setCustomerId(ra.getRequest().getCustomer().getId());
                     newCarGPS.setCarId(request.getCarId());
                     newCarGPS.setDeleted(false);
-                    double lat = 42.89992 + new Random().nextDouble() * (46.45343 - 42.89992);
+                    double lat = 43.89992 + new Random().nextDouble() * (45.45343 - 43.89992);
                     newCarGPS.setLat(String.valueOf(lat));
-                    double lng = 21.99932 + new Random().nextDouble() * (24.89423 - 21.99932);
+                    double lng = 22.99932 + new Random().nextDouble() * (24.89423 - 22.99932);
                     newCarGPS.setLng(String.valueOf(lng));
                     CarGPS savedCarGPS = _carGPSRepository.save(newCarGPS);
                     return mapCarGPSToCarGPSResponse(savedCarGPS);
@@ -140,29 +140,29 @@ public class CarGPSService implements ICarGSPService {
             double newLng;
             switch (switcher){
                 case 1:
-                    newLat = Double.valueOf(cg.getLat()) + 0.1;
-                    newLng = Double.valueOf(cg.getLng()) + 0.1;
+                    newLat = Double.valueOf(cg.getLat()) + 0.2;
+                    newLng = Double.valueOf(cg.getLng()) + 0.2;
                     cg.setLat(String.valueOf(newLat));
                     cg.setLng(String.valueOf(newLng));
                     _carGPSRepository.save(cg);
                     break;
                 case 2:
-                    newLat = Double.valueOf(cg.getLat()) + 0.1;
-                    newLng = Double.valueOf(cg.getLng()) - 0.1;
+                    newLat = Double.valueOf(cg.getLat()) + 0.2;
+                    newLng = Double.valueOf(cg.getLng()) - 0.2;
                     cg.setLat(String.valueOf(newLat));
                     cg.setLng(String.valueOf(newLng));
                     _carGPSRepository.save(cg);
                     break;
                 case 3:
-                    newLat = Double.valueOf(cg.getLat()) - 0.1;
-                    newLng = Double.valueOf(cg.getLng()) + 0.1;
+                    newLat = Double.valueOf(cg.getLat()) - 0.2;
+                    newLng = Double.valueOf(cg.getLng()) + 0.2;
                     cg.setLat(String.valueOf(newLat));
                     cg.setLng(String.valueOf(newLng));
                     _carGPSRepository.save(cg);
                     break;
                 default: //case 4:
-                    newLat = Double.valueOf(cg.getLat()) - 0.1;
-                    newLng = Double.valueOf(cg.getLng()) - 0.1;
+                    newLat = Double.valueOf(cg.getLat()) - 0.2;
+                    newLng = Double.valueOf(cg.getLng()) - 0.2;
                     cg.setLat(String.valueOf(newLat));
                     cg.setLng(String.valueOf(newLng));
                     _carGPSRepository.save(cg);
