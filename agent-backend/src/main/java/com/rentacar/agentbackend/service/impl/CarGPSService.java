@@ -47,9 +47,9 @@ public class CarGPSService implements ICarGSPService {
                     newCarGPS.setCustomerId(ra.getRequest().getCustomer().getId());
                     newCarGPS.setCarId(request.getCarId());
                     newCarGPS.setDeleted(false);
-                    double lat = 43.89992 + new Random().nextDouble() * (45.45343 - 43.89992);
+                    double lat = 43.31992 + new Random().nextDouble() * (46.11343 - 43.31992);
                     newCarGPS.setLat(String.valueOf(lat));
-                    double lng = 22.99932 + new Random().nextDouble() * (24.89423 - 22.99932);
+                    double lng = 19.32425 + new Random().nextDouble() * (21.89423 - 19.32425);
                     newCarGPS.setLng(String.valueOf(lng));
                     CarGPS savedCarGPS = _carGPSRepository.save(newCarGPS);
                     return mapCarGPSToCarGPSResponse(savedCarGPS);
@@ -78,26 +78,28 @@ public class CarGPSService implements ICarGSPService {
     public List<CarGpsResponse> getAllCarsWhichCanBeTrackedByAgent(UUID id) throws Exception {
         List<Ad> ads = _adRepository.findAllByDeleted(false);
         List<Ad> ads1 = new ArrayList<>();
-        SimpleUser simpleUser = null;
+        List<SimpleUser> simpleUsers = new ArrayList<>();
         for(Ad ad: ads){
             if(ad.getAgent().getId().equals(id)){
                 for(RequestAd ra: ad.getAdRequests()){
                     LocalDate now = LocalDate.now();
                     if(ra.getPickUpDate().isBefore(now) && ra.getReturnDate().isAfter(now)){
                         ads1.add(ad);
-                        simpleUser = ra.getRequest().getCustomer();
+                        simpleUsers.add(ra.getRequest().getCustomer());
                         break;
                     }
                 }
             }
         }
         List<CarGpsResponse> responses = new ArrayList<>();
+        int i = 0;
         for(Ad ad: ads1){
             CarGpsResponse response = new CarGpsResponse();
             response.setCarId(ad.getCar().getId());
             response.setBrandName(ad.getCar().getCarModel().getCarBrand().getName());
             response.setModelName(ad.getCar().getCarModel().getName());
-            response.setCustomer(simpleUser.getFirstName() + ' ' + simpleUser.getLastName());
+            response.setCustomer(simpleUsers.get(i).getFirstName() + ' ' + simpleUsers.get(i).getLastName());
+            i++;
             responses.add(response);
         }
         return responses;
