@@ -17,4 +17,6 @@ public interface IAgentService {
     boolean checkRequestMatching(RequestAd requestFirst, RequestAd requestSecond);
 
     void changeStatusOfRequests(Request baseRequest, RequestStatus wakeUpStatus, RequestStatus finalStatus);
+
+    Collection<AgentRequests> denyRequest(UUID agentId, UUID reqID);
 }

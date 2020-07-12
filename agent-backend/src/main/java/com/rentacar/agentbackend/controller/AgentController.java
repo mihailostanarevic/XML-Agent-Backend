@@ -49,4 +49,10 @@ public class AgentController {
         return new ResponseEntity<>(_agentService.approveRequest(agentId, reqID), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/requests/{resID}/deny")
+    @PreAuthorize("hasAuthority('APPROVE_REQUEST')")
+    public ResponseEntity<?> denyRequest(@PathVariable("id") UUID agentId, @PathVariable("resID") UUID reqID){
+        return new ResponseEntity<>(_agentService.denyRequest(agentId, reqID), HttpStatus.OK);
+    }
+
 }

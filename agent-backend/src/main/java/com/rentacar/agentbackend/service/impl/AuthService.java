@@ -269,6 +269,7 @@ public class AuthService implements IAuthService {
         List<Authority> authorities = new ArrayList<>();
         authorities.add(_authorityRepository.findByName("ROLE_SIMPLE_USER"));
         authorities.add(_authorityRepository.findByName("ROLE_RENT_USER"));
+        authorities.add(_authorityRepository.findByName("ROLE_AGENT"));
         authorities.add(_authorityRepository.findByName("ROLE_REQUEST"));
         authorities.add(_authorityRepository.findByName("ROLE_AD_USER"));       // samo zbog toga sto moze da postavlja oglas
         user.setAuthorities(new HashSet<>(authorities));

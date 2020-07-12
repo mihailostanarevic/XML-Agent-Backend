@@ -81,6 +81,16 @@ public class AgentService implements IAgentService {
         }
     }
 
+    @Override
+    public Collection<AgentRequests> denyRequest(UUID agentId, UUID requestID) {
+        Request request = _requestRepository.findOneById(requestID);
+        request.setStatus(RequestStatus.CANCELED);
+        _requestRepository.save(request);
+
+        changeStatusOfRequests(request, RequestStatus.CHECKED, RequestStatus.PENDING);
+        return getAllAgentRequests(agentId, RequestStatus.PENDING);
+    }
+
     public boolean checkRequestMatching(RequestAd requestFirst, RequestAd requestSecond) {
         if(requestFirst.getAd().getId().equals(requestSecond.getAd().getId())) {
             if (requestFirst.getReturnDate().isBefore(requestSecond.getPickUpDate())) {

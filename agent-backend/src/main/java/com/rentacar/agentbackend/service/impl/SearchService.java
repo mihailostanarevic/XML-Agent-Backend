@@ -277,7 +277,10 @@ public class SearchService implements ISearchService {
         if(ratings.size() != 0){
             avgRating = ((double)sum) / ratings.size();
         }
-        int price = Integer.parseInt(priceList.getPrice1day())*Integer.parseInt(ad.getCoefficient());
+        int price = 0;
+        if(priceList != null) {
+            price = Integer.parseInt(priceList.getPrice1day())*Integer.parseInt(ad.getCoefficient());
+        }
         AdSearchResponse adDTO = new AdSearchResponse(ad.getId(), ad.isLimitedDistance(), ad.getSeats(), ad.isCdw(), ad.getCreationDate(), photos, price, avgRating);
         CarSearchResponse carDTO = new CarSearchResponse();
         carDTO.setCarID(ad.getCar().getId());
