@@ -10,8 +10,11 @@ import com.rentacar.agentbackend.entity.Car;
 import com.rentacar.agentbackend.entity.CarAccessories;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.ICarService;
+import com.rentacar.agentbackend.soap.CarClient;
+import com.rentacar.agentbackend.soap.wsdl.CarCarAccessories;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +37,9 @@ public class CarService implements ICarService {
 
     private final CarAccessoriesService _carAccessoriesService;
 
+    @Autowired
+    private CarClient carClient;
+
     private final Logger logger = LoggerFactory.getLogger(CarService.class);
 
     public CarService(ICarRepository carRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarAccessoriesRepository carAccessoriesRepository, CarAccessoriesService carAccessoriesService) {
@@ -54,7 +60,15 @@ public class CarService implements ICarService {
         car.setGearshiftType(_gearshiftTypeRepository.findOneById(request.getGearshiftTypeId()));
         car.setFuelType(_fuelTypeRepository.findOneById(request.getFuelTypeId()));
         Car savedCar = _carRepository.save(car);
-
+        com.rentacar.agentbackend.soap.wsdl.Car carSOAP = new com.rentacar.agentbackend.soap.wsdl.Car();
+        carSOAP.setCarID(savedCar.getId().toString());
+        carSOAP.setCarModel(savedCar.getCarModel().getId().toString());
+        carSOAP.setDeleted(savedCar.isDeleted());
+        carSOAP.setFuelType(savedCar.getFuelType().getId().toString());
+        carSOAP.setGearshiftType(savedCar.getGearshiftType().getId().toString());
+        carSOAP.setKilometersTraveled(savedCar.getKilometersTraveled());
+        carSOAP.setAdID(null);
+        carClient.createCar(carSOAP);
         logger.info("New car created with id: " + savedCar.getId());
         return mapCarToCarResponse(savedCar);
     }
@@ -108,7 +122,16 @@ public class CarService implements ICarService {
         car.getCarAccessories().add(carAccessories);
         _carRepository.save(car);
         carAccessories.getCars().add(car);
-        _carAccessoriesRepository.save(carAccessories);
+        CarAccessories saved = _carAccessoriesRepository.save(carAccessories);
+        com.rentacar.agentbackend.soap.wsdl.CarAccessories carAccessoriesSOAP = new com.rentacar.agentbackend.soap.wsdl.CarAccessories();
+        carAccessoriesSOAP.setCarAccessoriesID(saved.getId().toString());
+        carAccessoriesSOAP.setDeleted(saved.isDeleted());
+        carAccessoriesSOAP.setDescription(saved.getDescription());
+        carClient.createCarAccessories(carAccessoriesSOAP);
+        CarCarAccessories carCarAccessoriesSOAP = new CarCarAccessories();
+        carCarAccessoriesSOAP.setCarID(request.getCarId().toString());
+        carCarAccessoriesSOAP.setCarAccessoryID(saved.getId().toString());
+        carClient.createCarCarAccessories(carCarAccessoriesSOAP);
     }
 
     @Override

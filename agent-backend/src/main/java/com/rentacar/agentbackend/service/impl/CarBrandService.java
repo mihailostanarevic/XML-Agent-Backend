@@ -7,6 +7,8 @@ import com.rentacar.agentbackend.dto.response.CarBrandResponse;
 import com.rentacar.agentbackend.entity.CarBrand;
 import com.rentacar.agentbackend.repository.ICarBrandRepository;
 import com.rentacar.agentbackend.service.ICarBrandService;
+import com.rentacar.agentbackend.soap.CarClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,9 @@ import java.util.stream.Collectors;
 public class CarBrandService implements ICarBrandService {
 
     private final ICarBrandRepository _carBrandRepository;
+
+    @Autowired
+    private CarClient carClient;
 
     public CarBrandService(ICarBrandRepository carBrandRepository) {
         _carBrandRepository = carBrandRepository;
@@ -29,6 +34,12 @@ public class CarBrandService implements ICarBrandService {
         carBrand.setName(request.getName());
         carBrand.setCountry(request.getCountry());
         CarBrand savedCarBrand = _carBrandRepository.save(carBrand);
+        com.rentacar.agentbackend.soap.wsdl.CarBrand carBrandSOAP = new com.rentacar.agentbackend.soap.wsdl.CarBrand();
+        carBrandSOAP.setCarBrandID(savedCarBrand.getId().toString());
+        carBrandSOAP.setCountry(savedCarBrand.getCountry());
+        carBrandSOAP.setName(savedCarBrand.getName());
+        carBrandSOAP.setDeleted(savedCarBrand.isDeleted());
+        carClient.createCarBrand(carBrandSOAP);
         return mapCarBrandToCarBrandResponse(savedCarBrand);
     }
 

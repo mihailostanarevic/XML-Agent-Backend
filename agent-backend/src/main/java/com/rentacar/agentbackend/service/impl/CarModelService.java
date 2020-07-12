@@ -9,6 +9,8 @@ import com.rentacar.agentbackend.repository.ICarBrandRepository;
 import com.rentacar.agentbackend.repository.ICarClassRepository;
 import com.rentacar.agentbackend.repository.ICarModelRepository;
 import com.rentacar.agentbackend.service.ICarModelService;
+import com.rentacar.agentbackend.soap.CarClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,9 @@ public class CarModelService implements ICarModelService {
 
     private final ICarClassRepository _carClassRepository;
 
+    @Autowired
+    private CarClient carClient;
+
     public CarModelService(ICarModelRepository carModelRepository, ICarBrandRepository carBrandRepository, ICarClassRepository carClassRepository) {
         _carModelRepository = carModelRepository;
         _carBrandRepository = carBrandRepository;
@@ -38,6 +43,13 @@ public class CarModelService implements ICarModelService {
         carModel.setCarBrand(_carBrandRepository.findOneById(request.getBrandId()));
         carModel.setCarClass(_carClassRepository.findOneById(request.getClassId()));
         CarModel savedCarModel = _carModelRepository.save(carModel);
+        com.rentacar.agentbackend.soap.wsdl.CarModel carModelSOAP = new com.rentacar.agentbackend.soap.wsdl.CarModel();
+        carModelSOAP.setCarModelID(savedCarModel.getId().toString());
+        carModelSOAP.setCarBrand(savedCarModel.getCarBrand().getId().toString());
+        carModelSOAP.setCarClass(savedCarModel.getCarClass().getId().toString());
+        carModelSOAP.setDeleted(savedCarModel.isDeleted());
+        carModelSOAP.setName(savedCarModel.getName());
+        carClient.createCarModel(carModelSOAP);
         return mapCarModelToCarModelResponse(savedCarModel);
     }
 

@@ -14,18 +14,20 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for createGearshiftTypeRequestDTO complex type.
+ * <p>Java class for fuelType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="createGearshiftTypeRequestDTO"&gt;
+ * &lt;complexType name="fuelType"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="gearshiftTypeID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="fuelTypeID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="numberOfGears" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="tankCapacity" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="gas" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
+ *         &lt;element name="deleted" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -35,39 +37,43 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "createGearshiftTypeRequestDTO", propOrder = {
-    "gearshiftTypeID",
+@XmlType(name = "fuelType", propOrder = {
+    "fuelTypeID",
     "type",
-    "numberOfGears"
+    "tankCapacity",
+    "gas",
+    "deleted"
 })
-public class CreateGearshiftTypeRequestDTO {
+public class FuelType {
 
-    protected String gearshiftTypeID;
+    protected String fuelTypeID;
     protected String type;
-    protected String numberOfGears;
+    protected String tankCapacity;
+    protected boolean gas;
+    protected boolean deleted;
 
     /**
-     * Gets the value of the gearshiftTypeID property.
+     * Gets the value of the fuelTypeID property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getGearshiftTypeID() {
-        return gearshiftTypeID;
+    public String getFuelTypeID() {
+        return fuelTypeID;
     }
 
     /**
-     * Sets the value of the gearshiftTypeID property.
+     * Sets the value of the fuelTypeID property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setGearshiftTypeID(String value) {
-        this.gearshiftTypeID = value;
+    public void setFuelTypeID(String value) {
+        this.fuelTypeID = value;
     }
 
     /**
@@ -95,27 +101,59 @@ public class CreateGearshiftTypeRequestDTO {
     }
 
     /**
-     * Gets the value of the numberOfGears property.
+     * Gets the value of the tankCapacity property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getNumberOfGears() {
-        return numberOfGears;
+    public String getTankCapacity() {
+        return tankCapacity;
     }
 
     /**
-     * Sets the value of the numberOfGears property.
+     * Sets the value of the tankCapacity property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setNumberOfGears(String value) {
-        this.numberOfGears = value;
+    public void setTankCapacity(String value) {
+        this.tankCapacity = value;
+    }
+
+    /**
+     * Gets the value of the gas property.
+     * 
+     */
+    public boolean isGas() {
+        return gas;
+    }
+
+    /**
+     * Sets the value of the gas property.
+     * 
+     */
+    public void setGas(boolean value) {
+        this.gas = value;
+    }
+
+    /**
+     * Gets the value of the deleted property.
+     * 
+     */
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    /**
+     * Sets the value of the deleted property.
+     * 
+     */
+    public void setDeleted(boolean value) {
+        this.deleted = value;
     }
 
 }

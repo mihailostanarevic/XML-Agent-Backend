@@ -2,10 +2,7 @@ package com.rentacar.agentbackend.service.impl;
 
 import com.rentacar.agentbackend.dto.response.*;
 import com.rentacar.agentbackend.entity.*;
-import com.rentacar.agentbackend.repository.IAdRepository;
-import com.rentacar.agentbackend.repository.IPriceListRepository;
-import com.rentacar.agentbackend.repository.IRatingRepository;
-import com.rentacar.agentbackend.repository.IRequestRepository;
+import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IAdService;
 import com.rentacar.agentbackend.service.ISearchService;
 import com.rentacar.agentbackend.util.enums.RequestStatus;
@@ -31,12 +28,15 @@ public class SearchService implements ISearchService {
 
     private final IRatingRepository _ratingRepository;
 
-    public SearchService(IAdRepository adRepository, IAdService adService, IRequestRepository requestRepository, IPriceListRepository priceListRepository, IRatingRepository ratingRepository) {
+    private final IAgentRepository _agentRepository;
+
+    public SearchService(IAdRepository adRepository, IAdService adService, IRequestRepository requestRepository, IPriceListRepository priceListRepository, IRatingRepository ratingRepository, IAgentRepository agentRepository) {
         _adRepository = adRepository;
         _adService = adService;
         _requestRepository = requestRepository;
         _priceListRepository = priceListRepository;
         _ratingRepository = ratingRepository;
+        _agentRepository = agentRepository;
     }
 
     @Override
@@ -203,20 +203,23 @@ public class SearchService implements ISearchService {
                         return true;
                     }
                 })
-//                .filter(ad -> {
-//                    if(priceFrom != null){
-//                        return ad.getCar().getCarModel().getCarClass().getId().equals(carClassID);
-//                    }else {
-//                        return true;
-//                    }
-//                })
-//                .filter(ad -> {
-//                    if(priceTo != null){
-//                        return ad.getCar().getCarModel().getCarClass().getId().equals(priceTo);
-//                    }else {
-//                        return true;
-//                    }
-//                })
+                .filter(ad -> {
+                    if(priceFrom != -1){
+                        PriceList priceList = _priceListRepository.findOneByAgentId(ad.getAgent().getId());
+                        return priceFrom < (Integer.parseInt(priceList.getPrice1day()) * Integer.parseInt(ad.getCoefficient()));
+                    }else {
+                        return true;
+                    }
+                })
+                .filter(ad -> {
+                    if(priceTo != 0){
+                        PriceList priceList = _priceListRepository.findOneByAgentId(ad.getAgent().getId());
+                        int price1day = Integer.parseInt(priceList.getPrice1day());
+                        return priceTo > (price1day * Integer.parseInt(ad.getCoefficient()));
+                    }else {
+                        return true;
+                    }
+                })
                 .filter(ad -> ad.isCdw() == cdw)
                 .filter(ad -> {
                     if(childrenSeats != -1){
