@@ -1,11 +1,114 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-                  xmlns:tns="http://www.car.com/car" targetNamespace="http://www.car.com/car">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch="http://www.car.com/car" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.car.com/car" targetNamespace="http://www.car.com/car">
     <wsdl:types>
         <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.car.com/car" version="1.0">
+            <xs:complexType name="ad">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="adID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="carModel" type="xs:string"/>
+                    <xs:element minOccurs="0" name="gearshiftType" type="xs:string"/>
+                    <xs:element minOccurs="0" name="fuelType" type="xs:string"/>
+                    <xs:element minOccurs="0" name="agentId" type="xs:string"/>
+                    <xs:element name="limitedDistance" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="availableKilometersPerRent" type="xs:string"/>
+                    <xs:element minOccurs="0" name="kilometersTraveled" type="xs:string"/>
+                    <xs:element name="seats" type="xs:int"/>
+                    <xs:element name="cdw" type="xs:boolean"/>
+                    <xs:element name="simpleUser" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="car">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="carID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="carModel" type="xs:string"/>
+                    <xs:element minOccurs="0" name="gearshiftType" type="xs:string"/>
+                    <xs:element minOccurs="0" name="fuelType" type="xs:string"/>
+                    <xs:element minOccurs="0" name="adID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="kilometersTraveled" type="xs:string"/>
+                    <xs:element name="deleted" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="carAccessories">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="carAccessoriesID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="description" type="xs:string"/>
+                    <xs:element name="deleted" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="carBrand">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="carBrandID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="name" type="xs:string"/>
+                    <xs:element minOccurs="0" name="country" type="xs:string"/>
+                    <xs:element name="deleted" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="carCarAccessories">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="carID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="carAccessoryID" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="carClass">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="carClassID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="name" type="xs:string"/>
+                    <xs:element minOccurs="0" name="description" type="xs:string"/>
+                    <xs:element name="deleted" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="carModel">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="carModelID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="name" type="xs:string"/>
+                    <xs:element minOccurs="0" name="carBrand" type="xs:string"/>
+                    <xs:element minOccurs="0" name="carClass" type="xs:string"/>
+                    <xs:element name="deleted" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="comment">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="commentID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="comment" type="xs:string"/>
+                    <xs:element minOccurs="0" name="simpleUser" type="xs:string"/>
+                    <xs:element minOccurs="0" name="adID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="status" type="xs:string"/>
+                    <xs:element minOccurs="0" name="agent" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
             <xs:complexType name="createGearshiftTypeRequestDTO">
                 <xs:sequence>
+                    <xs:element minOccurs="0" name="gearshiftTypeID" type="xs:string"/>
                     <xs:element minOccurs="0" name="type" type="xs:string"/>
                     <xs:element minOccurs="0" name="numberOfGears" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="fuelType">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="fuelTypeID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="type" type="xs:string"/>
+                    <xs:element minOccurs="0" name="tankCapacity" type="xs:string"/>
+                    <xs:element name="gas" type="xs:boolean"/>
+                    <xs:element name="deleted" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="message">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="messageID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="text" type="xs:string"/>
+                    <xs:element minOccurs="0" name="userSender" type="xs:string"/>
+                    <xs:element minOccurs="0" name="userReceiver" type="xs:string"/>
+                    <xs:element minOccurs="0" name="adID" type="xs:string"/>
+                    <xs:element name="seen" type="xs:boolean"/>
+                    <xs:element minOccurs="0" name="dateSent" type="xs:string"/>
+                    <xs:element minOccurs="0" name="timeSent" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="rating">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="ratingID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="grade" type="xs:string"/>
+                    <xs:element minOccurs="0" name="simpleUser" type="xs:string"/>
+                    <xs:element minOccurs="0" name="adID" type="xs:string"/>
                 </xs:sequence>
             </xs:complexType>
         </xs:schema>

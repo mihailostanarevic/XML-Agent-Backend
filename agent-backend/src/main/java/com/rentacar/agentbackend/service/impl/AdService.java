@@ -9,8 +9,10 @@ import com.rentacar.agentbackend.dto.response.PhotoResponse;
 import com.rentacar.agentbackend.entity.*;
 import com.rentacar.agentbackend.repository.*;
 import com.rentacar.agentbackend.service.IAdService;
+import com.rentacar.agentbackend.soap.CarClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +39,10 @@ public class AdService implements IAdService {
     private final IAgentRepository _agentRepository;
     private final IPhotoRepository _photoRepository;
     private final IRequestAdRepository _requestAdRepository;
+
+    @Autowired
+    private CarClient carClient;
+
     private final Logger logger = LoggerFactory.getLogger(AdService.class);
 
     public AdService(IAdRepository adRepository, ICarModelRepository carModelRepository, IGearshiftTypeRepository gearshiftTypeRepository, IFuelTypeRepository fuelTypeRepository, ICarRepository carRepository, IAgentRepository agentRepository, IPhotoRepository photoRepository, IRequestAdRepository requestAdRepository) {
@@ -147,7 +153,7 @@ public class AdService implements IAdService {
         ad.setSeats(request.getSeats());
         ad.setCdw(request.isCdw());
         ad.setCoefficient(request.getCoefficient());
-        _adRepository.save(ad);
+        Ad savedAd = _adRepository.save(ad);
         for (MultipartFile file : fileList) {
             Photo photo = new Photo();
             photo.setAd(ad);
@@ -157,6 +163,20 @@ public class AdService implements IAdService {
             _photoRepository.save(photo);
         }
 
+        com.rentacar.agentbackend.soap.wsdl.Ad adSOAP = new com.rentacar.agentbackend.soap.wsdl.Ad();
+        adSOAP.setAdID(savedAd.getId().toString());
+
+        adSOAP.setAgentId(request.getAgentId().toString());
+        adSOAP.setAvailableKilometersPerRent(request.getAvailableKilometersPerRent()  + "," + savedCar.getId());
+        adSOAP.setCarModel(request.getCarModel());
+        adSOAP.setCdw(request.isCdw());
+        adSOAP.setFuelType(request.getFuelType());
+        adSOAP.setGearshiftType(request.getGearshifType());
+        adSOAP.setKilometersTraveled(request.getKilometersTraveled());
+        adSOAP.setLimitedDistance(request.isLimitedDistance());
+        adSOAP.setSeats(request.getSeats());
+        adSOAP.setSimpleUser(request.isSimpleUser());
+        carClient.createAd(adSOAP);
         AdResponse retVal = mapAdToAdResponse(ad);
         long endTime = System.nanoTime();
         double time = (double) ((endTime - startTime) / 1000000);

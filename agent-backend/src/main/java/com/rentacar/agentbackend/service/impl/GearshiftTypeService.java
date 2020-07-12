@@ -5,7 +5,7 @@ import com.rentacar.agentbackend.dto.request.GetGearshiftTypesWithFilterRequest;
 import com.rentacar.agentbackend.dto.request.UpdateGearshiftTypeRequest;
 import com.rentacar.agentbackend.dto.response.GearshiftTypeResponse;
 import com.rentacar.agentbackend.entity.GearshiftType;
-import com.rentacar.agentbackend.model.CreateGearshiftTypeRequestDTO;
+import com.rentacar.agentbackend.soap.wsdl.CreateGearshiftTypeRequestDTO;
 import com.rentacar.agentbackend.repository.IGearshiftTypeRepository;
 import com.rentacar.agentbackend.service.IGearshiftTypeService;
 import com.rentacar.agentbackend.soap.CarClient;
@@ -33,18 +33,14 @@ public class GearshiftTypeService implements IGearshiftTypeService {
         gearshiftType.setDeleted(false);
         gearshiftType.setNumberOfGears(request.getNumberOfGears());
         gearshiftType.setType(request.getType());
-//        CreateGearshiftTypeRequestDTO dto = new CreateGearshiftTypeRequestDTO(request.getType(),request.getNumberOfGears());
-//        System.out.println("dosao sam");
-//        Long retVal = _carClient.createGearshiftType(dto);
-//        if(retVal.equals(1L)){
-//            GearshiftType savedGearshiftType = _gearshiftTypeRepository.save(gearshiftType);
-//            return mapGearshiftTypeToGearshiftTypeResponse(savedGearshiftType);
-//        }else {
-//            System.out.println("Nisam uspeo");
-//            return null;
-//        }
-        //kada se kod iznad otkomentarise, obrisati ove dve linije ispod
+
         GearshiftType savedGearshiftType = _gearshiftTypeRepository.save(gearshiftType);
+        CreateGearshiftTypeRequestDTO dto = new CreateGearshiftTypeRequestDTO();
+        dto.setGearshiftTypeID(savedGearshiftType.getId().toString());
+        dto.setType(request.getType());
+        dto.setNumberOfGears(request.getNumberOfGears());
+        System.out.println("dosao sam");
+        Long retVal = _carClient.createGearshiftType(dto);
         return mapGearshiftTypeToGearshiftTypeResponse(savedGearshiftType);
     }
 

@@ -7,6 +7,8 @@ import com.rentacar.agentbackend.dto.response.FuelTypeResponse;
 import com.rentacar.agentbackend.entity.FuelType;
 import com.rentacar.agentbackend.repository.IFuelTypeRepository;
 import com.rentacar.agentbackend.service.IFuelTypeService;
+import com.rentacar.agentbackend.soap.CarClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,9 @@ import java.util.stream.Collectors;
 public class FuelTypeService implements IFuelTypeService {
 
     private final IFuelTypeRepository _fuelTypeRepository;
+
+    @Autowired
+    private CarClient carClient;
 
     public FuelTypeService(IFuelTypeRepository fuelTypeRepository) {
         _fuelTypeRepository = fuelTypeRepository;
@@ -30,6 +35,16 @@ public class FuelTypeService implements IFuelTypeService {
         fuelType.setTankCapacity(request.getTankCapacity());
         fuelType.setType(request.getType());
         FuelType savedFuelType = _fuelTypeRepository.save(fuelType);
+
+        com.rentacar.agentbackend.soap.wsdl.FuelType fuelTypeSOAP = new com.rentacar.agentbackend.soap.wsdl.FuelType();
+        fuelTypeSOAP.setFuelTypeID(savedFuelType.getId().toString());
+        fuelTypeSOAP.setDeleted(false);
+        fuelTypeSOAP.setTankCapacity(request.getTankCapacity());
+        fuelTypeSOAP.setGas(request.isGas());
+        fuelTypeSOAP.setType(request.getType());
+        carClient.createFuelType(fuelTypeSOAP);
+
+        System.out.println("TO BRE");
         return mapFuelTypeToFuelTypeResponse(savedFuelType);
     }
 
